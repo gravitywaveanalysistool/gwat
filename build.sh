@@ -21,3 +21,5 @@ GDL_DLL=`find ./lib/gdl/build -name 'GDL.so'`
 python3 -m venv pyenv
 INSTALL_DIR=`find pyenv -type d -name 'site-packages'`
 cp ${GDL_DLL} ${INSTALL_DIR}/GDL.so
+source ./pyenv/bin/activate
+pip install numpy matplotlib

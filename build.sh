@@ -17,6 +17,7 @@ cd lib/gdl
 ./scripts/build_gdl.sh configure
 ./scripts/build_gdl.sh build
 
-mkdir gdl_build
-INSTALL_PREFIX=gdl_build & ./scripts/build_gdl.sh install 
+mkdir ../../gdl_build
+INSTALL_PREFIX=../../gdl_build & ./scripts/build_gdl.sh install
+cd ../..
 python3 -m venv pyenv

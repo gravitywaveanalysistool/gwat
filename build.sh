@@ -17,7 +17,7 @@ cd lib/gdl
 ./scripts/build_gdl.sh configure
 ./scripts/build_gdl.sh build
 cd ../..
-GDL_DLL=`find ./lib/gdl/build -filename 'GDL.so'`
+GDL_DLL=`find ./lib/gdl/build -name 'GDL.so'`
 python3 -m venv pyenv
 INSTALL_DIR=`find pyenv -type d -name 'site-packages'`
 cp ${GDL_DLL} ${INSTALL_DIR}/GDL.so

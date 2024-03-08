@@ -16,8 +16,8 @@ cd lib/gdl
 ./scripts/build_gdl.sh prep
 ./scripts/build_gdl.sh configure
 ./scripts/build_gdl.sh build
-
-mkdir ../../gdl_build
-INSTALL_PREFIX=../../gdl_build & ./scripts/build_gdl.sh install
+GDL_DLL = `find ./build -filename 'GDL.so'`
 cd ../..
+mkdir gdl_build
 python3 -m venv pyenv
+cp ${GDL_DLL} pyenv/lib/**/site-packages/GDL.so

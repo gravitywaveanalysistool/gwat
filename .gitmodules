@@ -1,0 +1,3 @@
+[submodule "lib/gdl"]
+	path = lib/gdl
+	url = https://github.com/piesarentsquare/csc380-team-e-gdl.git

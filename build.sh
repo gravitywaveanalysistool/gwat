@@ -11,13 +11,13 @@
 # elif [ ${BUILD_OS} == "Linux" ]; then
 
 #pretend ubuntu is the only os
-sudo apt-get install curl cmake g++ python3-venv
+sudo apt-get install curl cmake g++ python3-venv -y
 cd lib/gdl
 ./scripts/build_gdl.sh prep
 ./scripts/build_gdl.sh configure
 ./scripts/build_gdl.sh build
-GDL_DLL = `find ./build -filename 'GDL.so'`
 cd ../..
-mkdir gdl_build
+GDL_DLL=`find ./lib/gdl/build -filename 'GDL.so'`
 python3 -m venv pyenv
-cp ${GDL_DLL} pyenv/lib/**/site-packages/GDL.so
+INSTALL_DIR=`find pyenv -type d -name 'site-packages'`
+cp ${GDL_DLL} ${INSTALL_DIR}/GDL.so

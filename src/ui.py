@@ -1,8 +1,46 @@
+import tkinter
 from tkinter import *
 from tkinter import filedialog
+from tkinter import ttk
+import pandas as pd
+import test
+
+
+def display_parameters_in_root(station, parent):
+    # Create a frame to contain the treeview and scrollbars
+    param_frame_container = Frame(parent)
+
+    # Create the tree view frame and scrollbars
+    param_frame = ttk.Treeview(param_frame_container)
+    tree_y_scrollbar = Scrollbar(param_frame_container, orient=VERTICAL, command=param_frame.yview)
+    tree_x_scrollbar = Scrollbar(param_frame_container, orient=HORIZONTAL, command=param_frame.xview)
+
+    # Set the scroll commands to come from scroll bars
+    param_frame.config(yscrollcommand=tree_y_scrollbar.set)
+    param_frame.config(yscrollcommand=tree_x_scrollbar.set)
+
+    # Insert DataFrame columns as treeview columns
+    param_frame["columns"] = list(station.profile_df.columns)
+    for column in station.profile_df.columns:
+        param_frame.heading(column, text=column)
+
+    # Insert DataFrame rows as treeview items
+    for i, row in station.profile_df.iterrows():
+        param_frame.insert("", tkinter.END, values=list(row))
+
+    # Pack all our frames to the container
+    tree_y_scrollbar.pack(side="right", fill="y")
+    tree_x_scrollbar.pack(side="bottom", fill="x")
+    param_frame.pack(padx=5, pady=5, expand=True, fill="both")
+
+    # Pack our container frames
+    param_frame_container.pack(side="right", fill="both")
 
 
 def main():
+    # vars
+    stations = []
+
     # Define the root frame
     root = Tk()
     root.title("Gravity Wave Analysis Tool")
@@ -19,7 +57,10 @@ def main():
     import_menu = Menu(menu_bar, tearoff=0)
 
     def import_files():
-        file_path = filedialog.askopenfilenames()
+        file_path = filedialog.askopenfilename()
+        station = test.generate_profile_data(file_path)
+        stations.append(station)
+        station_list.insert(END, station.station_name)
 
     def import_directory():
         directory = filedialog.askdirectory()
@@ -64,16 +105,24 @@ def main():
     station_list.pack(side="left", fill="both", padx=5, pady=5)
     list_scrollbar.pack(side="right", fill="y")
 
-    # Fill listbox with station names
-    for i in range(1, 51):
-        station_list.insert(END, f"Station {i}")
+    # This executes whenever we select a station on the list, this will handle graph display and param display
+    def on_station_select(event):
+        selected_index = station_list.curselection()
+        if selected_index:
+            selected_station_name = station_list.get(selected_index)
+            selected_station = None
+            for station in stations:
+                if station.station_name == selected_station_name:
+                    selected_station = station
+                    break
+            if selected_station:
+                display_parameters_in_root(selected_station, root)
+
+    # Bind the selection event to the Listbox
+    station_list.bind("<<ListboxSelect>>", on_station_select)
 
     # Pack list frame
     list_frame.pack(side="left", fill="both")
-
-
-
-
 
     root.mainloop()
 

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib
 from tabulate import tabulate
 import matplotlib.pyplot as plt
+from station import Station
 
 rawData = './Tolten_Profile/T3_1800_12132020_Artemis_Rerun.txt'
 
@@ -61,21 +62,26 @@ def tropoData(rawData, encoding='ISO-8859-1'):
                 start_line = i - 1
     return start_line, end_line
 
-data_start_line, data_end_line = headerData(rawData)
-if data_start_line is not None and data_end_line is not None:
-    nrows_to_read = data_end_line - data_start_line
-    header_df = pd.read_csv(rawData, sep='\t', skiprows=data_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1', header=None)
-data_start_line, data_end_line = grabProfileData(rawData)
-if data_start_line is not None and data_end_line is not None:
-    nrows_to_read = data_end_line - data_start_line
-    profile_df = pd.read_csv(rawData, sep='\t', skiprows=data_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1')
-    #profile_df.columns += profile_df.iloc[0]
-    profile_df.rename(columns=lambda x: x.strip(), inplace=True)
-    profile_df = profile_df[1:]
-print(tabulate(profile_df, headers="keys"))
 
+def generate_profile_data(path_name):
+    header_start_line, header_end_line = headerData(path_name)
+    if header_start_line is not None and header_end_line is not None:
+        nrows_to_read = header_end_line - header_start_line
+        header_df = pd.read_csv(path_name, sep='\t', skiprows=header_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1', header=None)
 
-data_start_line, data_end_line = tropoData(rawData)
-if data_start_line is not None and data_end_line is not None:
-    nrows_to_read = data_end_line - data_start_line
-    tropo_df = pd.read_csv(rawData, sep='\t', skiprows=data_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1')
+    profile_start_line, profile_end_line = grabProfileData(path_name)
+    if profile_start_line is not None and profile_end_line is not None:
+        nrows_to_read = profile_end_line - profile_start_line
+        profile_df = pd.read_csv(path_name, sep='\t', skiprows=profile_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1')
+        #profile_df.columns += profile_df.iloc[0]
+        profile_df.rename(columns=lambda x: x.strip(), inplace=True)
+        profile_df = profile_df[1:]
+    #print(tabulate(profile_df, headers="keys"))
+
+    tropo_start_line, tropo_end_line = tropoData(path_name)
+    if tropo_start_line is not None and tropo_end_line is not None:
+        nrows_to_read = tropo_end_line - tropo_start_line
+        tropo_df = pd.read_csv(path_name, sep='\t', skiprows=tropo_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1')
+
+    station = Station(path_name, profile_df, tropo_df, header_df)
+    return station

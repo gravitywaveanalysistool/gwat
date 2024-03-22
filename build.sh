@@ -24,5 +24,5 @@ else
 fi
 
 source ./pyenv/bin/activate
-pip install numpy matplotlib tk
+pip install numpy matplotlib tk pandas
 install_package python3-gdl

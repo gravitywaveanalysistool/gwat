@@ -3,6 +3,9 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 import test
 
 
@@ -17,7 +20,7 @@ def display_parameters_in_root(station, parent):
 
     # Set the scroll commands to come from scroll bars
     param_frame.config(yscrollcommand=tree_y_scrollbar.set)
-    param_frame.config(yscrollcommand=tree_x_scrollbar.set)
+    param_frame.config(xscrollcommand=tree_x_scrollbar.set)
 
     # Insert DataFrame columns as treeview columns
     param_frame["columns"] = list(station.profile_df.columns)
@@ -34,7 +37,31 @@ def display_parameters_in_root(station, parent):
     param_frame.pack(padx=5, pady=5, expand=True, fill="both")
 
     # Pack our container frames
-    param_frame_container.pack(side="right", fill="both")
+    param_frame_container.pack(side="right", anchor="se", fill="both")
+
+
+def graph2d(x, y, deg, x_label, y_label, title):
+    # Scatter plot
+    fig = plt.figure()
+    plt.scatter(x, y, s=5, label='Data points')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.legend()
+    return fig
+
+
+def display_graphs_in_root(station, parent):
+    graph_frame_container = ttk.Frame(parent)
+    fig = graph2d(station.profile_df['T'] + 273, station.profile_df['Alt'] / 1000, 3, 'Temperature (K)',
+                  'Altitude (km)',
+                  'Temperature Profile and Fit')
+
+    canvas = FigureCanvasTkAgg(fig, master=graph_frame_container)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
+
+    graph_frame_container.pack(side="right", anchor="ne", fill="both")
 
 
 def main():
@@ -117,6 +144,7 @@ def main():
                     break
             if selected_station:
                 display_parameters_in_root(selected_station, root)
+                display_graphs_in_root(selected_station, root)
 
     # Bind the selection event to the Listbox
     station_list.bind("<<ListboxSelect>>", on_station_select)

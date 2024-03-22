@@ -6,6 +6,39 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import test
 import graphs
+from src import exportGraphs
+
+
+class ErrorFrame(customtkinter.CTkToplevel):
+    def __init__(self, master, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.button = None
+        self.text_dialog = None
+        self.title("Error")
+        self.lift()
+
+    def showerror(self, message):
+        if self.text_dialog:
+            self.text_dialog.destroy()
+        if self.button:
+            self.button.destroy()
+
+        self.text_dialog = customtkinter.CTkLabel(self, text=message)
+        self.text_dialog.grid(row=0, column=0, sticky="N", padx=20, pady=20)
+
+        def close_window():
+            self.destroy()
+
+        self.button = customtkinter.CTkButton(self, text="Ok", command=close_window)
+        self.button.grid(row=1, column=0, padx=20, pady=10)
+
+        self.update_geometry()
+
+    def update_geometry(self):
+        self.update_idletasks()
+        width = self.winfo_reqwidth() + 20
+        height = self.winfo_reqheight() + 20
+        self.geometry(f"{width}x{height}")
 
 
 class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
@@ -18,7 +51,7 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
         self.but_cmd = but_cmd
         self.radiobutton_variable = customtkinter.StringVar()
         self.button_list = []
-        self.checkbox_list = []
+        self.checkbox_dict = {}
         for title, fig in figs.items():
             self.add_item(title)  # Add the title to your UI
 
@@ -28,20 +61,20 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
         if self.but_cmd and self.check_cmd is not None:
             button.configure(command=lambda: self.but_cmd(item))
             checkbox.configure(command=self.check_cmd)
-        checkbox.grid(row=len(self.checkbox_list), column=0, pady=(0, 10), sticky="e")
+        checkbox.grid(row=len(self.checkbox_dict), column=0, pady=(0, 10), sticky="e")
         button.grid(row=len(self.button_list), column=1, pady=(0, 10), sticky="w")
 
         self.button_list.append(button)
-        self.checkbox_list.append(checkbox)
+        self.checkbox_dict[item] = checkbox
 
     def remove_item(self, item):
-        for button, checkbox in zip(self.button_list, self.checkbox_list):
+        for button, checkbox in zip(self.button_list, self.checkbox_dict):
             if item == button.cget("text"):
                 button.destroy()
                 checkbox.destroy()
 
                 self.button_list.remove(button)
-                self.checkbox_list.remove(checkbox)
+                self.checkbox_dict.pop(item)
                 return
 
 
@@ -64,6 +97,7 @@ class GUI(customtkinter.CTk):
         super().__init__()
 
         # vars
+        self.checkbox_dict = None
         file_path = None
         figs = {}
 
@@ -75,10 +109,19 @@ class GUI(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         def export_graphs():
-            raise NotImplementedError("Scott")
+            nonlocal file_path
+            file_path = filedialog.asksaveasfilename(defaultextension=".pdf")
+
+            if file_path:
+                exportGraphs.save_file(figs, file_path, self.checkbox_dict, self)
 
         def create_custom_graph():
-            raise NotImplementedError("Subclasses must implement configure_layout method")
+            # Have list of params stored somewhere
+            # Have dropdown list that shows the options for axis
+            # List of graph type
+            # Fields for x,y title
+
+            raise NotImplementedError("Eric")
 
         def list_checkmark_event():
             pass
@@ -136,6 +179,7 @@ class GUI(customtkinter.CTk):
                                                                   but_cmd=list_button_event,
                                                                   figs=figs)
                 self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, sticky="nsew")
+                self.checkbox_dict = self.scrollable_frame.checkbox_dict
 
                 # Create Custom Graph Button
                 self.upload_button = customtkinter.CTkButton(self, text="Custom Graph", command=create_custom_graph)
@@ -148,6 +192,8 @@ class GUI(customtkinter.CTk):
         # Button for uploading file
         self.upload_button = customtkinter.CTkButton(self, text="Upload File", command=upload_file)
         self.upload_button.grid(row=0, column=0, padx=15, pady=15)
+
+        ErrorFrame(self).showerror("Test")
 
 
 if __name__ == "__main__":

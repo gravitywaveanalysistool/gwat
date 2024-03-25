@@ -82,6 +82,16 @@ def generate_profile_data(path_name):
     if tropo_start_line is not None and tropo_end_line is not None:
         nrows_to_read = tropo_end_line - tropo_start_line
         tropo_df = pd.read_csv(path_name, sep='\t', skiprows=tropo_start_line, nrows=nrows_to_read, engine='python', encoding='ISO-8859-1')
+    # Converts column to whatever integer equivalent float / int
+    for col in profile_df.select_dtypes(include=['object']).columns:
+        profile_df[col] = pd.to_numeric(profile_df[col], downcast='integer')
 
+    # Calculates the difference between followings alts
+    profile_df['diff'] = profile_df['Alt'].diff()
+    peak_index = profile_df[profile_df['diff'] < 0].first_valid_index()
+    # Drop rows after peak and drop diff column
+    if peak_index is not None:
+        profile_df = profile_df.loc[:peak_index - 1]
+    profile_df = profile_df.drop(columns=['diff'])
     station = Station(path_name, profile_df, tropo_df, header_df)
     return station

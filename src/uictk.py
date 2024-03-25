@@ -104,6 +104,7 @@ class GraphFrame(customtkinter.CTkFrame):
         self.canvas.grid(row=0, column=0, padx=15, pady=15)
 
     def draw_plot(self, fig):
+        self.canvas.delete('all')
         self.canvas.fig_agg = FigureCanvasTkAgg(fig, master=self.canvas)
         self.canvas.fig_agg.draw()
         self.canvas.fig_agg.get_tk_widget().pack(fill=customtkinter.BOTH, expand=True)
@@ -115,6 +116,7 @@ class GUI(customtkinter.CTk):
 
         # vars
         self.checkbox_dict = None
+        self.graph_frame = None
         file_path = None
         figs = {}
 
@@ -145,6 +147,8 @@ class GUI(customtkinter.CTk):
 
         def list_button_event(title):
             fig = figs[title]
+            if self.graph_frame:
+                self.graph_frame.destroy() # COME BACK TO THIS!!!!!!!!!!!
             self.graph_frame = GraphFrame(master=self)
             self.graph_frame.grid(row=0, column=1, padx=15, pady=15, rowspan=3, sticky="ne")
             self.graph_frame.draw_plot(fig)

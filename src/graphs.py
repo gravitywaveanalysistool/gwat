@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from tabulate import tabulate
 
 import metpy.calc as mpcalc
 from metpy.plots import Hodograph
@@ -48,8 +49,8 @@ def hodograph(compRange, lineWidth, profile_df):
     norm = plt.Normalize(vmin=profile_df_numeric['Alt'].min(), vmax=profile_df_numeric['Alt'].max())
 
     # Calculate wind components
-    speeds = profile_df_numeric['Ws'].values
-    directions = profile_df_numeric['Wd'].values
+    speeds = profile_df_numeric['Ws']
+    directions = profile_df_numeric['Wd']
     u, v = calcWindComps(speeds, directions)
 
     # Plot hodograph segments with altitude-based coloring

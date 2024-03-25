@@ -41,6 +41,23 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.geometry(f"{width}x{height}")
 
 
+class ParameterFrame(customtkinter.CTkScrollableFrame):
+    def __init__(self, master, params, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.params = params
+
+        for i, (label, param) in enumerate(params.items()):
+            self.add_item(i, label, param)
+
+    def add_item(self, i, label, param):
+        label = customtkinter.CTkLabel(self, text=label)
+        param = customtkinter.CTkLabel(self, text=param)
+
+        label.grid(row=i, column=0, pady=(0, 10), padx=(0, 10), sticky="w")
+        param.grid(row=i, column=1, pady=(0, 10), padx=(0, 10), sticky="e")
+
+
 class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
     def __init__(self, master, figs, check_cmd=None, but_cmd=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -147,7 +164,7 @@ class GUI(customtkinter.CTk):
                                                                 'Wind Speed',
                                                                 'Altitude',
                                                                 'Wind Speed Profile and Fit')
-            # figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
+            figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
             # figs['Hodograph 2'] = graphs.hodograph(30, 1, station.profile_df)
 
         def upload_file():
@@ -178,7 +195,7 @@ class GUI(customtkinter.CTk):
                                                                   check_cmd=list_checkmark_event,
                                                                   but_cmd=list_button_event,
                                                                   figs=figs)
-                self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, sticky="nsew")
+                self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, rowspan=2, sticky="nsew")
                 self.checkbox_dict = self.scrollable_frame.checkbox_dict
 
                 # Create Custom Graph Button
@@ -187,7 +204,20 @@ class GUI(customtkinter.CTk):
 
                 # Create Export Graph Button
                 self.upload_button = customtkinter.CTkButton(self, text="Export Graph(s)", command=export_graphs)
-                self.upload_button.grid(row=3, column=0, padx=15, pady=15)
+                self.upload_button.grid(row=4, column=0, padx=15, pady=15)
+
+                # Create Export Params Button
+                self.upload_button = customtkinter.CTkButton(self, text="Export Params", command=export_graphs)
+                self.upload_button.grid(row=4, column=1, padx=15, pady=15)
+
+                # Create Param Frame
+                params = {}
+                for i in range(10):
+                    params[f"Param {i}"] = f"value {i}"
+
+                self.param_frame = ParameterFrame(master=self, params=params, width=600)
+                self.param_frame.grid(row=3, column=1, padx=15, pady=15, sticky="sew")
+                # self.grid_rowconfigure((1, 3), weight=0)
 
         # Button for uploading file
         self.upload_button = customtkinter.CTkButton(self, text="Upload File", command=upload_file)

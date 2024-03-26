@@ -117,6 +117,7 @@ class GUI(customtkinter.CTk):
         # vars
         self.checkbox_dict = None
         self.graph_frame = None
+        self.param_frame = None
         file_path = None
         figs = {}
 
@@ -133,6 +134,12 @@ class GUI(customtkinter.CTk):
 
             if file_path:
                 exportGraphs.save_file(figs, file_path, self.checkbox_dict, self)
+
+        def export_params():
+            file = filedialog.asksaveasfile(defaultextension=".txt")
+            if file:
+                for i, (label, param) in enumerate(self.param_frame.params.items()):
+                    file.write(label + ',' + param + '\n')
 
         def create_custom_graph():
             # Have list of params stored somewhere
@@ -211,7 +218,7 @@ class GUI(customtkinter.CTk):
                 self.upload_button.grid(row=4, column=0, padx=15, pady=15)
 
                 # Create Export Params Button
-                self.upload_button = customtkinter.CTkButton(self, text="Export Params", command=export_graphs)
+                self.upload_button = customtkinter.CTkButton(self, text="Export Params", command=export_params)
                 self.upload_button.grid(row=4, column=1, padx=15, pady=15)
 
                 # Create Param Frame

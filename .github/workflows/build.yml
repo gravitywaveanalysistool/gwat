@@ -9,7 +9,9 @@ jobs:
         os: [ ubuntu-latest, macos-latest ]
         include:
           - os: ubuntu-latest
-            cmd: pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy
+            cmd: >
+              pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
+              chmod +x dist/gwat
             filename: gwat
           - os: macos-latest
             cmd: >

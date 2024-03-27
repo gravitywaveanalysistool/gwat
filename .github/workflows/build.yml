@@ -10,7 +10,7 @@ jobs:
         include:
           - os: ubuntu-latest
             cmd: pyinstaller -F src/__init__.py -n gwat
-            filename: gwat
+            filename: gwat.pkg
           - os: macos-latest
             cmd: >
               pyinstaller -F -w src/__init__.py -n gwat &&

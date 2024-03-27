@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gwat-${{ matrix.os }}-python-${{ matrix.python-version }}
-          path: dist/gwat/${{ matrix.filename }}
+          path: dist/${{ matrix.filename }}
           overwrite: true

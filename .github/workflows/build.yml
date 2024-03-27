@@ -6,5 +6,7 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - run: ${{ github.workspace }}/build.sh
+      - run: |
+        chmod +x build.sh
+        ${{ github.workspace }}/build.sh
       - run: ls ${{ github.workspace }}

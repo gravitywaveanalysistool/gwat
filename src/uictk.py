@@ -40,6 +40,39 @@ class ErrorFrame(customtkinter.CTkToplevel):
         height = self.winfo_reqheight() + 20
         self.geometry(f"{width}x{height}")
 
+class CustomGraphFrame(customtkinter.CTkToplevel):
+    def __init__(self, master, station, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.button = None
+        self.text_dialog = None
+        self.title("Error")
+        self.lift()
+
+
+        #self.text_dialog = customtkinter.CTkLabel(self, text=message)
+        #self.text_dialog.grid(row=0, column=0, sticky="N", padx=20, pady=20)
+
+        # Convert labels to a list
+        label_list = station.profile_df.loc[0, :].values.flatten().tolist()
+
+        # Choose X DropDown
+        self.choose_x = customtkinter.CTkOptionMenu(self, values=label_list)
+        self.choose_x.grid(row=0, column=0, sticky="N", padx=20, pady=20)
+
+        # Choose Y DropDown
+        self.choose_y = customtkinter.CTkOptionMenu(self, values=label_list)
+        self.choose_y.grid(row=0, column=0, sticky="N", padx=20, pady=20)
+
+        # Choose best fit degree
+        self.choose_bf = customtkinter.CTkEntry(self, )
+        self.choose_bf.grid(row=0, column=0, sticky="N", padx=20, pady=20)
+
+        def close_window():
+            self.destroy()
+
+        self.button = customtkinter.CTkButton(self, text="Create", command=close_window)
+        self.button.grid(row=1, column=0, padx=20, pady=10)
+
 
 class ParameterFrame(customtkinter.CTkScrollableFrame):
     def __init__(self, master, params, **kwargs):

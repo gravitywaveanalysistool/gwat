@@ -5,11 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - os: ubuntu-latest
+        os:
+          - target: ubuntu-latest
             cmd: pyinstaller -F src/__init__.py -n gwat
             filename: gwat
-          - os: macos-latest
+          - target: macos-latest
             cmd: >
               pyinstaller -F -w src/__init__.py -n gwat &&
               cd dist/
@@ -29,11 +29,11 @@ jobs:
         run: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
-      - name: build for ${{ matrix.os }}, python ${{ matrix.python-version }}
-        run: ${{ matrix.cmd }}
+      - name: build for ${{ matrix.os.target }}, python ${{ matrix.python-version }}
+        run: ${{ matrix.os.cmd }}
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: gwat-${{ matrix.os }}-python-${{ matrix.python-version }}
-          path: dist/gwat/${{ matrix.filename }}
+          name: gwat-${{ matrix.os.target }}-python-${{ matrix.python-version }}
+          path: dist/gwat/${{ matrix.os.filename }}
           overwrite: true

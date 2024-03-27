@@ -33,7 +33,7 @@ jobs:
       - name: build for ${{ matrix.os }}, python ${{ matrix.python-version }}
         run: ${{ matrix.cmd }}
       - name: display outputs
-        run: ls dist/gwat/
+        run: ls dist/
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:

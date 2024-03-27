@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from tabulate import tabulate
-
 import metpy.calc as mpcalc
 from metpy.plots import Hodograph
 from metpy.units import units
@@ -50,13 +48,15 @@ def hodograph(compRange, lineWidth, profile_df):
     norm = plt.Normalize(vmin=profile_df_numeric['Alt'].min(), vmax=profile_df_numeric['Alt'].max())
 
     # Calculate wind components
-    Hodo = calcWindComps(profile_df_numeric['Ws'], profile_df_numeric['Wd'])
+    speeds = profile_df_numeric['Ws'].values
+    directions = profile_df_numeric['Wd'].values
+    u, v = calcWindComps(speeds, directions)
 
     # Plot hodograph segments with altitude-based coloring
-    for i in range(len(Hodo[0]) - 1):
-        segment_color = cmap(norm(profile_df['Alt'].iloc[i]))
-        hodo.plot(Hodo[0][i:i + 2], Hodo[1][i:i + 2], color=segment_color, linewidth=lineWidth,
-                  label=f'{profile_df_numeric["Alt"].iloc[i]:.0f}-{profile_df_numeric["Alt"].iloc[i + 1]:.0f} m')
+    for i in range(len(u) - 1):
+        segment_color = cmap(norm(profile_df_numeric['Alt'].iloc[i]))
+        ax.plot([0, u[i]], [0, v[i]], color=segment_color, linewidth=lineWidth,
+                label=f'{profile_df_numeric["Alt"].iloc[i]:.0f}-{profile_df_numeric["Alt"].iloc[i + 1]:.0f} m')
 
     # Create altitude color bar
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)

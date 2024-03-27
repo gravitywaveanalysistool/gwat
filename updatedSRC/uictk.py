@@ -41,23 +41,6 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.geometry(f"{width}x{height}")
 
 
-class ParameterFrame(customtkinter.CTkScrollableFrame):
-    def __init__(self, master, params, **kwargs):
-        super().__init__(master, **kwargs)
-
-        self.params = params
-
-        for i, (label, param) in enumerate(params.items()):
-            self.add_item(i, label, param)
-
-    def add_item(self, i, label, param):
-        label = customtkinter.CTkLabel(self, text=label)
-        param = customtkinter.CTkLabel(self, text=param)
-
-        label.grid(row=i, column=0, pady=(0, 10), padx=(0, 10), sticky="w")
-        param.grid(row=i, column=1, pady=(0, 10), padx=(0, 10), sticky="e")
-
-
 class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
     def __init__(self, master, figs, check_cmd=None, but_cmd=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -75,7 +58,7 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
     def add_item(self, item):
         button = customtkinter.CTkButton(self, text=item, width=100, height=24)
         checkbox = customtkinter.CTkCheckBox(self, text="", width=10)
-        if self.but_cmd and self.check_cmd is not None:
+        if self.but_cmd and self.check_cmd is no    t None:
             button.configure(command=lambda: self.but_cmd(item))
             checkbox.configure(command=self.check_cmd)
         checkbox.grid(row=len(self.checkbox_dict), column=0, pady=(0, 10), sticky="e")
@@ -94,6 +77,68 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
                 self.checkbox_dict.pop(item)
                 return
 
+Aug 17, 2021 — This is caused by pip being installed in site-packages , while it is not included in default sys.path .
+
+python - no module named distutils....but distutils installed?
+Stack Overflow
+https://stackoverflow.com › questions › no-module-na...
+Nov 10, 2021 — I was wanting to upgrade my python version (to 3.10 in this case) so after installing python3.10 I proceeded to try adding some modules I use ...
+10 answers
+  ·  Top answer: Install setuptools in your machine pip install setuptools This solved my problem
+Python3.8 Pip Distutils.cmd Not Found - Stack Overflow
+Dec 30, 2021
+ModuleNotFoundError: No module named 'distutils' in Python ...
+Oct 7, 2023
+Why did I got an error ModuleNotFoundError - Stack Overflow
+Oct 5, 2023
+python 3.x - No module named 'distutils.util' - Stack Overflow
+Jan 28, 2022
+More results from stackoverflow.com
+
+ModuleNotFoundError: No module named 'distutils.cmd'
+Dataiku Community
+https://community.dataiku.com › Setup-Configuration
+May 31, 2022 — Solved: I have recently installed dataiku, and when trying to create a new python environment through the console I get the above error.
+3 answers
+  ·  Top answer: HI a colleague, of mine figure it out i need to be specific on the python version instead 3 ...
+
+Resolve modulenotfounderror: no module named 'distutils'
+Medium · Oliviaviera
+1 month ago
+The error message “ModuleNotFoundError: No module named 'distutils'” indicates that Python couldn't find the 'distutils' module, which is a core ...
+
+No module named 'distutils' on MacOS : r/learnpython
+Reddit · r/learnpython
+10+ comments · 5 months ago
+The solution for this issue on linux is: sudo apt install python3-distutils, but there doesn't seem to be an equivalent homebrew command for Mac ...
+
+Solve Bugs — No module named 'distutils' when pip install ...
+Medium · Felix Yip
+7 months ago
+When you want to pip install packages such as numpy in IDE, e.g. in Visual Studio Code, you may come across the bugs as follows.
+
+`poetry install` reports `ModuleNotFoundError: No module ...
+GitHub
+https://github.com › python-poetry › poetry › issues
+Sep 28, 2022 — poetry install reports ModuleNotFoundError: No module named 'distutils. ... No module named 'distutils.cmd'; I get the same error when running ...
+
+python no module named distutils cmd
+YouTube · CodeGPT
+80+ views · 3 months ago
+10:02
+Download this code from https://codegive.com Title: Fixing "No module named 'distutils.cmd'" Error in Python Introduction: The "No module ...
+
+ModuleNotFoundError: No module named 'distutils' : PY-61800
+JetBrains
+https://youtrack.jetbrains.com › issue › ModuleNotFoun...
+Go to Settings -> Tools -> Python Integrated Tools · There is a notice message that says "No pytest runner found in selected interpreter" · Click on the "Fix" ...
+More results
+GitHub
+No module named 'distutils.cmd' · Issue #124 · pypa/get-pip
+This is caused by pip being installed in site-packages , while it is not included in default sys.path .
+
+About this result
+Loading details about this result...
 
 class GraphFrame(customtkinter.CTkFrame):
     def __init__(self, master=None, **kwargs):
@@ -104,7 +149,6 @@ class GraphFrame(customtkinter.CTkFrame):
         self.canvas.grid(row=0, column=0, padx=15, pady=15)
 
     def draw_plot(self, fig):
-        self.canvas.delete('all')
         self.canvas.fig_agg = FigureCanvasTkAgg(fig, master=self.canvas)
         self.canvas.fig_agg.draw()
         self.canvas.fig_agg.get_tk_widget().pack(fill=customtkinter.BOTH, expand=True)
@@ -116,8 +160,6 @@ class GUI(customtkinter.CTk):
 
         # vars
         self.checkbox_dict = None
-        self.graph_frame = None
-        self.param_frame = None
         file_path = None
         figs = {}
 
@@ -135,12 +177,6 @@ class GUI(customtkinter.CTk):
             if file_path:
                 exportGraphs.save_file(figs, file_path, self.checkbox_dict, self)
 
-        def export_params():
-            file = filedialog.asksaveasfile(defaultextension=".txt")
-            if file:
-                for i, (label, param) in enumerate(self.param_frame.params.items()):
-                    file.write(label + ',' + param + '\n')
-
         def create_custom_graph():
             # Have list of params stored somewhere
             # Have dropdown list that shows the options for axis
@@ -154,28 +190,26 @@ class GUI(customtkinter.CTk):
 
         def list_button_event(title):
             fig = figs[title]
-            if self.graph_frame:
-                self.graph_frame.destroy() # COME BACK TO THIS!!!!!!!!!!!
             self.graph_frame = GraphFrame(master=self)
             self.graph_frame.grid(row=0, column=1, padx=15, pady=15, rowspan=3, sticky="ne")
             self.graph_frame.draw_plot(fig)
 
         def generate_graphs(station):
             # Create a list of graph figures from the station list
-            figs['Temperature Profile and Fit'] = (graphs.graph2d((pd.to_numeric(station.profile_df['T']) + 273),
-                                                                  (pd.to_numeric(station.profile_df['Alt']) / 1000),
+            figs['Temperature Profile and Fit'] = (graphs.graph2d((station.profile_df['T'] + 273),
+                                                                  ((station.profile_df['Alt']) / 1000),
                                                                   6,
                                                                   'Temperature (K)',
                                                                   'Altitude (km)',
                                                                   'Temperature Profile and Fit'))
 
-            figs['Wind Speed Profile and Fit'] = graphs.graph2d(pd.to_numeric(station.profile_df['Ws']),
-                                                                pd.to_numeric(station.profile_df['Alt']),
+            figs['Wind Speed Profile and Fit'] = graphs.graph2d((station.profile_df['Ws']),
+                                                                (station.profile_df['Alt']),
                                                                 8,
                                                                 'Wind Speed',
                                                                 'Altitude',
                                                                 'Wind Speed Profile and Fit')
-            figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
+            # figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
             # figs['Hodograph 2'] = graphs.hodograph(30, 1, station.profile_df)
 
         def upload_file():
@@ -206,7 +240,7 @@ class GUI(customtkinter.CTk):
                                                                   check_cmd=list_checkmark_event,
                                                                   but_cmd=list_button_event,
                                                                   figs=figs)
-                self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, rowspan=2, sticky="nsew")
+                self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, sticky="nsew")
                 self.checkbox_dict = self.scrollable_frame.checkbox_dict
 
                 # Create Custom Graph Button
@@ -215,20 +249,7 @@ class GUI(customtkinter.CTk):
 
                 # Create Export Graph Button
                 self.upload_button = customtkinter.CTkButton(self, text="Export Graph(s)", command=export_graphs)
-                self.upload_button.grid(row=4, column=0, padx=15, pady=15)
-
-                # Create Export Params Button
-                self.upload_button = customtkinter.CTkButton(self, text="Export Params", command=export_params)
-                self.upload_button.grid(row=4, column=1, padx=15, pady=15)
-
-                # Create Param Frame
-                params = {}
-                for i in range(10):
-                    params[f"Param {i}"] = f"value {i}"
-
-                self.param_frame = ParameterFrame(master=self, params=params, width=600)
-                self.param_frame.grid(row=3, column=1, padx=15, pady=15, sticky="sew")
-                # self.grid_rowconfigure((1, 3), weight=0)
+                self.upload_button.grid(row=3, column=0, padx=15, pady=15)
 
         # Button for uploading file
         self.upload_button = customtkinter.CTkButton(self, text="Upload File", command=upload_file)
@@ -237,7 +258,7 @@ class GUI(customtkinter.CTk):
         ErrorFrame(self).showerror("Test")
 
 
-def main():
+if __name__ == "__main__":
     customtkinter.set_appearance_mode("dark")
     app = GUI()
     app.mainloop()

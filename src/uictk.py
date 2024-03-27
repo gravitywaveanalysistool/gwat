@@ -150,7 +150,7 @@ class GUI(customtkinter.CTk):
         self.upload_button.grid(row=0, column=0, padx=15, pady=15)
 
 
-if __name__ == "__main__":
+def main():
     customtkinter.set_appearance_mode("dark")
     app = GUI()
     app.mainloop()

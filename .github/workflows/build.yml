@@ -1,0 +1,10 @@
+name: Build GWAT
+on: [push]
+jobs:
+  install-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - run: ${{ github.workspace }}/build.sh
+      - run: ls ${{ github.workspace }}

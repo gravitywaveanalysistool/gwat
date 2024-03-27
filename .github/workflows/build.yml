@@ -1,7 +1,7 @@
 name: Build GWAT
 on: [push]
 jobs:
-  install-deps:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -23,3 +23,9 @@ jobs:
       - name: build
         run: pyinstaller src/__init__.py -n gwat
       - run: ls ${{ github.workspace }}
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gwat-${{ matrix.os }}-python-${{ matrix.python-version }}
+          path: dist/gwat/gwat
+          overwrite: true

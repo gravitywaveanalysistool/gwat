@@ -41,6 +41,63 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.geometry(f"{width}x{height}")
 
 
+class CustomGraphFrame(customtkinter.CTkToplevel):
+    def __init__(self, master, gui, station, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.gui = gui
+        self.button = None
+        self.text_dialog = None
+        self.x_selection, self.y_selection, self.fit_selection = None, None, None
+        self.title("Custom Graph")
+        self.lift()
+
+        def select_x(selection):
+            self.x_selection = selection
+
+        def select_y(selection):
+            self.y_selection = selection
+
+        # Convert labels to a list
+        label_list = station.profile_df.columns.tolist()
+
+        # Choose X DropDown
+        self.x_label = customtkinter.CTkLabel(self, text="Choose X-Axis")
+        self.x_label.grid(row=0, column=0, sticky="N", padx=20, pady=2)
+
+        self.choose_x = customtkinter.CTkOptionMenu(self, values=label_list, command=select_x)
+        self.choose_x.grid(row=1, column=0, padx=20, pady=20)
+
+        # Choose Y DropDown
+        self.y_label = customtkinter.CTkLabel(self, text="Choose Y-Axis")
+        self.y_label.grid(row=2, column=0, sticky="N", padx=20, pady=2)
+
+        self.choose_y = customtkinter.CTkOptionMenu(self, values=label_list, command=select_y)
+        self.choose_y.grid(row=3, column=0, padx=20, pady=20)
+
+        # Choose best fit degree
+        self.fit_label = customtkinter.CTkLabel(self, text="Choose Fit Degree")
+        self.fit_label.grid(row=4, column=0, sticky="N", padx=20, pady=2)
+
+        self.choose_bf = customtkinter.CTkEntry(self)
+        self.choose_bf.grid(row=5, column=0, padx=20, pady=20)
+
+        def create_graph():
+            if self.choose_bf.get() and self.x_selection and self.y_selection is not None:
+                self.gui.figs[f"{self.x_selection} vs. {self.y_selection}"] = graphs.graph2d(
+                    pd.to_numeric(station.profile_df[self.x_selection]),
+                    pd.to_numeric(station.profile_df[self.y_selection]),
+                    int(self.choose_bf.get()),
+                    self.x_selection,
+                    self.y_selection,
+                    f"{self.x_selection} vs. {self.y_selection}")
+
+                self.gui.scrollable_frame.add_item(f"{self.x_selection} vs. {self.y_selection}")
+                self.destroy()
+
+        self.button = customtkinter.CTkButton(self, text="Create", command=create_graph)
+        self.button.grid(row=6, column=0, padx=20, pady=10)
+
+
 class ParameterFrame(customtkinter.CTkScrollableFrame):
     def __init__(self, master, params, **kwargs):
         super().__init__(master, **kwargs)
@@ -59,25 +116,23 @@ class ParameterFrame(customtkinter.CTkScrollableFrame):
 
 
 class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
-    def __init__(self, master, figs, check_cmd=None, but_cmd=None, **kwargs):
+    def __init__(self, master, figs, but_cmd=None, **kwargs):
         super().__init__(master, **kwargs)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
 
-        self.check_cmd = check_cmd
         self.but_cmd = but_cmd
         self.radiobutton_variable = customtkinter.StringVar()
         self.button_list = []
         self.checkbox_dict = {}
         for title, fig in figs.items():
-            self.add_item(title)  # Add the title to your UI
+            self.add_item(title)
 
     def add_item(self, item):
         button = customtkinter.CTkButton(self, text=item, width=100, height=24)
         checkbox = customtkinter.CTkCheckBox(self, text="", width=10)
-        if self.but_cmd and self.check_cmd is not None:
+        if self.but_cmd is not None:
             button.configure(command=lambda: self.but_cmd(item))
-            checkbox.configure(command=self.check_cmd)
         checkbox.grid(row=len(self.checkbox_dict), column=0, pady=(0, 10), sticky="e")
         button.grid(row=len(self.button_list), column=1, pady=(0, 10), sticky="w")
 
@@ -99,7 +154,6 @@ class GraphFrame(customtkinter.CTkFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
-        # Create a canvas to display the plot
         self.canvas = customtkinter.CTkCanvas(self)
         self.canvas.grid(row=0, column=0, padx=15, pady=15)
 
@@ -115,11 +169,12 @@ class GUI(customtkinter.CTk):
         super().__init__()
 
         # vars
+        self.scrollable_frame = None
         self.checkbox_dict = None
         self.graph_frame = None
         self.param_frame = None
-        file_path = None
-        figs = {}
+        self.station = None
+        self.figs = {}
 
         self.title("Gravity Wave Analysis Tool")
         self.geometry("1200x800")
@@ -129,11 +184,10 @@ class GUI(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         def export_graphs():
-            nonlocal file_path
             file_path = filedialog.asksaveasfilename(defaultextension=".pdf")
 
             if file_path:
-                exportGraphs.save_file(figs, file_path, self.checkbox_dict, self)
+                exportGraphs.save_file(self.figs, file_path, self.checkbox_dict, self)
 
         def export_params():
             file = filedialog.asksaveasfile(defaultextension=".txt")
@@ -142,51 +196,43 @@ class GUI(customtkinter.CTk):
                     file.write(label + ',' + param + '\n')
 
         def create_custom_graph():
-            # Have list of params stored somewhere
-            # Have dropdown list that shows the options for axis
-            # List of graph type
-            # Fields for x,y title
-
-            raise NotImplementedError("Eric")
-
-        def list_checkmark_event():
-            pass
+            CustomGraphFrame(self, self, self.station)
 
         def list_button_event(title):
-            fig = figs[title]
+            fig = self.figs[title]
             if self.graph_frame:
-                self.graph_frame.destroy() # COME BACK TO THIS!!!!!!!!!!!
+                self.graph_frame.destroy()
             self.graph_frame = GraphFrame(master=self)
             self.graph_frame.grid(row=0, column=1, padx=15, pady=15, rowspan=3, sticky="ne")
             self.graph_frame.draw_plot(fig)
 
         def generate_graphs(station):
             # Create a list of graph figures from the station list
-            figs['Temperature Profile and Fit'] = (graphs.graph2d((pd.to_numeric(station.profile_df['T']) + 273),
-                                                                  (pd.to_numeric(station.profile_df['Alt']) / 1000),
-                                                                  6,
-                                                                  'Temperature (K)',
-                                                                  'Altitude (km)',
-                                                                  'Temperature Profile and Fit'))
+            self.figs['Temperature Profile and Fit'] = (graphs.graph2d((pd.to_numeric(station.profile_df['T']) + 273),
+                                                                       (pd.to_numeric(
+                                                                           station.profile_df['Alt']) / 1000),
+                                                                       6,
+                                                                       'Temperature (K)',
+                                                                       'Altitude (km)',
+                                                                       'Temperature Profile and Fit'))
 
-            figs['Wind Speed Profile and Fit'] = graphs.graph2d(pd.to_numeric(station.profile_df['Ws']),
-                                                                pd.to_numeric(station.profile_df['Alt']),
-                                                                8,
-                                                                'Wind Speed',
-                                                                'Altitude',
-                                                                'Wind Speed Profile and Fit')
-            figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
-            # figs['Hodograph 2'] = graphs.hodograph(30, 1, station.profile_df)
+            self.figs['Wind Speed Profile and Fit'] = graphs.graph2d(pd.to_numeric(station.profile_df['Ws']),
+                                                                     pd.to_numeric(station.profile_df['Alt']),
+                                                                     8,
+                                                                     'Wind Speed',
+                                                                     'Altitude',
+                                                                     'Wind Speed Profile and Fit')
+            self.figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
+            self.figs['Hodograph 2'] = graphs.hodograph(30, 1, station.profile_df)
 
         def upload_file():
-            nonlocal file_path
             file_path = filedialog.askopenfilename()
 
             if file_path:
-                station = test.generate_profile_data(file_path)
+                self.station = test.generate_profile_data(file_path)
 
                 # GENERATE GRAPHS
-                generate_graphs(station)
+                generate_graphs(self.station)
 
                 # Make upload button not expand
                 self.grid_columnconfigure(0, weight=0)
@@ -203,9 +249,8 @@ class GUI(customtkinter.CTk):
 
                 # Create scrollable checkbox frame
                 self.scrollable_frame = ScrollingCheckButtonFrame(master=self, width=300,
-                                                                  check_cmd=list_checkmark_event,
                                                                   but_cmd=list_button_event,
-                                                                  figs=figs)
+                                                                  figs=self.figs)
                 self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, rowspan=2, sticky="nsew")
                 self.checkbox_dict = self.scrollable_frame.checkbox_dict
 
@@ -234,7 +279,6 @@ class GUI(customtkinter.CTk):
         self.upload_button = customtkinter.CTkButton(self, text="Upload File", command=upload_file)
         self.upload_button.grid(row=0, column=0, padx=15, pady=15)
 
-        ErrorFrame(self).showerror("Test")
 
 
 if __name__ == "__main__":

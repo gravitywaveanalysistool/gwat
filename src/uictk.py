@@ -184,7 +184,8 @@ class GUI(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         def export_graphs():
-            file_path = filedialog.asksaveasfilename(defaultextension=".pdf")
+            file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
+                                                     filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")))
 
             if file_path:
                 exportGraphs.save_file(self.figs, file_path, self.checkbox_dict, self)

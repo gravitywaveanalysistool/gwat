@@ -1,44 +1,96 @@
 name: Build GWAT
 on: [push]
 jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubunutu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Output release URL
+        run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+      - name: Upload release URL file
+        uses: actions/upload-artifact@v1
+        with:
+          name: release_url
+          path: release_url.txt
+
   build:
+    name: Build GWAT to executable
+    needs: create-release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         include:
           - os: ubuntu-latest
+            target: Linux
             cmd: >
-              pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
-              chmod +x dist/gwat
+              python -m pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy
             filename: gwat
+            mime_type: application/x-elf
           - os: macos-latest
+            target: MacOS
             cmd: >
-              pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
+              python -m pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
               cd dist/ &&
               zip -r9 gwat gwat.app/
             filename: gwat.zip
+            mime_type: application/zip
+          - os: windows-latest
+            target: Windows
+            cmd: >
+              python -m pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy
+            filename: gwat.exe
+            mime_type: application/vnd.microsoft.portable-executable
 
     steps:
       - uses: actions/checkout@v4
-      - name: get python ${{ matrix.python-version }}
+      - name: Get Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.11
           cache: 'pip'
 
-      - name: install dependencies
+      - name: Install Dependencies
         run: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
-      - name: build for ${{ matrix.os }}, python ${{ matrix.python-version }}
+      - name: Build for ${{ matrix.os }}
         run: ${{ matrix.cmd }}
       - name: display outputs
         run: ls dist/
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: gwat-${{ matrix.os }}-python-${{ matrix.python-version }}
+          name: gwat-${{ matrix.os }}
           path: dist/${{ matrix.filename }}
           overwrite: true
+      - name: Get release URL File
+        uses: actions/download-artifact@v1
+        with:
+          name: release_url
+      - name: Get Release File Name & Upload URL
+        id: get-release-info
+        shell: bash
+        run: |
+          value=`cat release_url/release_url.txt`
+          echo ::set-output name=upload_url::$value
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get-release-info.outputs.upload_url }}
+          asset_path: ./dist/${{ matrix.filename }}
+          asset_name: ${{ matrix.target}} ${{ matrix.filename }}
+          asset_content_type: ${{ matrix.mime_type }}
+        

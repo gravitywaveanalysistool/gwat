@@ -15,7 +15,6 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.button = None
         self.text_dialog = None
         self.title("Error")
-        self.lift()
 
     def showerror(self, message):
         if self.text_dialog:
@@ -33,6 +32,9 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.button.grid(row=1, column=0, padx=20, pady=10)
 
         self.update_geometry()
+        self.lift()
+        self.grab_set()
+
 
     def update_geometry(self):
         self.update_idletasks()
@@ -47,9 +49,10 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.gui = gui
         self.button = None
         self.text_dialog = None
-        self.x_selection, self.y_selection, self.fit_selection = None, None, None
+        self.x_selection = None
+        self.y_selection = None
+        self.fit_selection = None
         self.title("Custom Graph")
-        self.lift()
 
         def select_x(selection):
             self.x_selection = selection
@@ -59,6 +62,10 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
 
         # Convert labels to a list
         label_list = station.profile_df.columns.tolist()
+
+        # Create Default Values
+        self.x_selection = label_list[0]
+        self.y_selection = label_list[0]
 
         # Choose X DropDown
         self.x_label = customtkinter.CTkLabel(self, text="Choose X-Axis")
@@ -82,6 +89,7 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.choose_bf.grid(row=5, column=0, padx=20, pady=20)
 
         def create_graph():
+            #print(f"{self.choose_bf.get()}, {self.x_selection}, {self.y_selection}")
             if self.choose_bf.get() and self.x_selection and self.y_selection is not None:
                 self.gui.figs[f"{self.x_selection} vs. {self.y_selection}"] = graphs.graph2d(
                     pd.to_numeric(station.profile_df[self.x_selection]),
@@ -96,6 +104,9 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
 
         self.button = customtkinter.CTkButton(self, text="Create", command=create_graph)
         self.button.grid(row=6, column=0, padx=20, pady=10)
+
+        self.lift()
+        self.grab_set()
 
 
 class ParameterFrame(customtkinter.CTkScrollableFrame):

@@ -1,4 +1,4 @@
-APT_PACKAGES=(python3 python3 python3-venv python-gdl zlib1g-dev libjpeg-dev libpng-dev)
+APT_PACKAGES=(python3 python3 python3-venv python3-gdl,python-gdl zlib1g-dev libjpeg-dev libpng-dev)
 RPM_PACKAGES=(python3 python3 python3-venv python3-gdl zlib-devel libjpeg-devel libpng-devel)
 
 if [ $(uname) == "Linux" ]; then

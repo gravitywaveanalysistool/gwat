@@ -31,7 +31,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
         include:
-          - os: ubuntu-latest
+          - os: [ubuntu-latest]
             target: Linux
             cmd: >
               python -m pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy

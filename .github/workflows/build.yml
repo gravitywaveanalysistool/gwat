@@ -3,7 +3,7 @@ on: [push]
 jobs:
   create-release:
     name: Create Release
-    runs-on: ubunutu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release
         id: create_release

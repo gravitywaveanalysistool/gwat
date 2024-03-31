@@ -8,6 +8,9 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.text_dialog = None
         self.title("Error")
 
+        # Set Icon
+        self.iconbitmap("src/media/logo_notext_icon.ico")
+
     def showerror(self, message):
         if self.text_dialog:
             self.text_dialog.destroy()

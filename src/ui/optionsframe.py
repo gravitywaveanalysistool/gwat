@@ -8,6 +8,9 @@ class OptionsFrame(customtkinter.CTkToplevel):
         self.options_temp = self.options.copy()
         self.title("Options")
 
+        # Set Icon
+        self.iconbitmap("src/media/logo_notext_icon.ico")
+
         # Create a global option list, maybe a dict. Persistent options in future? Cache Graphs?
         # Have some defaults
         # Gen graphs will pull from these options.

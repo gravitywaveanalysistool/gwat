@@ -3,7 +3,9 @@ from tkinter import filedialog
 import pandas as pd
 import customtkinter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
 
+from src.station import Station
 from src import graphs
 from src import utils
 from src import parseradfile
@@ -34,6 +36,9 @@ class GUI(customtkinter.CTk):
         # Allow upload button to expand anywhere
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
+        # Set Icon
+        self.iconbitmap("src/media/logo_notext_icon.ico")
 
         def export_graphs():
             file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
@@ -90,6 +95,9 @@ class GUI(customtkinter.CTk):
                 # GENERATE GRAPHS
                 generate_graphs(self.station)
 
+                # Delete Logo
+                self.logo_label.destroy()
+
                 # Make upload button not expand and move to top
                 self.upload_button.grid(row=1, column=0, padx=15, pady=15)
                 self.grid_columnconfigure(0, weight=0)
@@ -139,12 +147,20 @@ class GUI(customtkinter.CTk):
                 self.param_frame.grid(row=3, column=1, padx=15, pady=15, sticky="sew")
                 # self.grid_rowconfigure((1, 3), weight=0)
 
+        # Logo Display
+        self.logo = customtkinter.CTkImage(light_image=Image.open("src/media/logo_text.png"),
+                                           dark_image=Image.open("src/media/logo_text.png"),
+                                           size=(600,600))
+        self.logo_label = customtkinter.CTkLabel(self, image=self.logo, text="")
+        self.logo_label.grid(row=0, column=0, padx=15, pady=15)
+
         # Button for uploading file
         self.upload_button = customtkinter.CTkButton(self, text="Upload File", command=upload_file)
-        self.upload_button.grid(row=0, column=0, padx=15, pady=15)
+        self.upload_button.grid(row=1, column=0, padx=15, pady=15, sticky="n")
 
 
 if __name__ == "__main__":
     customtkinter.set_appearance_mode("dark")
+    customtkinter.set_default_color_theme("src/ui/orange_theme.json")
     app = GUI()
     app.mainloop()

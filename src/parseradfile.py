@@ -1,9 +1,5 @@
 import pandas as pd
-import numpy as np
-import matplotlib
-from tabulate import tabulate
-import matplotlib.pyplot as plt
-from station import Station
+from src.station import Station
 
 rawData = './Tolten_Profile/T3_1800_12132020_Artemis_Rerun.txt'
 

@@ -9,6 +9,7 @@ from metpy.plots import Hodograph
 from metpy.units import units
 from matplotlib.cm import get_cmap
 
+
 def graph2d(x, y, deg, x_label, y_label, title):
     # Scatter plot
     fig, ax = plt.subplots()
@@ -27,6 +28,7 @@ def graph2d(x, y, deg, x_label, y_label, title):
 
     return fig
 
+
 def calcWindComps(speeds, directions):
     speeds = np.array(speeds)
     directions = np.array(directions)
@@ -34,6 +36,7 @@ def calcWindComps(speeds, directions):
     u = -speeds * np.sin(np.radians(directions))
     v = -speeds * np.cos(np.radians(directions))
     return u, v
+
 
 def hodograph(compRange, lineWidth, profile_df):
     fig = plt.figure(figsize=(6, 6))

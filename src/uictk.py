@@ -15,7 +15,6 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.button = None
         self.text_dialog = None
         self.title("Error")
-        self.lift()
 
     def showerror(self, message):
         if self.text_dialog:
@@ -33,6 +32,8 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.button.grid(row=1, column=0, padx=20, pady=10)
 
         self.update_geometry()
+        self.lift()
+        self.grab_set()
 
     def update_geometry(self):
         self.update_idletasks()
@@ -41,15 +42,75 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.geometry(f"{width}x{height}")
 
 
+class OptionsFrame(customtkinter.CTkToplevel):
+    def __init__(self, master, options, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.options = options
+        self.options_temp = self.options.copy()
+        self.title("Options")
+
+        # Create a global option list, maybe a dict. Persistent options in future? Cache Graphs?
+        # Have some defaults
+        # Gen graphs will pull from these options.
+        # When an option changes, regenerate graphs
+        # In the future, per graph options?
+
+        def select_x(selection):
+            self.x_selection = selection
+
+        def select_y(selection):
+            self.y_selection = selection
+
+        # choose_poly_deg DropDown
+        self.choose_poly_deg_lab = customtkinter.CTkLabel(self, text="Choose Poly Degree")
+        self.choose_poly_deg_lab.grid(row=0, column=0, sticky="N", padx=20, pady=2)
+
+        self.choose_poly_deg = customtkinter.CTkEntry(self)
+        self.choose_poly_deg.grid(row=1, column=0, padx=20, pady=20)
+
+        # Choose Y DropDown
+        self.choose_ds_degree_lab = customtkinter.CTkLabel(self, text="Choose Data-Skip Degree")
+        self.choose_ds_degree_lab.grid(row=2, column=0, sticky="N", padx=20, pady=2)
+
+        self.choose_ds_degree = customtkinter.CTkEntry(self)
+        self.choose_ds_degree.grid(row=3, column=0, padx=20, pady=20)
+
+        def save():
+            for key, value in self.options_temp.items():
+                if key == 'degree':
+                    self.options_temp[key] = self.choose_poly_deg.get()
+                elif key == 'dataskip':
+                    self.options_temp[key] = self.choose_ds_degree.get()
+
+            options.update(self.options_temp)
+
+            # Generate Graphs w/ new options
+
+            self.destroy()
+
+        def discard():
+            self.destroy()
+
+        self.save_button = customtkinter.CTkButton(self, text="Save", command=save)
+        self.save_button.grid(row=4, column=0, padx=20, pady=10)
+
+        self.discard_button = customtkinter.CTkButton(self, text="Discard", command=discard)
+        self.discard_button.grid(row=5, column=0, padx=20, pady=10)
+
+        self.lift()
+        self.grab_set()
+
+
 class CustomGraphFrame(customtkinter.CTkToplevel):
     def __init__(self, master, gui, station, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.gui = gui
         self.button = None
         self.text_dialog = None
-        self.x_selection, self.y_selection, self.fit_selection = None, None, None
+        self.x_selection = None
+        self.y_selection = None
+        self.fit_selection = None
         self.title("Custom Graph")
-        self.lift()
 
         def select_x(selection):
             self.x_selection = selection
@@ -59,6 +120,10 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
 
         # Convert labels to a list
         label_list = station.profile_df.columns.tolist()
+
+        # Create Default Values
+        self.x_selection = label_list[0]
+        self.y_selection = label_list[0]
 
         # Choose X DropDown
         self.x_label = customtkinter.CTkLabel(self, text="Choose X-Axis")
@@ -82,6 +147,7 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.choose_bf.grid(row=5, column=0, padx=20, pady=20)
 
         def create_graph():
+            # print(f"{self.choose_bf.get()}, {self.x_selection}, {self.y_selection}")
             if self.choose_bf.get() and self.x_selection and self.y_selection is not None:
                 self.gui.figs[f"{self.x_selection} vs. {self.y_selection}"] = graphs.graph2d(
                     pd.to_numeric(station.profile_df[self.x_selection]),
@@ -96,6 +162,9 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
 
         self.button = customtkinter.CTkButton(self, text="Create", command=create_graph)
         self.button.grid(row=6, column=0, padx=20, pady=10)
+
+        self.lift()
+        self.grab_set()
 
 
 class ParameterFrame(customtkinter.CTkScrollableFrame):
@@ -175,6 +244,7 @@ class GUI(customtkinter.CTk):
         self.param_frame = None
         self.station = None
         self.figs = {}
+        self.options = {'degree': '3', 'dataskip': '100'}
 
         self.title("Gravity Wave Analysis Tool")
         self.geometry("1200x800")
@@ -199,12 +269,15 @@ class GUI(customtkinter.CTk):
         def create_custom_graph():
             CustomGraphFrame(self, self, self.station)
 
+        def show_options():
+            OptionsFrame(self, self.options)
+
         def list_button_event(title):
             fig = self.figs[title]
             if self.graph_frame:
                 self.graph_frame.destroy()
             self.graph_frame = GraphFrame(master=self)
-            self.graph_frame.grid(row=0, column=1, padx=15, pady=15, rowspan=3, sticky="ne")
+            self.graph_frame.grid(row=0, column=1, padx=15, pady=15, rowspan=4, sticky="ne")
             self.graph_frame.draw_plot(fig)
 
         def generate_graphs(station):
@@ -235,37 +308,45 @@ class GUI(customtkinter.CTk):
                 # GENERATE GRAPHS
                 generate_graphs(self.station)
 
-                # Make upload button not expand
+                # Make upload button not expand and move to top
+                self.upload_button.grid(row=1, column=0, padx=15, pady=15)
                 self.grid_columnconfigure(0, weight=0)
                 self.grid_rowconfigure(0, weight=0)
 
-                # Make Custom button not expand
+                # Make Options button not expand
                 self.grid_rowconfigure(1, weight=0)
 
-                # Make Export button not expand
-                self.grid_rowconfigure(3, weight=0)
+                # Make Custom button not expand
+                self.grid_rowconfigure(2, weight=0)
 
                 # Allow scroll frame to expand
-                self.grid_rowconfigure(2, weight=1)
+                self.grid_rowconfigure(3, weight=1)
+
+                # Make Export Graph button not expand
+                self.grid_rowconfigure(4, weight=0)
+
+                # Create Options Button
+                self.options_button = customtkinter.CTkButton(self, text="Options", command=show_options)
+                self.options_button.grid(row=0, column=0, padx=15, pady=15)
+
+                # Create Custom Graph Button
+                self.upload_button = customtkinter.CTkButton(self, text="Custom Graph", command=create_custom_graph)
+                self.upload_button.grid(row=2, column=0, padx=15, pady=15)
 
                 # Create scrollable checkbox frame
                 self.scrollable_frame = ScrollingCheckButtonFrame(master=self, width=300,
                                                                   but_cmd=list_button_event,
                                                                   figs=self.figs)
-                self.scrollable_frame.grid(row=2, column=0, padx=15, pady=15, rowspan=2, sticky="nsew")
+                self.scrollable_frame.grid(row=3, column=0, padx=15, pady=15, rowspan=2, sticky="nsew")
                 self.checkbox_dict = self.scrollable_frame.checkbox_dict
-
-                # Create Custom Graph Button
-                self.upload_button = customtkinter.CTkButton(self, text="Custom Graph", command=create_custom_graph)
-                self.upload_button.grid(row=1, column=0, padx=15, pady=15)
 
                 # Create Export Graph Button
                 self.upload_button = customtkinter.CTkButton(self, text="Export Graph(s)", command=export_graphs)
-                self.upload_button.grid(row=4, column=0, padx=15, pady=15)
+                self.upload_button.grid(row=5, column=0, padx=15, pady=15)
 
                 # Create Export Params Button
                 self.upload_button = customtkinter.CTkButton(self, text="Export Params", command=export_params)
-                self.upload_button.grid(row=4, column=1, padx=15, pady=15)
+                self.upload_button.grid(row=5, column=1, padx=15, pady=15)
 
                 # Create Param Frame
                 params = {}
@@ -279,7 +360,6 @@ class GUI(customtkinter.CTk):
         # Button for uploading file
         self.upload_button = customtkinter.CTkButton(self, text="Upload File", command=upload_file)
         self.upload_button.grid(row=0, column=0, padx=15, pady=15)
-
 
 
 if __name__ == "__main__":

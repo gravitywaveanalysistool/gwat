@@ -7,7 +7,7 @@ when the user checks off the graphs they want to export
 
 from matplotlib.backends.backend_pdf import PdfPages
 
-import uictk
+from src.ui import uictk
 
 
 # Talk to Eric to see how he's handling the desired graphs from UI

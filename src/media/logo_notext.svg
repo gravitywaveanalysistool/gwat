@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Gravit.io -->
+
+<svg
+   style="isolation:isolate"
+   viewBox="0 0 1000.0001 1000.0001"
+   width="1000.0001pt"
+   height="1000.0001pt"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="GWAT Logo.svg"
+   inkscape:export-filename="logo_notext.png"
+   inkscape:export-xdpi="86.399994"
+   inkscape:export-ydpi="86.399994"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="pt"
+     inkscape:zoom="0.89325"
+     inkscape:cx="547.99888"
+     inkscape:cy="614.60957"
+     inkscape:window-width="1949"
+     inkscape:window-height="1212"
+     inkscape:window-x="826"
+     inkscape:window-y="1162"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3" />
+  <defs
+     id="defs1">
+    <filter
+       inkscape:label="Bloom"
+       inkscape:menu="Bevels"
+       inkscape:menu-tooltip="Soft, cushion-like bevel with matte highlights"
+       height="1.2094857"
+       width="1.2094857"
+       y="-0.10474286"
+       x="-0.10474286"
+       style="color-interpolation-filters:sRGB"
+       id="filter65">
+      <feGaussianBlur
+         stdDeviation="5"
+         in="SourceAlpha"
+         result="result1"
+         id="feGaussianBlur62" />
+      <feComposite
+         operator="arithmetic"
+         k2="3.2"
+         k1="-1"
+         k4="-2"
+         result="result3"
+         in2="result1"
+         id="feComposite63"
+         k3="0" />
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 10 0 "
+         result="result2"
+         id="feColorMatrix63" />
+      <feComposite
+         result="fbSourceGraphic"
+         in="SourceGraphic"
+         operator="out"
+         in2="result2"
+         id="feComposite64" />
+      <feBlend
+         mode="multiply"
+         in="result1"
+         in2="fbSourceGraphic"
+         result="result91"
+         id="feBlend64" />
+      <feBlend
+         mode="screen"
+         in="fbSourceGraphic"
+         in2="result91"
+         id="feBlend65"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix65" />
+      <feGaussianBlur
+         id="feGaussianBlur65"
+         result="result1"
+         in="fbSourceGraphicAlpha"
+         stdDeviation="2.2" />
+      <feSpecularLighting
+         id="feSpecularLighting65"
+         result="result0"
+         specularExponent="18.10000038"
+         specularConstant="2"
+         surfaceScale="5">
+        <feDistantLight
+           id="feDistantLight65"
+           azimuth="225"
+           elevation="24" />
+      </feSpecularLighting>
+      <feComposite
+         id="feComposite65"
+         result="result6"
+         operator="in"
+         in2="fbSourceGraphicAlpha" />
+      <feMorphology
+         id="feMorphology65"
+         radius="5.7"
+         operator="dilate" />
+      <feGaussianBlur
+         id="feGaussianBlur66"
+         result="result11"
+         stdDeviation="5.7" />
+      <feDiffuseLighting
+         id="feDiffuseLighting66"
+         surfaceScale="5"
+         result="result3"
+         diffuseConstant="2"
+         in="result1">
+        <feDistantLight
+           id="feDistantLight66"
+           elevation="25"
+           azimuth="225" />
+      </feDiffuseLighting>
+      <feBlend
+         id="feBlend66"
+         result="result7"
+         mode="multiply"
+         in="result3"
+         in2="fbSourceGraphic" />
+      <feComposite
+         id="feComposite66"
+         in="result7"
+         operator="in"
+         in2="fbSourceGraphicAlpha"
+         result="result91" />
+      <feBlend
+         id="feBlend67"
+         result="result9"
+         mode="lighten"
+         in="result6"
+         in2="result91" />
+      <feComposite
+         id="feComposite67"
+         in="result11"
+         in2="result9" />
+    </filter>
+    <filter
+       inkscape:label="Blur Double"
+       inkscape:menu="Blurs"
+       inkscape:menu-tooltip="Overlays two copies with different blur amounts and modifiable blend and composite"
+       style="color-interpolation-filters:sRGB"
+       id="filter119"
+       x="-0.075298677"
+       y="-0.075298677"
+       width="1.1505974"
+       height="1.1505974">
+      <feGaussianBlur
+         stdDeviation="5"
+         result="fbSourceGraphic"
+         id="feGaussianBlur118" />
+      <feGaussianBlur
+         stdDeviation="0.01"
+         in="SourceGraphic"
+         result="result1"
+         id="feGaussianBlur119" />
+      <feComposite
+         in2="result1"
+         operator="arithmetic"
+         in="fbSourceGraphic"
+         k2="0.5"
+         k3="0.5"
+         result="result2"
+         id="feComposite119"
+         k1="0"
+         k4="0" />
+      <feBlend
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result3"
+         id="feBlend119" />
+    </filter>
+    <filter
+       inkscape:label="Blur Double"
+       inkscape:menu="Blurs"
+       inkscape:menu-tooltip="Overlays two copies with different blur amounts and modifiable blend and composite"
+       style="color-interpolation-filters:sRGB"
+       id="filter121"
+       x="-0.091004062"
+       y="-0.091004062"
+       width="1.1820081"
+       height="1.1820081">
+      <feGaussianBlur
+         stdDeviation="5"
+         result="fbSourceGraphic"
+         id="feGaussianBlur120" />
+      <feGaussianBlur
+         stdDeviation="0.01"
+         in="SourceGraphic"
+         result="result1"
+         id="feGaussianBlur121" />
+      <feComposite
+         in2="result1"
+         operator="arithmetic"
+         in="fbSourceGraphic"
+         k2="0.5"
+         k3="0.5"
+         result="result2"
+         id="feComposite121"
+         k1="0"
+         k4="0" />
+      <feBlend
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result3"
+         id="feBlend121" />
+    </filter>
+    <filter
+       inkscape:label="Blur Double"
+       inkscape:menu="Blurs"
+       inkscape:menu-tooltip="Overlays two copies with different blur amounts and modifiable blend and composite"
+       style="color-interpolation-filters:sRGB"
+       id="filter123"
+       x="-0.063694578"
+       y="-0.063694578"
+       width="1.1273892"
+       height="1.1273892">
+      <feGaussianBlur
+         stdDeviation="5"
+         result="fbSourceGraphic"
+         id="feGaussianBlur122" />
+      <feGaussianBlur
+         stdDeviation="0.01"
+         in="SourceGraphic"
+         result="result1"
+         id="feGaussianBlur123" />
+      <feComposite
+         in2="result1"
+         operator="arithmetic"
+         in="fbSourceGraphic"
+         k2="0.5"
+         k3="0.5"
+         result="result2"
+         id="feComposite123"
+         k1="0"
+         k4="0" />
+      <feBlend
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result3"
+         id="feBlend123" />
+    </filter>
+  </defs>
+  <path
+     id="path27"
+     style="display:inline;isolation:isolate;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:27;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter123)"
+     inkscape:label="Outter Dash 3"
+     d="M 439.99951,251.22363 A 256.5,256.5 0 0 0 251.22363,439.99951 h 20.67041 A 236.25,236.25 0 0 1 439.99951,271.89404 Z" />
+  <path
+     id="path26"
+     style="display:inline;isolation:isolate;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:24;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter119)"
+     inkscape:label="Outter Dash 2"
+     d="M 439.99951,280.31543 A 228,228 0 0 0 280.31543,439.99951 h 18.50391 A 210,210 0 0 1 439.99951,298.81934 Z" />
+  <path
+     id="circle8"
+     style="display:inline;isolation:isolate;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:21.21;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter121)"
+     inkscape:label="Outter Dash 1"
+     d="M 439.99951,307.87354 A 201.495,201.495 0 0 0 307.87354,439.99951 h 16.93359 A 185.5875,185.5875 0 0 1 439.99951,324.80713 Z" />
+  <circle
+     vector-effect="non-scaling-stroke"
+     cx="500"
+     cy="500"
+     r="175"
+     fill="rgb(255,191,0)"
+     id="circle1"
+     style="display:inline;isolation:isolate;fill:#ffa200;fill-opacity:1;filter:url(#filter65)"
+     inkscape:label="Sun" />
+  <circle
+     vector-effect="non-scaling-stroke"
+     cx="500"
+     cy="500"
+     r="147.05882"
+     fill="#000000"
+     id="circle2"
+     style="display:none;isolation:isolate"
+     inkscape:label="Moon" />
+</svg>

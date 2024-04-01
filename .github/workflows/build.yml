@@ -10,20 +10,21 @@ jobs:
         include:
           - os: ubuntu-latest
             target: Linux
-            cmd: pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy
-            filename: gwat
+            cmd: >
+              pyinstaller -D src/__init__.py -n gwat-linux -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
+            filename: gwat-linux
           - os: macos-latest
             target: MacOS
             cmd: >
-              pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
-              cd dist/ &&
-              zip -r9 gwat gwat.app/
-            filename: gwat.zip
+              pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro &&
+              cd dist/gwat &&
+              zip -r9 gwat-macos gwat.app/
+            filename: gwat-macos.zip
           - os: windows-latest
             target: Windows
             cmd: >
-              pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy
-            filename: gwat.exe
+              pyinstaller -D -w src/__init__.py -n gwat-windows -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
+            filename: gwat-windows.exe
     steps:
       - uses: actions/checkout@v4
       - name: Get Python
@@ -37,8 +38,6 @@ jobs:
             pip install -r requirements.txt
       - name: Build for ${{ matrix.os }}
         run: ${{ matrix.cmd }}
-      - name: display outputs
-        run: ls dist/
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -49,7 +48,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: dist/${{ matrix.filename }}
+          artifacts: dist/gwat
           prerelease: false
           replacesArtifacts: true
           commit: ${{ github.sha }}

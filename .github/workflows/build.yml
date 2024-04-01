@@ -10,21 +10,19 @@ jobs:
         include:
           - os: ubuntu-latest
             target: Linux
-            cmd: >
-              pyinstaller -D src/__init__.py -n gwat-linux -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            filename: gwat-linux
+            build_cmd: pyinstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
+            zip_cmd: tar -czf gwat-linux.tar.gz dist/gwat
+            filename: gwat-linux.tar.gz
           - os: macos-latest
             target: MacOS
-            cmd: >
-              pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            #   cd dist/gwat &&
-            #   zip -r9 gwat-macos gwat.app/
+            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
+            zip_cmd: zip -r9 gwat-macos dist/gwat
             filename: gwat-macos.zip
           - os: windows-latest
             target: Windows
-            cmd: >
-              pyinstaller -D -w src/__init__.py -n gwat-windows -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            filename: gwat-windows.exe
+            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
+            zip_cmd: tar.exe -czf gwat-windows.zip dist/gwat
+            filename: gwat-windows.zip
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -38,9 +36,11 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
       - name: Build for ${{ matrix.os }}
-        run: ${{ matrix.cmd }}
+        run: ${{ matrix.build_cmd }}
       - name: Display outputs
         run: ls dist/gwat
+      - name: Compress output
+        run: ${{ matrix.zip_cmd }}
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -51,7 +51,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          artifacts: dist/gwat
+          artifacts: ${{ matrix.filename }}
           prerelease: false
           replacesArtifacts: true
           commit: ${{ github.sha }}

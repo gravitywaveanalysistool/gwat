@@ -17,14 +17,15 @@ jobs:
             target: MacOS
             cmd: >
               pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro &&
-              cd dist/gwat &&
-              zip -r9 gwat-macos gwat.app/
+            #   cd dist/gwat &&
+            #   zip -r9 gwat-macos gwat.app/
             filename: gwat-macos.zip
           - os: windows-latest
             target: Windows
             cmd: >
               pyinstaller -D -w src/__init__.py -n gwat-windows -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
             filename: gwat-windows.exe
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - name: Get Python
@@ -38,6 +39,8 @@ jobs:
             pip install -r requirements.txt
       - name: Build for ${{ matrix.os }}
         run: ${{ matrix.cmd }}
+      - name: Display outputs
+        run: ls
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:

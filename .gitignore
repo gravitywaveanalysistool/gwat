@@ -1,1 +1,5 @@
 pyenv/
+dist/
+gwat.spec
+src/__pycache__
+build/

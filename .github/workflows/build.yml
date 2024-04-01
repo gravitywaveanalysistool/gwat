@@ -12,7 +12,6 @@ jobs:
             target: Linux
             cmd: pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy
             filename: gwat
-            mime_type: application/x-elf
           - os: macos-latest
             target: MacOS
             cmd: >
@@ -20,14 +19,11 @@ jobs:
               cd dist/ &&
               zip -r9 gwat gwat.app/
             filename: gwat.zip
-            mime_type: application/zip
           - os: windows-latest
             target: Windows
             cmd: >
               pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy
             filename: gwat.exe
-            mime_type: application/vnd.microsoft.portable-executable
-
     steps:
       - uses: actions/checkout@v4
       - name: Get Python
@@ -49,10 +45,6 @@ jobs:
           name: gwat-${{ matrix.os }}
           path: dist/${{ matrix.filename }}
           overwrite: true
-      - name: Get release URL File
-        uses: actions/download-artifact@v1
-        with:
-          name: release_url
       - name: Upload Release
         uses: ncipollo/release-action@v1
         with:

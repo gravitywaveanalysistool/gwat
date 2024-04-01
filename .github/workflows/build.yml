@@ -16,7 +16,7 @@ jobs:
           - os: macos-latest
             target: MacOS
             cmd: >
-              pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro &&
+              pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
             #   cd dist/gwat &&
             #   zip -r9 gwat-macos gwat.app/
             filename: gwat-macos.zip

@@ -40,7 +40,7 @@ jobs:
       - name: Build for ${{ matrix.os }}
         run: ${{ matrix.cmd }}
       - name: Display outputs
-        run: ls
+        run: ls dist/gwat
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:

@@ -11,7 +11,7 @@ jobs:
           - os: ubuntu-latest
             target: Linux
             build_cmd: pyinstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            zip_cmd: tar -czf gwat-linux.tar.gz dist/gwat
+            zip_cmd: tar -czfv gwat-linux.tar.gz dist/gwat
             filename: gwat-linux.tar.gz
           - os: macos-latest
             target: MacOS
@@ -21,7 +21,7 @@ jobs:
           - os: windows-latest
             target: Windows
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            zip_cmd: tar.exe -czf gwat-windows.zip dist/gwat
+            zip_cmd: Compress-Archive -DestinationPath gwat-windows -Path dist/gwat
             filename: gwat-windows.zip
       fail-fast: false
     steps:
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gwat-${{ matrix.os }}
-          path: dist/${{ matrix.filename }}
+          path: ${{ matrix.filename }}
           overwrite: true
       - name: Upload Release
         uses: ncipollo/release-action@v1

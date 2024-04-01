@@ -11,8 +11,8 @@ jobs:
           - os: ubuntu-latest
             target: Linux
             build_cmd: pyinstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            zip_cmd: cd dist/gwat/ && tar -czvf gwat-linux.tar.gz *
-            filename: gwat-linux.tar.gz
+            zip_cmd: cd dist/gwat/ && tar -czvf gwat-linux.tar.gz * && cd ../..
+            filename: dist/gwat/gwat-linux.tar.gz
           - os: macos-latest
             target: MacOS
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
@@ -35,7 +35,7 @@ jobs:
         run: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
-      - name: Build for ${{ matrix.os }}
+      - name: Build for ${{ matrix.target }}
         run: ${{ matrix.build_cmd }}
       - name: Display outputs
         run: ls dist/gwat

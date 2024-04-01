@@ -16,8 +16,8 @@ jobs:
           - os: macos-latest
             target: MacOS
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro
-            zip_cmd: zip -r9 gwat-macos dist/gwat/*
-            filename: gwat-macos.zip
+            zip_cmd: cd dist/gwat/ && zip -r9 gwat-macos dist/gwat/* && cd ../..
+            filename: dist/gwat/gwat-macos.zip
           - os: windows-latest
             target: Windows
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/hilbert.pro:pro/hilbert.pro

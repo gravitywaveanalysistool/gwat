@@ -16,7 +16,7 @@ jobs:
           - os: macos-latest
             target: MacOS
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/:pro/
-            zip_cmd: cd dist/gwat/ && zip -r9 gwat-macos dist/gwat/* && cd ../..
+            zip_cmd: cd dist/gwat/ && zip -r9 gwat-macos * && cd ../..
             filename: dist/gwat/gwat-macos.zip
           - os: windows-latest
             target: Windows

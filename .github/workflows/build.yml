@@ -10,13 +10,13 @@ jobs:
         include:
           - os: ubuntu-latest
             target: Linux
-            cmd: python -m pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy
+            cmd: pyinstaller -F src/__init__.py -n gwat -p src/ --copy-metadata numpy
             filename: gwat
             mime_type: application/x-elf
           - os: macos-latest
             target: MacOS
             cmd: >
-              python -m pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
+              pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy &&
               cd dist/ &&
               zip -r9 gwat gwat.app/
             filename: gwat.zip
@@ -24,7 +24,7 @@ jobs:
           - os: windows-latest
             target: Windows
             cmd: >
-              python -m pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy
+              pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy
             filename: gwat.exe
             mime_type: application/vnd.microsoft.portable-executable
 

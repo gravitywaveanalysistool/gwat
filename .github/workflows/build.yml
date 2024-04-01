@@ -54,5 +54,6 @@ jobs:
           replacesArtifacts: true
           commit: ${{ github.sha }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
           
         

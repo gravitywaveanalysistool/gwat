@@ -3,7 +3,7 @@ import pandas as pd
 
 class Station:
 
-    def __init__(self, file_path, profile_df, tropo_df, header_df):
+    def __init__(self, file_path, profile_df, strato_df, tropo_df, header_df):
         """
         Initializes a Station instance.
 
@@ -15,8 +15,8 @@ class Station:
         """
         self.file_path = file_path
         self.profile_df = profile_df.copy()
+        self.strato_df = strato_df.copy()
         self.tropo_df = tropo_df.copy()
         self.header_df = header_df.copy()
         self.station_name = str(self.header_df.at[1, 3])
-        #self.gdl_params_df = gld_params_df.copy()
 

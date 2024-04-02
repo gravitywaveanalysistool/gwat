@@ -1,20 +1,18 @@
 from tkinter import filedialog
 
-import pandas as pd
 import customtkinter
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from PIL import Image, ImageTk
+import pandas as pd
+from PIL import Image
 
-from src.station import Station
-from src import graphs
-from src import utils
-from src import parseradfile
-from graphframe import GraphFrame
-from scrollingbuttonframe import ScrollingCheckButtonFrame
-from parameterframe import ParameterFrame
 from customgraphframe import CustomGraphFrame
+from graphframe import GraphFrame
 from optionsframe import OptionsFrame
-from errorframe import ErrorFrame
+from parameterframe import ParameterFrame
+from scrollingbuttonframe import ScrollingCheckButtonFrame
+from src import parseradfile
+from src import utils
+from src.graphing.hodograph import HodoGraph
+from src.graphing.xygraph import XYGraph
 
 
 class GUI(customtkinter.CTk):
@@ -27,7 +25,7 @@ class GUI(customtkinter.CTk):
         self.graph_frame = None
         self.param_frame = None
         self.station = None
-        self.figs = {}
+        self.graph_objects = {}
         self.options = {'degree': '3', 'dataskip': '100'}
 
         self.title("Gravity Wave Analysis Tool")
@@ -45,7 +43,7 @@ class GUI(customtkinter.CTk):
                                                      filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")))
 
             if file_path:
-                utils.save_graph_to_file(self.figs, file_path, self.checkbox_dict, self)
+                utils.save_graph_to_file(self.graph_objects, file_path, self.checkbox_dict, self)
 
         def export_params():
             file = filedialog.asksaveasfile(defaultextension=".txt")
@@ -60,7 +58,7 @@ class GUI(customtkinter.CTk):
             OptionsFrame(self, self.options)
 
         def list_button_event(title):
-            fig = self.figs[title]
+            fig = self.graph_objects[title].get_figure()
             if self.graph_frame:
                 self.graph_frame.destroy()
             self.graph_frame = GraphFrame(master=self)
@@ -68,23 +66,40 @@ class GUI(customtkinter.CTk):
             self.graph_frame.draw_plot(fig)
 
         def generate_graphs(station):
-            # Create a list of graph figures from the station list
-            self.figs['Temperature Profile and Fit'] = (graphs.graph2d((pd.to_numeric(station.profile_df['T']) + 273),
-                                                                       (pd.to_numeric(
-                                                                           station.profile_df['Alt']) / 1000),
-                                                                       6,
-                                                                       'Temperature (K)',
-                                                                       'Altitude (km)',
-                                                                       'Temperature Profile and Fit'))
+            # Create initial Graph instances and select parameters
+            self.graph_objects['Temperature Profile and Fit'] = XYGraph(title='Temperature Profile and Fit',
+                                                                        data=station.profile_df,
+                                                                        x='T',
+                                                                        y='Alt',
+                                                                        degree=6,
+                                                                        x_label='Temperature (K)',
+                                                                        y_label='Altitude (km)',
+                                                                        best_fit=True)
 
-            self.figs['Wind Speed Profile and Fit'] = graphs.graph2d(pd.to_numeric(station.profile_df['Ws']),
-                                                                     pd.to_numeric(station.profile_df['Alt']),
-                                                                     8,
-                                                                     'Wind Speed',
-                                                                     'Altitude',
-                                                                     'Wind Speed Profile and Fit')
-            self.figs['Hodograph 1'] = graphs.hodograph(40, 2, station.profile_df)
-            self.figs['Hodograph 2'] = graphs.hodograph(30, 1, station.profile_df)
+            self.graph_objects['Wind Speed Profile and Fit'] = XYGraph(title='Wind Speed Profile and Fit',
+                                                                       data=station.profile_df,
+                                                                       x='Ws',
+                                                                       y='Alt',
+                                                                       degree=8,
+                                                                       x_label='Wind Speed',
+                                                                       y_label='Altitude',
+                                                                       best_fit=True)
+
+            self.graph_objects['Hodograph 1'] = HodoGraph(title='Hodograph 1',
+                                                          data=station.profile_df,
+                                                          comp_range=40,
+                                                          line_width=5,
+                                                          alt_threshold=200)
+
+            self.graph_objects['Hodograph 2'] = HodoGraph(title='Hodograph 2',
+                                                          data=station.profile_df,
+                                                          comp_range=30,
+                                                          line_width=1,
+                                                          alt_threshold=200)
+
+            # Generate their figures
+            for _, graph in self.graph_objects.items():
+                graph.generate_graph()
 
         def upload_file():
             file_path = filedialog.askopenfilename()
@@ -124,9 +139,10 @@ class GUI(customtkinter.CTk):
                 self.upload_button.grid(row=2, column=0, padx=15, pady=15)
 
                 # Create scrollable checkbox frame
-                self.scrollable_frame = ScrollingCheckButtonFrame(master=self, width=300,
+                self.scrollable_frame = ScrollingCheckButtonFrame(master=self, width=400,
                                                                   but_cmd=list_button_event,
-                                                                  figs=self.figs)
+                                                                  graph_objects=self.graph_objects,
+                                                                  station=self.station)
                 self.scrollable_frame.grid(row=3, column=0, padx=15, pady=15, rowspan=2, sticky="nsew")
                 self.checkbox_dict = self.scrollable_frame.checkbox_dict
 
@@ -150,7 +166,7 @@ class GUI(customtkinter.CTk):
         # Logo Display
         self.logo = customtkinter.CTkImage(light_image=Image.open("src/media/logo_text.png"),
                                            dark_image=Image.open("src/media/logo_text.png"),
-                                           size=(600,600))
+                                           size=(600, 600))
         self.logo_label = customtkinter.CTkLabel(self, image=self.logo, text="")
         self.logo_label.grid(row=0, column=0, padx=15, pady=15)
 

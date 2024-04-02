@@ -1,5 +1,7 @@
 import customtkinter
-
+import pandas as pd
+from src.graphing.hodograph import HodoGraph
+from src.graphing.xygraph import XYGraph
 
 class CustomGraphFrame(customtkinter.CTkToplevel):
     def __init__(self, master, gui, station, *args, **kwargs):
@@ -50,17 +52,24 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.choose_bf.grid(row=5, column=0, padx=20, pady=20)
 
         def create_graph():
-            # print(f"{self.choose_bf.get()}, {self.x_selection}, {self.y_selection}")
             if self.choose_bf.get() and self.x_selection and self.y_selection is not None:
-                self.gui.figs[f"{self.x_selection} vs. {self.y_selection}"] = graphs.graph2d(
-                    pd.to_numeric(station.profile_df[self.x_selection]),
-                    pd.to_numeric(station.profile_df[self.y_selection]),
-                    int(self.choose_bf.get()),
-                    self.x_selection,
-                    self.y_selection,
-                    f"{self.x_selection} vs. {self.y_selection}")
+                title = f"{self.x_selection} vs. {self.y_selection}"
 
-                self.gui.scrollable_frame.add_item(f"{self.x_selection} vs. {self.y_selection}")
+                # Create graph instance
+                self.gui.graph_objects[title] = XYGraph(
+                    title=title,
+                    data=station.profile_df,
+                    x=self.x_selection,
+                    y=self.y_selection,
+                    degree=int(self.choose_bf.get()),
+                    x_label=self.x_selection,
+                    y_label=self.y_selection,
+                    best_fit=True)
+
+                # Generate its figure
+                self.gui.graph_objects[title].generate_graph()
+
+                self.gui.scrollable_frame.add_item(title)
                 self.destroy()
 
         self.button = customtkinter.CTkButton(self, text="Create", command=create_graph)

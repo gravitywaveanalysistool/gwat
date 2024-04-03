@@ -1,7 +1,14 @@
 if command -v python3 >/dev/null 2>&1; then
     PYTHON=python3
-else
+elif command -v python >/dev/null 2>&1; then
     PYTHON=python
+else
+    echo "python not found"
+    exit 1
+fi
+if ! command -v ${PYTHON} -m pip >/dev/null 2>&1; then
+    echo "pip not found"
+    exit 1
 fi
 ${PYTHON} -m pip install -r requirements.txt
 if [ ! d out ]; then

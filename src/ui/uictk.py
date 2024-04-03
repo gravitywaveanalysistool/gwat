@@ -4,11 +4,11 @@ import customtkinter
 import pandas as pd
 from PIL import Image
 
-from customgraphframe import CustomGraphFrame
-from graphframe import GraphFrame
-from optionsframe import OptionsFrame
-from parameterframe import ParameterFrame
-from scrollingbuttonframe import ScrollingCheckButtonFrame
+from src.ui.customgraphframe import CustomGraphFrame
+from src.ui.graphframe import GraphFrame
+from src.ui.optionsframe import OptionsFrame
+from src.ui.parameterframe import ParameterFrame
+from src.ui.scrollingbuttonframe import ScrollingCheckButtonFrame
 from src import parseradfile
 from src import utils
 from src.graphing.hodograph import HodoGraph

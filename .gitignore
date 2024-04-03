@@ -1,5 +1,6 @@
-pyenv/
 dist/
-gwat.spec
-**/__pycache__
 build/
+**/__pycache__
+gwat.spec
+
+.idea/

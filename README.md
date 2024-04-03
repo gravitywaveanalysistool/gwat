@@ -6,7 +6,7 @@ Tyler Cullen, Jeremiah Hubbard, Eric Stewart, Scott Wilmott
 
 Download a binary from our [Releases](https://github.com/PiesArentSquare/csc380-team-e/releases/tag/latest)
 
-Or build it yourself with:
+Or (assuming you have python3 and pip installed) build it yourself with:
 
 ### Linux/macOS:
 ```

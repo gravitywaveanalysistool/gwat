@@ -175,7 +175,7 @@ class GUI(customtkinter.CTk):
         self.upload_button.grid(row=1, column=0, padx=15, pady=15, sticky="n")
 
 
-if __name__ == "__main__":
+def main():
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("src/ui/orange_theme.json")
     app = GUI()

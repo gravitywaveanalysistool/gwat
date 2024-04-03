@@ -40,3 +40,4 @@ class HodoGraph(Graph):
         ax.set_ylabel('V Component (m/s)')
 
         self.fig = fig
+        plt.close(fig)

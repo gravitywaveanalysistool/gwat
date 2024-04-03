@@ -31,3 +31,4 @@ class XYGraph(Graph):
         plt.legend()
 
         self.fig = fig
+        plt.close(fig)

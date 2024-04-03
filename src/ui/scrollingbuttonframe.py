@@ -20,6 +20,10 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
         for title, graph in graph_objects.items():
             self.add_item(title)
 
+    def destroy(self):
+        super().destroy()
+        self._parent_frame.destroy()
+
     def add_item(self, title):
         def option_event(selection):
             if selection == 'Stratosphere':

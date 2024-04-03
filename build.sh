@@ -10,7 +10,7 @@ if ! command -v ${PYTHON} -m pip >/dev/null 2>&1; then
     echo "pip not found"
     exit 1
 fi
-${PYTHON} -m pip install -r requirements.txt
+${PYTHON} -m pip install -r requirements.txt --upgrade
 if [ ! d out ]; then
     mkdir out
 fi

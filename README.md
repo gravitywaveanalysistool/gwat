@@ -9,14 +9,14 @@ Download a binary from our [Releases](https://github.com/PiesArentSquare/csc380-
 Or build it yourself with:
 
 ### Linux/macOS:
-```bash
+```
 git clone https://github.com/PiesArentSquare/csc380-team-e.git
 cd csc380-team-e
 chmod +x build.sh
 ./build.sh
 ```
 ### Windows:
-```powershell
+```
 git clone https://github.com/PiesArentSquare/csc380-team-e.git
 cd csc380-team-e
 build.bat

@@ -159,8 +159,8 @@ class GUI(customtkinter.CTk):
                 for i in range(10):
                     params[f"Param {i}"] = f"value {i}"
 
-                self.param_frame = ParameterFrame(master=self, params=params, width=600)
-                self.param_frame.grid(row=3, column=1, padx=15, pady=15, sticky="sew")
+                self.param_frame = ParameterFrame(master=self, params=params, width=300)
+                self.param_frame.grid(row=0, column=2, padx=15, pady=15, rowspan=5, sticky="nsew")
                 # self.grid_rowconfigure((1, 3), weight=0)
 
         # Logo Display

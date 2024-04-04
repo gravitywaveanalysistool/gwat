@@ -15,9 +15,9 @@ if [ ! d out ]; then
     mkdir out
 fi
 if [ $(uname) == "Linux" ]; then
-    ${PYTHON} -m PyInstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/:pro/ --clean
+    ${PYTHON} -m PyInstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/:pro/ --add-data data/:data/ --clean
 elif [ $(uname) == "Darwin" ]; then
-    ${PYTHON} -m PyInstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i src/media/logo_notext_icon.ico --add-data pro/:pro/ --clean
+    ${PYTHON} -m PyInstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i data/media/logo_notext_icon.ico --add-data pro/:pro/ --add-data data/:data/ --clean
 else
     echo "unknown OS"
     exit 1 

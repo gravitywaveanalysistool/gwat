@@ -10,17 +10,17 @@ jobs:
         include:
           - os: ubuntu-latest
             target: Linux
-            build_cmd: pyinstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/:pro/
+            build_cmd: pyinstaller -D src/__init__.py -n gwat -p src/ --copy-metadata numpy --add-data pro/:pro/ --add-data data/:data/
             zip_cmd: cd dist/gwat/ && tar -czvf gwat-linux.tar.gz * && cd ../..
             filename: dist/gwat/gwat-linux.tar.gz
           - os: macos-latest
             target: MacOS
-            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i src/media/logo_notext_icon.ico --add-data pro/:pro/
+            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i data/media/logo_notext_icon.ico --add-data pro/:pro/ --add-data data/:data/
             zip_cmd: cd dist/gwat/ && zip -r9 gwat-macos * && cd ../..
             filename: dist/gwat/gwat-macos.zip
           - os: windows-latest
             target: Windows
-            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i src/media/logo_notext_icon.ico --add-data pro/:pro/
+            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i data/media/logo_notext_icon.ico --add-data pro/:pro/ --add-data data/:data/
             zip_cmd: Compress-Archive -DestinationPath gwat-windows -Path dist/gwat/*
             filename: gwat-windows.zip
       fail-fast: false

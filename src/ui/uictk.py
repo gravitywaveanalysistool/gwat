@@ -13,7 +13,7 @@ from src import parseradfile
 from src import utils
 from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
-
+from src import datapath
 
 class GUI(customtkinter.CTk):
     def __init__(self):
@@ -36,7 +36,7 @@ class GUI(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         # Set Icon
-        self.iconbitmap("src/media/logo_notext_icon.ico")
+        self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
 
         def export_graphs():
             file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
@@ -164,8 +164,8 @@ class GUI(customtkinter.CTk):
                 # self.grid_rowconfigure((1, 3), weight=0)
 
         # Logo Display
-        self.logo = customtkinter.CTkImage(light_image=Image.open("src/media/logo_text.png"),
-                                           dark_image=Image.open("src/media/logo_text.png"),
+        self.logo = customtkinter.CTkImage(light_image=Image.open(datapath.getDataPath("media/logo_text.png")),
+                                           dark_image=Image.open(datapath.getDataPath("media/logo_text.png")),
                                            size=(600, 600))
         self.logo_label = customtkinter.CTkLabel(self, image=self.logo, text="")
         self.logo_label.grid(row=0, column=0, padx=15, pady=15)
@@ -177,6 +177,6 @@ class GUI(customtkinter.CTk):
 
 def main():
     customtkinter.set_appearance_mode("dark")
-    customtkinter.set_default_color_theme("src/ui/orange_theme.json")
+    customtkinter.set_default_color_theme(datapath.getDataPath("orange_theme.json"))
     app = GUI()
     app.mainloop()

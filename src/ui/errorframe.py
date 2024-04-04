@@ -1,5 +1,7 @@
 import customtkinter
 
+from src import datapath
+
 
 class ErrorFrame(customtkinter.CTkToplevel):
     def __init__(self, master, *args, **kwargs):
@@ -9,7 +11,7 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.title("Error")
 
         # Set Icon
-        self.iconbitmap("src/media/logo_notext_icon.ico")
+        self.iconbitmap(".." + datapath.getDataPath("media/logo_notext_icon.ico"))
 
     def showerror(self, message):
         if self.text_dialog:

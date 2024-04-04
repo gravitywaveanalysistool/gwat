@@ -10,4 +10,4 @@ def getDataPath(filepath: str) -> str:
     if os.path.exists("data/" + filepath):
         return "data/" + filepath
     else:
-        return "_internal/data/" + filepath
+        return "/data/" + filepath

@@ -1,5 +1,7 @@
 import customtkinter
 
+from src import datapath
+
 
 class OptionsFrame(customtkinter.CTkToplevel):
     def __init__(self, master, options, *args, **kwargs):
@@ -9,7 +11,7 @@ class OptionsFrame(customtkinter.CTkToplevel):
         self.title("Options")
 
         # Set Icon
-        self.iconbitmap("src/media/logo_notext_icon.ico")
+        self.iconbitmap(".." + datapath.getDataPath("media/logo_notext_icon.ico"))
 
         # Create a global option list, maybe a dict. Persistent options in future? Cache Graphs?
         # Have some defaults

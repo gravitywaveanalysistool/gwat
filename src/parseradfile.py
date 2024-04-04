@@ -102,7 +102,7 @@ def generate_profile_data(path_name):
     calcWindComps(tropo_df, 'Ws', 'Wd')
     calcWindComps(strato_df, 'Ws', 'Wd')
 
-    station = Station(path_name, profile_df, tropo_df, strato_df, header_df)
+    station = Station(path_name, profile_df, strato_df, tropo_df, header_df)
     return station
 
 

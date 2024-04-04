@@ -26,6 +26,7 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
 
     def add_item(self, title):
         def option_event(selection):
+            print(selection)
             if selection == 'Stratosphere':
                 self.graph_objects[title].data = self.station.strato_df
             if selection == 'Troposphere':

@@ -11,7 +11,7 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.title("Error")
 
         # Set Icon
-        self.iconbitmap(".." + datapath.getDataPath("media/logo_notext_icon.ico"))
+        self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
 
     def showerror(self, message):
         if self.text_dialog:

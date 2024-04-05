@@ -10,6 +10,11 @@ rawData = './Tolten_Profile/T3_1800_12132020_Artemis_Rerun.txt'
 
 # Grab header information such as station name date etc...
 def headerData(rawData, encoding='ISO-8859-1'):
+    """
+    @param rawData:
+    @param encoding:
+    @return:
+    """
     start_line = None
     end_line = None
     with open(rawData, 'r', encoding=encoding) as file:
@@ -28,6 +33,11 @@ def headerData(rawData, encoding='ISO-8859-1'):
 
 # Grab profile data which is what contains the raw Radiosonde data
 def grabProfileData(rawData, encoding='ISO-8859-1'):
+    """
+    @param rawData:
+    @param encoding:
+    @return:
+    """
     start_line = None
     end_line = None
     with open(rawData, 'r', encoding=encoding) as file:
@@ -46,6 +56,10 @@ def grabProfileData(rawData, encoding='ISO-8859-1'):
 
 
 def get_tropopause_value(file_path):
+    """
+    @param file_path:
+    @return:
+    """
     with open(file_path, 'r', encoding='ISO-8859-1') as file:
         lines = file.readlines()
         tropopause_found = False
@@ -59,6 +73,10 @@ def get_tropopause_value(file_path):
 
 
 def calcWindComps(dataframe):
+    """
+    @param dataframe:
+    @return:
+    """
     dataframe["Wd_rad"] = np.deg2rad(dataframe["Wd"])
     dataframe['U'] = -dataframe['Ws'] * np.sin(dataframe['Wd_rad'])
     dataframe['V'] = -dataframe['Ws'] * np.cos(dataframe['Wd_rad'])
@@ -73,6 +91,10 @@ def calcWindComps(dataframe):
     dataframe['VP'] = dataframe['V'] - x__curve
 
 def calcTempPert(dataframe):
+    """
+    @param dataframe:
+    @return:
+    """
     coeff = np.polyfit(dataframe['Alt'], dataframe['T'], 6)
     y__curve = np.linspace(dataframe['Alt'].min(), dataframe['Alt'].max(), len(dataframe))
     x__curve = np.polyval(coeff, y__curve)
@@ -80,6 +102,10 @@ def calcTempPert(dataframe):
 
 
 def generate_profile_data(path_name):
+    """
+    @param path_name:
+    @return:
+    """
     data_start_line, data_end_line = headerData(path_name)
     if data_start_line is not None and data_end_line is not None:
         nrows_to_read = data_end_line - data_start_line

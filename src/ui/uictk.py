@@ -39,6 +39,9 @@ class GUI(ctk.CTk):
         self.setup_initial_layout()
 
     def setup_initial_layout(self):
+        """
+        @return:
+        """
         self.title("Gravity Wave Analysis Tool")
         self.geometry("1200x800")
 
@@ -61,6 +64,10 @@ class GUI(ctk.CTk):
         self.upload_button.grid(row=1, column=0, padx=10, pady=(0, 10))
 
     def switch_to_main_layout(self, parameters):
+        """
+        @param parameters:
+        @return:
+        """
         self.is_main_layout = True
         # remove logo
         self.logo_label.destroy()
@@ -114,6 +121,9 @@ class GUI(ctk.CTk):
         export_param_button.grid(row=3, column=3, padx=(0, 10), pady=10, sticky="ew")
 
     def upload_file(self):
+        """
+        @return:
+        """
         file_path = filedialog.askopenfilename()
 
         if not file_path:
@@ -136,6 +146,10 @@ class GUI(ctk.CTk):
             self.switch_to_main_layout(tropo_params)
 
     def export_graphs(self, selected_graphs):
+        """
+        @param selected_graphs:
+        @return:
+        """
         file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
                                                  filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
                                                  initialfile="graphs")
@@ -145,22 +159,39 @@ class GUI(ctk.CTk):
             utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs, self)
 
     def export_params(self):
+        """
+        @return:
+        """
         file = filedialog.asksaveasfile(defaultextension=".txt", initialfile="parameters")
         if file:
             for i, (label, param) in enumerate(self.param_frame.params.items()):
                 file.write(label + ',' + param + '\n')
 
     def create_custom_graph(self):
+        """
+        @return:
+        """
         CustomGraphFrame(self, self, self.station)
 
     def show_options(self):
+        """
+        @return:
+        """
         OptionsFrame(self, self.options)
 
     def select_graph(self, title):
+        """
+        @param title:
+        @return:
+        """
         self.strato_graph_frame.draw_plot(self.graph_objects[title].get_figure("strato"))
         self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
 
     def generate_graphs(self, station):
+        """
+        @param station:
+        @return:
+        """
         with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:
             default_graphs = json.load(json_file)
 

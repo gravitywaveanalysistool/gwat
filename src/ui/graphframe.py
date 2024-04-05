@@ -5,6 +5,10 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class GraphFrame(customtkinter.CTkFrame):
     def __init__(self, master=None, **kwargs):
+        """
+        @param master:
+        @param kwargs:
+        """
         super().__init__(master, **kwargs)
 
         self.canvas = None
@@ -13,6 +17,10 @@ class GraphFrame(customtkinter.CTkFrame):
         # self.toolbar_frame.grid(row=1, column=0, padx=15, pady=15)
 
     def draw_plot(self, fig):
+        """
+        @param fig:
+        @return:
+        """
         if self.canvas is not None:
             self.canvas.destroy()
         self.canvas = customtkinter.CTkCanvas(self)

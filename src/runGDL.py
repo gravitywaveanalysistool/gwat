@@ -5,6 +5,12 @@ from src import datapath
 
 
 def runGDL(filepath, latitude, gui):
+    """
+    @param filepath:
+    @param latitude:
+    @param gui:
+    @return:
+    """
     # Move to pro directory for access to gw programs
     cwd = os.getcwd()
     os.chdir(datapath.getProPath(""))  # Assumes we are running out of root directory

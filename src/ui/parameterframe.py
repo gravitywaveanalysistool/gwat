@@ -3,6 +3,11 @@ import customtkinter
 
 class ParameterFrame(customtkinter.CTkScrollableFrame):
     def __init__(self, master, params, **kwargs):
+        """
+        @param master: 
+        @param params:
+        @param kwargs:
+        """
         super().__init__(master, **kwargs)
 
         self.params = params
@@ -11,6 +16,12 @@ class ParameterFrame(customtkinter.CTkScrollableFrame):
             self.add_item(i, label, param)
 
     def add_item(self, i, label, param):
+        """
+        @param i:
+        @param label:
+        @param param:
+        @return:
+        """
         label = customtkinter.CTkLabel(self, text=label)
         param = customtkinter.CTkLabel(self, text=param)
 

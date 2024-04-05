@@ -6,6 +6,16 @@ from src.graphing.graph import Graph
 
 class XYGraph(Graph):
     def __init__(self, title, x, y, degree, x_label, y_label, best_fit, draw_lines):
+        """
+        @param title:
+        @param x:
+        @param y:
+        @param degree:
+        @param x_label:
+        @param y_label:
+        @param best_fit:
+        @param draw_lines:
+        """
         super().__init__(title)
         self.x = x
         self.y = y
@@ -16,6 +26,11 @@ class XYGraph(Graph):
         self.draw_lines = draw_lines
 
     def generate_graph(self, data, data_type):
+        """
+        @param data:
+        @param data_type:
+        @return:
+        """
         fig = plt.figure()
         plt.plot(data[self.x], data[self.y], linewidth=3, label='Data Points', color='k')
 

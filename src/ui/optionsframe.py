@@ -5,6 +5,12 @@ from src import datapath
 
 class OptionsFrame(customtkinter.CTkToplevel):
     def __init__(self, master, options, *args, **kwargs):
+        """
+        @param master:
+        @param options:
+        @param args:
+        @param kwargs:
+        """
         super().__init__(master, *args, **kwargs)
         self.options = options
         self.options_temp = self.options.copy()
@@ -40,6 +46,9 @@ class OptionsFrame(customtkinter.CTkToplevel):
         self.choose_ds_degree.grid(row=3, column=0, padx=20, pady=20)
 
         def save():
+            """
+            @return:
+            """
             for key, value in self.options_temp.items():
                 if key == 'degree':
                     self.options_temp[key] = self.choose_poly_deg.get()
@@ -53,6 +62,9 @@ class OptionsFrame(customtkinter.CTkToplevel):
             self.destroy()
 
         def discard():
+            """
+            @return:
+            """
             self.destroy()
 
         self.save_button = customtkinter.CTkButton(self, text="Save", command=save)

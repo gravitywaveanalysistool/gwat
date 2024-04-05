@@ -3,6 +3,15 @@ import customtkinter as ctk
 
 class ScrollingCheckButtonFrame(ctk.CTkFrame):
     def __init__(self, master, graph_objects, station, but_cmd=None, export_cmd=None, width=None, **kwargs):
+        """
+        @param master:
+        @param graph_objects:
+        @param station:
+        @param but_cmd:
+        @param export_cmd:
+        @param width:
+        @param kwargs:
+        """
         super().__init__(master, **kwargs)
 
         self.grid_columnconfigure(0, weight=0)
@@ -43,6 +52,9 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
             self.add_item(title)
 
     def export(self):
+        """
+        @return:
+        """
         selected_graphs = {}
         for name, (checkbox, graph_type) in self.checkbox_dict.items():
             print(name, graph_type)
@@ -56,6 +68,9 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         self.export_cmd(selected_graphs)
 
     def select_all(self):
+        """
+        @return:
+        """
         for _, (checkbox, _) in self.checkbox_dict.items():
             if self.all_selected.get() == 'on':
                 checkbox.select()
@@ -66,6 +81,10 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         super().destroy()
 
     def add_item(self, title):
+        """
+        @param title:
+        @return:
+        """
         def select_graph_type(selection):
             self.checkbox_dict[title][1] = selection
 
@@ -83,6 +102,10 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         self.checkbox_dict[title] = (checkbox, self.data_options[0])
 
     def remove_item(self, item):
+        """
+        @param item:
+        @return:
+        """
         for button, checkbox in zip(self.button_list, self.checkbox_dict):
             if item == button.cget("text"):
                 button.destroy()

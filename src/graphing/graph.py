@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 
 class Graph(ABC):
     def __init__(self, title):
+        """
+        @param title:
+        """
         self.title = title
         self.strato_fig = None
         self.tropo_fig = None
@@ -12,12 +15,21 @@ class Graph(ABC):
         pass
 
     def _set_figure(self, fig, data_type):
+        """
+        @param fig:
+        @param data_type:
+        @return:
+        """
         if data_type == "strato":
             self.strato_fig = fig
         else:
             self.tropo_fig = fig
 
     def get_figure(self, data_type):
+        """
+        @param data_type:
+        @return:
+        """
         if data_type == "strato":
             return self.strato_fig
         else:

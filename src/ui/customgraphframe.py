@@ -7,6 +7,13 @@ from src.graphing.xygraph import XYGraph
 
 class CustomGraphFrame(customtkinter.CTkToplevel):
     def __init__(self, master, gui, station, *args, **kwargs):
+        """
+        @param master:
+        @param gui:
+        @param station:
+        @param args:
+        @param kwargs:
+        """
         super().__init__(master, *args, **kwargs)
         self.gui = gui
         self.button = None
@@ -54,6 +61,9 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.choose_bf.grid(row=5, column=0, padx=20, pady=20)
 
         def create_graph():
+            """
+            @return:
+            """
             if self.choose_bf.get() and self.x_selection and self.y_selection is not None:
                 title = f"{self.x_selection} vs. {self.y_selection}"
 

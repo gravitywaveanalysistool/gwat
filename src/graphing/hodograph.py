@@ -6,12 +6,23 @@ from src.graphing.graph import Graph
 
 class HodoGraph(Graph):
     def __init__(self, title, comp_range, line_width, alt_threshold):
+        """
+        @param title:
+        @param comp_range:
+        @param line_width:
+        @param alt_threshold:
+        """
         super().__init__(title)
         self.comp_range = comp_range
         self.line_width = line_width
         self.alt_threshold = alt_threshold
 
     def generate_graph(self, data, data_type):
+        """
+        @param data:
+        @param data_type:
+        @return:
+        """
         fig = plt.figure(figsize=(6, 6))
         ax = fig.add_subplot(1, 1, 1)
         hodo = Hodograph(ax, component_range=self.comp_range)

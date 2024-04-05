@@ -4,6 +4,9 @@ from src.ui.errorframe import ErrorFrame
 
 
 def read_params():
+    """
+    @return:
+    """
     # only for windows right now
     filepath = "C:\\Users\\" + getlogin() + "\\AppData\\Local\\Temp\\"
     f = open(filepath + "gw_parameters.txt", "r")

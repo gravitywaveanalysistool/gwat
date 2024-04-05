@@ -5,6 +5,11 @@ from src import datapath
 
 class ErrorFrame(customtkinter.CTkToplevel):
     def __init__(self, master, *args, **kwargs):
+        """
+        @param master:
+        @param args:
+        @param kwargs:
+        """
         super().__init__(master, *args, **kwargs)
         self.button = None
         self.text_dialog = None
@@ -14,6 +19,10 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
 
     def showerror(self, message):
+        """
+        @param message:
+        @return:
+        """
         if self.text_dialog:
             self.text_dialog.destroy()
         if self.button:
@@ -33,6 +42,9 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.grab_set()
 
     def update_geometry(self):
+        """
+        @return:
+        """
         self.update_idletasks()
         width = self.winfo_reqwidth() + 20
         height = self.winfo_reqheight() + 20

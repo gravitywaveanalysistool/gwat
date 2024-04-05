@@ -36,7 +36,7 @@ class GUI(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         # Set Icon
-        self.iconbitmap(".."+datapath.getDataPath("media/logo_notext_icon.ico"))
+        self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
 
         def export_graphs():
             file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
@@ -74,7 +74,8 @@ class GUI(customtkinter.CTk):
                                                                         degree=6,
                                                                         x_label='Temperature (C)',
                                                                         y_label='Altitude (m)',
-                                                                        best_fit=True)
+                                                                        best_fit=True
+                                                                        ,draw_lines=False)
 
             self.graph_objects['Wind Speed Profile and Fit'] = XYGraph(title='Wind Speed Profile and Fit',
                                                                        data=station.profile_df,
@@ -83,24 +84,36 @@ class GUI(customtkinter.CTk):
                                                                        degree=8,
                                                                        x_label='Wind Speed',
                                                                        y_label='Altitude (m)',
-                                                                       best_fit=True)
-
-            self.graph_objects['Rate of Change Temperature vs Altitude'] = XYGraph(title='Rate of Change Temperature vs Altitude',
+                                                                       best_fit=True,
+                                                                       draw_lines=False)
+            self.graph_objects['Temperature vs Altitude'] = XYGraph(title='Temperature  vs Altitude',
                                                                        data=station.profile_df,
-                                                                       x='T_Perturbation',
+                                                                       x='T',
                                                                        y='Alt',
                                                                        degree=8,
                                                                        x_label='Temperature Rate of Change',
                                                                        y_label='Altitude (m)',
-                                                                       best_fit=True)
-            self.graph_objects['Ascending Rate'] = XYGraph(title='Ascending Rate m/s',
+                                                                       best_fit=True,
+                                                                       draw_lines=False)
+
+            self.graph_objects['Temperature Perturbation vs Altitude'] = XYGraph(title='Temperature Perturbation vs Altitude',
                                                                        data=station.profile_df,
-                                                                       x='Ascending_Rate',
+                                                                       x='Temp_Pert',
                                                                        y='Alt',
                                                                        degree=8,
-                                                                       x_label='Ascending Rate (m/s)',
+                                                                       x_label='Temperature Perturbation',
                                                                        y_label='Altitude (m)',
-                                                                       best_fit=True)
+                                                                       best_fit=False,
+                                                                       draw_lines=False)
+            self.graph_objects['Temperature vs Pressure'] = XYGraph(title='Temperature vs Pressure',
+                                                                       data=station.profile_df,
+                                                                       x='T',
+                                                                       y='Log_P',
+                                                                       degree=8,
+                                                                       x_label='Temperature (C)',
+                                                                       y_label='Pressure (hPa)',
+                                                                       best_fit=True,
+                                                                       draw_lines=False)
 
             self.graph_objects['u Wind Component vs Altitude'] = XYGraph(title='u Wind Component vs Altitude',
                                                                        data=station.profile_df,
@@ -109,7 +122,8 @@ class GUI(customtkinter.CTk):
                                                                        degree=8,
                                                                        x_label='u Wind Component (m/s)',
                                                                        y_label='Altitude (m)',
-                                                                       best_fit=True)
+                                                                       best_fit=True,
+                                                                       draw_lines=False)
 
             self.graph_objects['v Component vs Altitude'] = XYGraph(title='v Component vs Altitude',
                                                                        data=station.profile_df,
@@ -118,7 +132,8 @@ class GUI(customtkinter.CTk):
                                                                        degree=8,
                                                                        x_label='u Wind Component (m/s)',
                                                                        y_label='Altitude',
-                                                                       best_fit=True)
+                                                                       best_fit=True,
+                                                                       draw_lines=False)
             self.graph_objects['u\' Wind Component vs Altitude'] = XYGraph(title='u\' Wind Component vs Altitude',
                                                                        data=station.profile_df,
                                                                        x='UP',
@@ -126,7 +141,8 @@ class GUI(customtkinter.CTk):
                                                                        degree=8,
                                                                        x_label='U\' Wind Component (m/s)',
                                                                        y_label='Altitude (m)',
-                                                                       best_fit=False)
+                                                                       best_fit=False,
+                                                                       draw_lines=False)
 
             self.graph_objects['v\' Component vs Altitude'] = XYGraph(title='v\' Prime Component vs Altitude',
                                                                        data=station.profile_df,
@@ -135,18 +151,19 @@ class GUI(customtkinter.CTk):
                                                                        degree=8,
                                                                        x_label='U Wind Component (m/s)',
                                                                        y_label='Altitude (m)',
-                                                                       best_fit=False)
+                                                                       best_fit=False,
+                                                                       draw_lines=False)
 
 
             self.graph_objects['Hodograph 1'] = HodoGraph(title='Hodograph 1',
                                                           data=station.profile_df,
-                                                          comp_range=10,
-                                                          line_width=3,
+                                                          comp_range=9,
+                                                          line_width=2,
                                                           alt_threshold=0)
 
             self.graph_objects['Hodograph 2'] = HodoGraph(title='Hodograph 2',
                                                           data=station.profile_df,
-                                                          comp_range=10,
+                                                          comp_range=9,
                                                           line_width=5,
                                                           alt_threshold=150)
 

@@ -63,14 +63,20 @@ def calcWindComps(dataframe):
     dataframe['U'] = -dataframe['Ws'] * np.sin(dataframe['Wd_rad'])
     dataframe['V'] = -dataframe['Ws'] * np.cos(dataframe['Wd_rad'])
 
-    coeff = np.polyfit(dataframe['Alt'], dataframe['U'], 6)
+    coeff = np.polyfit(dataframe['Alt'], dataframe['U'], 8)
     y__curve = np.linspace(dataframe['Alt'].min(), dataframe['Alt'].max(), len(dataframe))
     x__curve = np.polyval(coeff, y__curve)
     dataframe['UP'] = dataframe['U'] - x__curve
 
-    coeff = np.polyfit(dataframe['Alt'], dataframe['V'], 6)
+    coeff = np.polyfit(dataframe['Alt'], dataframe['V'], 8)
     x__curve = np.polyval(coeff, y__curve)
     dataframe['VP'] = dataframe['V'] - x__curve
+
+def calcTempPert(dataframe):
+    coeff = np.polyfit(dataframe['Alt'], dataframe['T'], 6)
+    y__curve = np.linspace(dataframe['Alt'].min(), dataframe['Alt'].max(), len(dataframe))
+    x__curve = np.polyval(coeff, y__curve)
+    dataframe['Temp_Pert'] = dataframe['T'] - x__curve
 
 
 def generate_profile_data(path_name):
@@ -93,8 +99,6 @@ def generate_profile_data(path_name):
     for col in profile_df.select_dtypes(include=['object']).columns:
         profile_df[col] = pd.to_numeric(profile_df[col], downcast='integer')
 
-    mean_temp = profile_df['T'].mean()
-    profile_df['T_Perturbation'] = profile_df['T'] - mean_temp
 
     # Calculates the difference between followings alts
     profile_df['Alt_diff'] = profile_df['Alt'].diff()
@@ -107,6 +111,8 @@ def generate_profile_data(path_name):
 
     Tropopause = get_tropopause_value(path_name)
     calcWindComps(profile_df)
+    calcTempPert(profile_df)
+    profile_df['Log_P'] = np.log(profile_df['P'])
     closest_index = (profile_df['P'] - Tropopause).abs().idxmin()
     tropo_df = profile_df.iloc[:closest_index + 1]
     strato_df = profile_df.iloc[closest_index + 1:]

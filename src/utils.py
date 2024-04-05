@@ -46,20 +46,22 @@ def save_params_to_file(parameterDictionary, filePath):
 
 
 # Talk to Eric to see how he's handling the desired graphs from UI
-def save_graph_to_file(graphs_objects, file_path, checkbox_dict, gui):
+def save_graph_to_file(graphs_objects, file_path, selected_graphs, gui):
     """
     - This function requires a list of desired graphs to be input which should be passed from the UI
     when the user checks off the graphs they want to export
     - Graphs will then be exported to a single pdf file
     - Defaults to pdf but further file types can be added later if needed
     """
-    if not checkbox_dict:
+    if not selected_graphs:
         ErrorFrame(gui).showerror("No Graphs Selected!")
     else:
         out_file = PdfPages(file_path)  # Creates the output file
 
-        for name, checkbox in checkbox_dict.items():  # Saves each graph to file
-            if checkbox.get():
-                out_file.savefig(graphs_objects[name].get_figure())
+        for name, graph_type in selected_graphs.items():  # Saves each graph to file
+            if graph_type in ['strato', 'all']:
+                out_file.savefig(graphs_objects[name].get_figure('strato'))
+            if graph_type in ['tropo', 'all']:
+                out_file.savefig(graphs_objects[name].get_figure('tropo'))
 
         out_file.close()

@@ -1,18 +1,40 @@
-import customtkinter
+import customtkinter as ctk
 
 
-class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
-    def __init__(self, master, graph_objects, station, but_cmd=None, **kwargs):
+class ScrollingCheckButtonFrame(ctk.CTkFrame):
+    def __init__(self, master, graph_objects, station, but_cmd=None, export_cmd=None, width=None, **kwargs):
         super().__init__(master, **kwargs)
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=2)
-        self.grid_columnconfigure(2, weight=2)
+
+        self.grid_columnconfigure(0, weight=0)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+
+        self.export_cmd = export_cmd
+
+        self.all_selected = ctk.StringVar(value="off")
+        select_all_checkbox = ctk.CTkCheckBox(self, text="Select All", width=10, variable=self.all_selected,
+                                              onvalue='on', offvalue='off', command=self.select_all)
+        select_all_checkbox.grid(row=0, column=0, pady=10, padx=10, sticky="e")
+
+        export_graphs_button = ctk.CTkButton(self, text="Export Graphs", command=self.export)
+        export_graphs_button.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="ew")
+
+        if width:
+            self.scroll_frame = ctk.CTkScrollableFrame(self, width=width)
+        else:
+            self.scroll_frame = ctk.CTkScrollableFrame(self)
+
+        self.scroll_frame.grid(row=1, column=0, pady=(10, 0), sticky="nsew", columnspan=2)
+
+        self.scroll_frame.grid_columnconfigure(0, weight=1)
+        self.scroll_frame.grid_columnconfigure(1, weight=2)
+        self.scroll_frame.grid_columnconfigure(2, weight=2)
 
         self.graph_objects = graph_objects
         self.station = station
 
         self.but_cmd = but_cmd
-        self.radiobutton_variable = customtkinter.StringVar()
         self.data_op_dict = {}
         self.button_list = []
         self.checkbox_dict = {}
@@ -20,24 +42,36 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
         for title, graph in graph_objects.items():
             self.add_item(title)
 
+    def export(self):
+        selected_graphs = {}
+        for name, (checkbox, graph_type) in self.checkbox_dict.items():
+            print(name, graph_type)
+            if checkbox.get():
+                if graph_type == self.data_options[0]:
+                    selected_graphs[name] = 'all'
+                elif graph_type == self.data_options[1]:
+                    selected_graphs[name] = 'strato'
+                elif graph_type == self.data_options[2]:
+                    selected_graphs[name] = 'tropo'
+        self.export_cmd(selected_graphs)
+
+    def select_all(self):
+        for _, (checkbox, _) in self.checkbox_dict.items():
+            if self.all_selected.get() == 'on':
+                checkbox.select()
+            else:
+                checkbox.deselect()
+
     def destroy(self):
         super().destroy()
-        self._parent_frame.destroy()
 
     def add_item(self, title):
-        def option_event(selection):
-            print(selection)
-            if selection == 'Stratosphere':
-                self.graph_objects[title].data = self.station.strato_df
-            if selection == 'Troposphere':
-                self.graph_objects[title].data = self.station.tropo_df
-            if selection == 'All':
-                self.graph_objects[title].data = self.station.profile_df
-            self.graph_objects[title].generate_graph()
+        def select_graph_type(selection):
+            self.checkbox_dict[title][1] = selection
 
-        data_option = customtkinter.CTkOptionMenu(self, values=self.data_options, command=option_event)
-        button = customtkinter.CTkButton(self, text=title, width=100, height=24)
-        checkbox = customtkinter.CTkCheckBox(self, text="", width=10)
+        data_option = ctk.CTkOptionMenu(self.scroll_frame, values=self.data_options, command=select_graph_type)
+        button = ctk.CTkButton(self.scroll_frame, text=title, width=100, height=24)
+        checkbox = ctk.CTkCheckBox(self.scroll_frame, text="", width=10)
         if self.but_cmd is not None:
             button.configure(command=lambda: self.but_cmd(title))
         checkbox.grid(row=len(self.checkbox_dict), column=0, pady=(0, 10), sticky="e")
@@ -46,7 +80,7 @@ class ScrollingCheckButtonFrame(customtkinter.CTkScrollableFrame):
 
         self.data_op_dict[data_option] = title
         self.button_list.append(button)
-        self.checkbox_dict[title] = checkbox
+        self.checkbox_dict[title] = (checkbox, self.data_options[0])
 
     def remove_item(self, item):
         for button, checkbox in zip(self.button_list, self.checkbox_dict):

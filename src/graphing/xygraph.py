@@ -17,7 +17,7 @@ class XYGraph(Graph):
 
     def generate_graph(self):
         fig = plt.figure()
-        plt.scatter(self.data[self.x], self.data[self.y], s=5, label='Data Points', color='k')
+        plt.plot(self.data[self.x], self.data[self.y], linewidth=3, label='Data Points', color='k')
 
         # Draw lines between dots if draw_lines is True
         if self.draw_lines:

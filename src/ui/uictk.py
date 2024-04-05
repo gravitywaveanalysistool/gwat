@@ -14,6 +14,8 @@ from src import utils
 from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
 from src import datapath
+from src.utils import read_params
+from src import runGDL
 
 
 class GUI(ctk.CTk):
@@ -104,7 +106,7 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.grid(row=2, column=2, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
 
         # col 3
-        self.param_frame = ParameterFrame(master=self, params=parameters)
+        self.param_frame = ParameterFrame(master=self, params=parameters, width=400)
         self.param_frame.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="nsew", rowspan=3)
 
         export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
@@ -118,19 +120,19 @@ class GUI(ctk.CTk):
 
         self.station = parseradfile.generate_profile_data(file_path)
 
+        runGDL.runGDL(file_path, -35, self)
+
         # GENERATE GRAPHS
         self.generate_graphs(self.station)
 
         # Create Param Frame
-        params = {}
-        for i in range(10):
-            params[f"Param {i}"] = f"value {i}"
+        tropo_params, strato_params = read_params()
 
         if self.is_main_layout:
             # TODO: update params
             pass
         else:
-            self.switch_to_main_layout(params)
+            self.switch_to_main_layout(tropo_params)
 
     def export_graphs(self, selected_graphs):
         file_path = filedialog.asksaveasfilename(defaultextension=".pdf",

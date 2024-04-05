@@ -36,7 +36,7 @@ PRO gw_eclipse_new, datapath, latitude
 ;
 ;This note is updated by J. Gong on 02/21/2024
 ;======================================================================================
-infile=findfile(datapath+'*.txt')
+infile=findfile(datapath)
 nf=n_elements(infile)
 
 outputfile='~\AppData\Local\Temp\gw_parameters.txt'

@@ -2,7 +2,9 @@ from matplotlib.backends.backend_pdf import PdfPages
 from os import getlogin
 from src.ui.errorframe import ErrorFrame
 
+
 def read_params():
+    # only for windows right now
     filepath = "C:\\Users\\" + getlogin() + "\\AppData\\Local\\Temp\\"
     f = open(filepath + "gw_parameters.txt", "r")
 

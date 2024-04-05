@@ -1,0 +1,115 @@
+{
+    "Temperature Profile and Fit": {
+        "type": "XYGraph",
+        "title": "Temperature Profile and Fit",
+        "x": "T",
+        "y": "Alt",
+        "degree": 6,
+        "x_label": "Temperature (K)",
+        "y_label": "Altitude (km)",
+        "best_fit": true,
+        "draw_lines": false
+    },
+    "Wind Speed Profile and Fit": {
+        "type": "XYGraph",
+        "title": "Wind Speed Profile and Fit",
+        "x": "Ws",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "Wind Speed",
+        "y_label": "Altitude",
+        "best_fit": true,
+        "draw_lines": false
+    },
+    "Temperature vs Altitude": {
+        "type": "XYGraph",
+        "title": "Temperature vs Altitude",
+        "x": "T",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "Temperature Rate of Change",
+        "y_label": "Altitude (m)",
+        "best_fit": true,
+        "draw_lines": false
+    },
+    "Temperature Perturbation vs Altitude": {
+        "type": "XYGraph",
+        "title": "Temperature Perturbation vs Altitude",
+        "x": "Temp_Pert",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "Temperature Perturbation",
+        "y_label": "Altitude (m)",
+        "best_fit": false,
+        "draw_lines": false
+    },
+    "Temperature vs Pressure": {
+        "type": "XYGraph",
+        "title": "Temperature vs Pressure",
+        "x": "T",
+        "y": "Log_P",
+        "degree": 8,
+        "x_label": "Temperature (C)",
+        "y_label": "Pressure (hPa)",
+        "best_fit": true,
+        "draw_lines": false
+    },
+    "u Wind Component vs Altitude": {
+        "type": "XYGraph",
+        "title": "u Wind Component vs Altitude",
+        "x": "U",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "u Wind Component (m/s)",
+        "y_label": "Altitude (m)",
+        "best_fit": true,
+        "draw_lines": false
+    },
+    "v Component vs Altitude": {
+        "type": "XYGraph",
+        "title": "v Component vs Altitude",
+        "x": "V",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "u Wind Component (m/s)",
+        "y_label": "Altitude",
+        "best_fit": true,
+        "draw_lines": false
+    },
+    "u' Wind Component vs Altitude": {
+        "type": "XYGraph",
+        "title": "u' Wind Component vs Altitude",
+        "x": "UP",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "U' Wind Component (m/s)",
+        "y_label": "Altitude (m)",
+        "best_fit": false,
+        "draw_lines": false
+    },
+    "v' Component vs Altitude": {
+        "type": "XYGraph",
+        "title": "v' Component vs Altitude",
+        "x": "VP",
+        "y": "Alt",
+        "degree": 8,
+        "x_label": "U Wind Component (m/s)",
+        "y_label": "Altitude (m)",
+        "best_fit": false,
+        "draw_lines": false
+    },
+    "Hodograph 1": {
+        "type": "HodoGraph",
+        "title": "Hodograph 1",
+        "comp_range": 9,
+        "line_width": 2,
+        "alt_threshold": 0
+    },
+    "Hodograph 2": {
+        "type": "HodoGraph",
+        "title": "Hodograph 2",
+        "comp_range": 9,
+        "line_width": 5,
+        "alt_threshold": 150
+    }
+}

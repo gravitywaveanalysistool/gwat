@@ -80,8 +80,9 @@ for kf=0,nf-1 do begin
   gw_eclipse_complete,infile[kf],zsegStrato[0],zsegStrato[1],3,dz,lat_station,$
 	gw=gw_strato,npoly=ipoly
 
+  
   gw=gw_tropo
-  printf,28,'Tropo'
+  ;printf,28,'Tropo'
   printf,28,gw.lh ;Horizontal Wavelength
   printf,28,gw.lz ;Vertical Wavelength
   printf,28,gw.mean_dir ;Mean Phase Direction
@@ -90,11 +91,10 @@ for kf=0,nf-1 do begin
   printf,28,gw.vw ;Meridional Momentum mean
   printf,28,gw.pe ;Potential Energy
   printf,28,gw.ke ;Kinetic Energy
-  printf,28,gw.omega ;Coriolis Parameter
 
-  printf,28,string(10b)
+  ;printf,28,""
   gw=gw_strato
-  printf,28,'Strato'
+  ;printf,28,'Strato'
   printf,28,gw.lh
   printf,28,gw.lz
   printf,28,gw.mean_dir
@@ -103,7 +103,7 @@ for kf=0,nf-1 do begin
   printf,28,gw.vw
   printf,28,gw.pe
   printf,28,gw.ke
-  printf,28,gw.omega
+
   goto,next_profile
 
 next_profile:

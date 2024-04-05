@@ -5,8 +5,8 @@ from src.graphing.graph import Graph
 
 
 class XYGraph(Graph):
-    def __init__(self, title, data, x, y, degree, x_label, y_label, best_fit, draw_lines):
-        super().__init__(title, data)
+    def __init__(self, title, x, y, degree, x_label, y_label, best_fit, draw_lines):
+        super().__init__(title)
         self.x = x
         self.y = y
         self.degree = degree
@@ -15,9 +15,9 @@ class XYGraph(Graph):
         self.best_fit = best_fit
         self.draw_lines = draw_lines
 
-    def generate_graph(self):
+    def generate_graph(self, data, data_type):
         fig = plt.figure()
-        plt.plot(self.data[self.x], self.data[self.y], linewidth=3, label='Data Points', color='k')
+        plt.plot(data[self.x], data[self.y], linewidth=3, label='Data Points', color='k')
 
         # Draw lines between dots if draw_lines is True
         if self.draw_lines:
@@ -25,8 +25,8 @@ class XYGraph(Graph):
 
         # best fit curve
         if self.best_fit:
-            coeffs = np.polyfit(self.data[self.y], self.data[self.x], self.degree)
-            y_curve = np.linspace(self.data[self.y].min(), self.data[self.y].max(), 500)
+            coeffs = np.polyfit(data[self.y], data[self.x], self.degree)
+            y_curve = np.linspace(data[self.y].min(), data[self.y].max(), 500)
             x_curve = np.polyval(coeffs, y_curve)
             plt.plot(x_curve, y_curve, 'r-', label='Best Fit Line')
 
@@ -35,5 +35,5 @@ class XYGraph(Graph):
         plt.title(self.title)
         plt.legend()
 
-        self.fig = fig
+        self._set_figure(fig, data_type)
         plt.close(fig)

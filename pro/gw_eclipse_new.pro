@@ -1,6 +1,7 @@
 @a2_eclipse
+
+PRO gw_eclipse_new, datapath, latitude
 ;;Have it take in the path of the file and the lat_station variable
-PRO gw_eclipse_new
 ;======================================================================================
 ;VERSION update from gw_eclipse.pro
 ;Now this wrapper
@@ -11,7 +12,7 @@ PRO gw_eclipse_new
 ;troposphere:1.98 km above surface to 1.5 km below tropopause. The lowest 1.98 km is excluded due to consideration of PBL).
 ;(3) a fixed vertical resolution (15 m) and a fixed polynomial fitting order (3rd) to remove backgrounds.The
 ;actual segment thickness has to be completely divisible by 15 m hence, which will result in a slight
-;height segment difference from the ones claimed above depending on the determined tropopause height (<15 m difference). 
+;height segment difference from the ones claimed above depending on the determined tropopause height (<15 m difference).
 ;
 ;Disclaimer:
 ;(1)The above changes are based on discussion with SUNY Oswego team for the purpose of creating
@@ -35,28 +36,22 @@ PRO gw_eclipse_new
 ;
 ;This note is updated by J. Gong on 02/21/2024
 ;======================================================================================
-datapath='./'
-;stationname='Tolten'
-stationname='Villarrica'
-datapath=datapath+stationname+'_Profile/'
-
 infile=findfile(datapath+'*.txt')
 nf=n_elements(infile)
 
-outputfile='./gw_parameters'+stationname+'.txt'
+outputfile='~\AppData\Local\Temp\gw_parameters.txt'
 
 zseg=[1.98,30.]*1.E+3 ;original input height segment. Will be separated to stratosphere and troposphere later
 dz=15.
 ipoly=3 ;fixed 3rd polynomial fitting
 
-lat_station=-39.23 ;//you need to figure out a way to either read latitude from radiosonde file or ask user to input.
+lat_station=latitude ;//you need to figure out a way to either read latitude from radiosonde file or ask user to input.
 
 openw,28,outputfile
 
-
 for kf=0,nf-1 do begin
  profilename=strmid(infile[kf],strlen(datapath),13)
- print,infile[kf]
+ ;print,infile[kf]
  gw_eclipse_complete,infile[kf],zseg[0],zseg[1],3,dz,lat_station,$
 	gw=gw,npoly=ipoly ;//don't take gw parameters from here. This step is to get mean T profile for determining tropopause
  if gw.outputflag NE 0 then goto,next_profile
@@ -79,7 +74,7 @@ for kf=0,nf-1 do begin
  endif
  if round(np) EQ np then zsegStrato=[z_tropo+1.5,30.]*1.E+3 else $
 	zsegStrato=[30.-dz/1.E+3*floor(np),30.]*1.E+3
-  print,infile[kf]
+  ;print,infile[kf]
   gw_eclipse_complete,infile[kf],zsegTropo[0],zsegTropo[1],3,dz,lat_station,$
 	gw=gw_tropo,npoly=ipoly
   gw_eclipse_complete,infile[kf],zsegStrato[0],zsegStrato[1],3,dz,lat_station,$
@@ -87,23 +82,19 @@ for kf=0,nf-1 do begin
 
   gw=gw_tropo
   printf,28,'Tropo'
-  printf,28,zsegtropo[0]/1.E+3
-  printf,28,zsegtropo[1]/1.E+3
-  printf,28,gw.lh
-  printf,28,gw.lz
-  printf,28,gw.mean_dir
-  printf,28,gw.up_frac*100.
-  printf,28,gw.uw
-  printf,28,gw.vw
-  printf,28,gw.pe
-  printf,28,gw.ke
-  printf,28,gw.omega
-  printf,28,gw.outputflag
+  printf,28,gw.lh ;Horizontal Wavelength
+  printf,28,gw.lz ;Vertical Wavelength
+  printf,28,gw.mean_dir ;Mean Phase Direction
+  printf,28,gw.up_frac*100. ;Upward Propigation Fraction
+  printf,28,gw.uw ;Zonal Momentum mean
+  printf,28,gw.vw ;Meridional Momentum mean
+  printf,28,gw.pe ;Potential Energy
+  printf,28,gw.ke ;Kinetic Energy
+  printf,28,gw.omega ;Coriolis Parameter
+
   printf,28,string(10b)
   gw=gw_strato
   printf,28,'Strato'
-  printf,28,zsegstrato[0]/1.E+3
-  printf,28,zsegstrato[1]/1.E+3
   printf,28,gw.lh
   printf,28,gw.lz
   printf,28,gw.mean_dir
@@ -113,11 +104,11 @@ for kf=0,nf-1 do begin
   printf,28,gw.pe
   printf,28,gw.ke
   printf,28,gw.omega
-  printf,28,gw.outputflag
   goto,next_profile
 
 next_profile:
 endfor ;kf
   close,28
+print, "success"
 end
 end

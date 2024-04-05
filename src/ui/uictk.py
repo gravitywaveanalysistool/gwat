@@ -1,3 +1,4 @@
+import json
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -160,47 +161,28 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
 
     def generate_graphs(self, station):
-        self.graph_objects['Temperature Profile and Fit']\
-            = XYGraph(title='Temperature Profile and Fit', x='T', y='Alt', degree=6, x_label='Temperature (C)',
-                      y_label='Altitude (m)', best_fit=True ,draw_lines=False)
+        with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:
+            default_graphs = json.load(json_file)
 
-        self.graph_objects['Wind Speed Profile and Fit']\
-            = XYGraph(title='Wind Speed Profile and Fit', x='Ws', y='Alt', degree=8, x_label='Wind Speed',
-                      y_label='Altitude (m)', best_fit=True, draw_lines=False)
-
-        self.graph_objects['Temperature vs Altitude']\
-            = XYGraph(title='Temperature  vs Altitude', x='T', y='Alt', degree=8, x_label='Temperature Rate of Change',
-                      y_label='Altitude (m)', best_fit=True, draw_lines=False)
-
-        self.graph_objects['Temperature Perturbation vs Altitude']\
-            = XYGraph(title='Temperature Perturbation vs Altitude', x='Temp_Pert', y='Alt', degree=8,
-                      x_label='Temperature Perturbation', y_label='Altitude (m)', best_fit=False, draw_lines=False)
-
-        self.graph_objects['Temperature vs Pressure']\
-            = XYGraph(title='Temperature vs Pressure', x='T', y='Log_P', degree=8, x_label='Temperature (C)',
-                      y_label='Pressure (hPa)', best_fit=True, draw_lines=False)
-
-        self.graph_objects['u Wind Component vs Altitude']\
-            = XYGraph(title='u Wind Component vs Altitude', x='U', y='Alt', degree=8, x_label='u Wind Component (m/s)',
-                      y_label='Altitude (m)', best_fit=True, draw_lines=False)
-
-        self.graph_objects['v Component vs Altitude']\
-            = XYGraph(title='v Component vs Altitude', x='V', y='Alt', degree=8, x_label='u Wind Component (m/s)',
-                      y_label='Altitude', best_fit=True, draw_lines=False)
-
-        self.graph_objects['u\' Wind Component vs Altitude']\
-            = XYGraph(title='u\' Wind Component vs Altitude', x='UP', y='Alt', degree=8,
-                      x_label='U\' Wind Component (m/s)', y_label='Altitude (m)', best_fit=False, draw_lines=False)
-
-        self.graph_objects['v\' Component vs Altitude']\
-            = XYGraph(title='v\' Prime Component vs Altitude', x='VP', y='Alt', degree=8,
-                      x_label='U Wind Component (m/s)', y_label='Altitude (m)', best_fit=False, draw_lines=False)
-
-        self.graph_objects['Hodograph 1']\
-            = HodoGraph(title='Hodograph 1', comp_range=9, line_width=2, alt_threshold=0)
-
-        self.graph_objects['Hodograph 2']\
-            = HodoGraph(title='Hodograph 2', comp_range=9, line_width=5, alt_threshold=150)
+        for graph_name, params in default_graphs.items():
+            if params['type'] == 'XYGraph':
+                self.graph_objects[graph_name] = XYGraph(
+                    title=params['title'],
+                    x=params['x'],
+                    y=params['y'],
+                    degree=params['degree'],
+                    x_label=params['x_label'],
+                    y_label=params['y_label'],
+                    best_fit=params['best_fit'],
+                    draw_lines=params['draw_lines']
+                )
+            elif params['type'] == 'HodoGraph':
+                self.graph_objects[graph_name] = HodoGraph(
+                    title=params['title'],
+                    comp_range=params['comp_range'],
+                    line_width=params['line_width'],
+                    alt_threshold=params['alt_threshold']
+                )
 
         # Generate their figures
         for _, graph in self.graph_objects.items():

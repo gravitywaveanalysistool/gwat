@@ -1,7 +1,29 @@
 from matplotlib.backends.backend_pdf import PdfPages
-
-from src.ui import uictk
+from os import getlogin
 from src.ui.errorframe import ErrorFrame
+
+def read_params():
+    filepath = "C:\\Users\\" + getlogin() + "\\AppData\\Local\\Temp\\"
+    f = open(filepath + "gw_parameters.txt", "r")
+
+    paramNames = ["Horizontal Wavelength", "Vertical Wavelength", "Mean Phase Propogation Direction",
+                  "Upward Propogation Fraction",
+                  "Zonal Momentum Flux", "Meridional Momentum Flux", "Potential Energy", "Kinetic Energy"]
+    allParams = []
+    tropoParams = {}
+    stratoParams = {}
+
+    for line in f:
+        allParams.append(line.strip())
+
+    i = 0
+    for value in allParams:
+        if i > 7: break
+        tropoParams[paramNames[i]] = allParams[i]
+        stratoParams[paramNames[i]] = allParams[i + 8]
+        i += 1
+
+    return tropoParams, stratoParams
 
 
 def save_params_to_file(parameterDictionary, filePath):

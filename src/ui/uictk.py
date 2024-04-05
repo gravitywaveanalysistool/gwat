@@ -14,6 +14,7 @@ from src import utils
 from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
 from src import datapath
+from src.utils import read_params
 
 class GUI(customtkinter.CTk):
     def __init__(self):
@@ -208,11 +209,9 @@ class GUI(customtkinter.CTk):
                 self.upload_button.grid(row=5, column=1, padx=15, pady=15)
 
                 # Create Param Frame
-                params = {}
-                for i in range(10):
-                    params[f"Param {i}"] = f"value {i}"
+                tropoParam,stratoParam = read_params()
 
-                self.param_frame = ParameterFrame(master=self, params=params, width=300)
+                self.param_frame = ParameterFrame(master=self, params=tropoParam, width=300)
                 self.param_frame.grid(row=0, column=2, padx=15, pady=15, rowspan=5, sticky="nsew")
                 # self.grid_rowconfigure((1, 3), weight=0)
 

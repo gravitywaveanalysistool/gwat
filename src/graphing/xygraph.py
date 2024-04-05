@@ -17,11 +17,11 @@ class XYGraph(Graph):
 
     def generate_graph(self):
         fig = plt.figure()
-        plt.scatter(self.data[self.x], self.data[self.y], s=5, label='Data Points')
+        plt.scatter(self.data[self.x], self.data[self.y], s=5, label='Data Points', color='k')
 
         # Draw lines between dots if draw_lines is True
         if self.draw_lines:
-            plt.plot(self.data[self.x], self.data[self.y], linestyle='-', color='b', alpha=0.5)
+            plt.plot(self.data[self.x], self.data[self.y], linestyle='-', color='k', alpha=0.5)
 
         # best fit curve
         if self.best_fit:

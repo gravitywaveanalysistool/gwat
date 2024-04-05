@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
+import metpy.calc as mpcalc
+from metpy.units import units
 from src.station import Station
+from tabulate import tabulate
 
 rawData = './Tolten_Profile/T3_1800_12132020_Artemis_Rerun.txt'
 
@@ -18,8 +21,8 @@ def headerData(rawData, encoding='ISO-8859-1'):
                 end_line = i
                 break
             elif headerDataHit and line.strip() and start_line is None:
-                #Grabs line where profile data exists
-                start_line = i  - 1
+                # Grabs line where profile data exists
+                start_line = i - 1
     return start_line, end_line
 
 
@@ -33,11 +36,11 @@ def grabProfileData(rawData, encoding='ISO-8859-1'):
             if 'Profile Data' in line:
                 pfDataHit = True
             elif pfDataHit and 'Tropopauses:' in line:
-                #Mark the line before Tropopauses footer
+                # Mark the line before Tropopauses footer
                 end_line = i - 1
                 break
             elif pfDataHit and line.strip() and start_line is None:
-                #Grabs line where profile data exists
+                # Grabs line where profile data exists
                 start_line = i
     return start_line, end_line
 
@@ -54,14 +57,21 @@ def get_tropopause_value(file_path):
                 return float(value)
                 break
 
-def calcWindComps(dataframe, speeds, directions):
-    speeds = np.array(dataframe[speeds])
-    directions = np.array(dataframe[directions])
 
-    u = -speeds * np.sin(np.radians(directions))
-    v = -speeds * np.cos(np.radians(directions))
-    dataframe['U'] = u
-    dataframe['V'] = v
+def calcWindComps(dataframe):
+    dataframe["Wd_rad"] = np.deg2rad(dataframe["Wd"])
+    dataframe['U'] = -dataframe['Ws'] * np.sin(dataframe['Wd_rad'])
+    dataframe['V'] = -dataframe['Ws'] * np.cos(dataframe['Wd_rad'])
+
+    coeff = np.polyfit(dataframe['Alt'], dataframe['U'], 6)
+    y__curve = np.linspace(dataframe['Alt'].min(), dataframe['Alt'].max(), len(dataframe))
+    x__curve = np.polyval(coeff, y__curve)
+    dataframe['UP'] = dataframe['U'] - x__curve
+
+    coeff = np.polyfit(dataframe['Alt'], dataframe['V'], 6)
+    x__curve = np.polyval(coeff, y__curve)
+    dataframe['VP'] = dataframe['V'] - x__curve
+
 
 def generate_profile_data(path_name):
     data_start_line, data_end_line = headerData(path_name)
@@ -86,24 +96,22 @@ def generate_profile_data(path_name):
     mean_temp = profile_df['T'].mean()
     profile_df['T_Perturbation'] = profile_df['T'] - mean_temp
 
+    # Calculates the difference between followings alts
+    profile_df['Alt_diff'] = profile_df['Alt'].diff()
+    profile_df['Time_diff'] = profile_df["Time"].diff()
+    peak_index = profile_df[profile_df['Alt_diff'] < 0].first_valid_index()
+    # Drop rows after peak and drop diff column
+    if peak_index is not None:
+        profile_df = profile_df.loc[:peak_index - 1]
+    profile_df['Ascending_Rate'] = profile_df['Alt_diff'] / profile_df['Time_diff']
+
     Tropopause = get_tropopause_value(path_name)
+    calcWindComps(profile_df)
     closest_index = (profile_df['P'] - Tropopause).abs().idxmin()
     tropo_df = profile_df.iloc[:closest_index + 1]
     strato_df = profile_df.iloc[closest_index + 1:]
 
-    # Calculates the difference between followings alts
-    profile_df['Ascending_Rate'] = profile_df['Alt'].diff()
-    peak_index = profile_df[profile_df['Ascending_Rate'] < 0].first_valid_index()
-    # Drop rows after peak and drop diff column
-    if peak_index is not None:
-        profile_df = profile_df.loc[:peak_index - 1]
 
-    calcWindComps(profile_df, 'Ws', 'Wd')
-    calcWindComps(tropo_df, 'Ws', 'Wd')
-    calcWindComps(strato_df, 'Ws', 'Wd')
 
     station = Station(path_name, profile_df, strato_df, tropo_df, header_df)
     return station
-
-
-

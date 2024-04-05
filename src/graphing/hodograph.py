@@ -7,6 +7,8 @@ from src.graphing.graph import Graph
 class HodoGraph(Graph):
     def __init__(self, title, comp_range, line_width, alt_threshold):
         """
+        Set's default properties upon instantiation
+
         @param title:
         @param comp_range:
         @param line_width:
@@ -19,6 +21,9 @@ class HodoGraph(Graph):
 
     def generate_graph(self, data, data_type):
         """
+        Takes supplied data type generates a Hodograph based on supplied parameters
+
+        Sets self.fig to the resulting figure
         @param data:
         @param data_type:
         @return:

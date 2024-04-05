@@ -4,7 +4,9 @@ from abc import ABC, abstractmethod
 class Graph(ABC):
     def __init__(self, title):
         """
-        @param title:
+        Set's default properties upon instantiation
+
+        @param title: string
         """
         self.title = title
         self.strato_fig = None
@@ -16,6 +18,8 @@ class Graph(ABC):
 
     def _set_figure(self, fig, data_type):
         """
+        Sets the figure to the corresponding figure for the given data type
+
         @param fig:
         @param data_type:
         @return:
@@ -27,8 +31,10 @@ class Graph(ABC):
 
     def get_figure(self, data_type):
         """
-        @param data_type:
-        @return:
+        Gets the corresponding figure for the given data type
+
+        @param data_type: dataframe
+        @return: strato_fig | tropo_fig : matplotlib figure
         """
         if data_type == "strato":
             return self.strato_fig

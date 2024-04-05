@@ -27,6 +27,10 @@ class XYGraph(Graph):
 
     def generate_graph(self, data, data_type):
         """
+        Takes supplied data type generates a XYGraph based on supplied parameters
+
+        Sets self.fig to the resulting figure
+
         @param data:
         @param data_type:
         @return:

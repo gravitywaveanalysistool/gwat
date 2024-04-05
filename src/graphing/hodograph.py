@@ -26,7 +26,7 @@ class HodoGraph(Graph):
         for i in range(len(self.data['UP']) - 1):
             if self.data['Alt'].iloc[i] >= last_alt + self.alt_threshold:
                 segment_color = cmap(norm(self.data['Alt'].iloc[i]))
-                hodo.plot(self.data['UP'][i:i + 2], self.data['V'][i:i + 2], color=segment_color, linewidth=self.line_width,
+                hodo.plot(self.data['UP'][i:i + 2], self.data['VP'][i:i + 2], color=segment_color, linewidth=self.line_width,
                           label=f'{self.data["Alt"].iloc[i]:.0f}-{self.data["Alt"].iloc[i + 1]:.0f} m')
                 last_alt = self.data['Alt'].iloc[i]
 

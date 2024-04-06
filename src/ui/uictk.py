@@ -2,6 +2,7 @@ import json
 from tkinter import filedialog
 
 import customtkinter as ctk
+import tkinter as tk
 from PIL import Image
 import platform
 
@@ -53,7 +54,7 @@ class GUI(ctk.CTk):
         if platform.system() == 'Windows':
             self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
         else:
-            self.iconbitmap(datapath.getDataPath("media/logo_notext_icon16.png"))
+            self.iconphoto(False, tk.PhotoImage(file=datapath.getDataPath("media/logo_notext_icon16.png")))
 
         # setup grid
         self.grid_columnconfigure(0, weight=1)

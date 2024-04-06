@@ -3,6 +3,7 @@ from tkinter import filedialog
 
 import customtkinter as ctk
 from PIL import Image
+import platform
 
 from src.ui.customgraphframe import CustomGraphFrame
 from src.ui.graphframe import GraphFrame
@@ -49,7 +50,10 @@ class GUI(ctk.CTk):
         self.geometry("1200x800")
 
         # Set Icon
-        self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
+        if platform.system() == 'Windows':
+            self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
+        else:
+            self.iconbitmap(datapath.getDataPath("media/logo_notext_icon16.png"))
 
         # setup grid
         self.grid_columnconfigure(0, weight=1)

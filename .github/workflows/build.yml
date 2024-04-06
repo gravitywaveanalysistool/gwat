@@ -50,9 +50,8 @@ jobs:
       - name: Upload Release
         uses: ncipollo/release-action@v1
         with:
-          allowUpdates: true
           artifacts: ${{ matrix.filename }}
-          prerelease: false
+          prerelease: true
           replacesArtifacts: true
           commit: ${{ github.sha }}
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -33,7 +33,7 @@ class Graph(ABC):
         """
         Gets the corresponding figure for the given data type
 
-        @param data_type: dataframe
+        @param data_type: "strato" | "tropo"
         @return: strato_fig | tropo_fig : matplotlib figure
         """
         if data_type == "strato":

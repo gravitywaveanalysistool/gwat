@@ -28,7 +28,7 @@ class HodoGraph(Graph):
         @param data_type:
         @return:
         """
-        fig = plt.figure(figsize=(6, 6))
+        fig = plt.figure(figsize=(6, 6), layout='tight')
         ax = fig.add_subplot(1, 1, 1)
         hodo = Hodograph(ax, component_range=self.comp_range)
         hodo.add_grid(increment=10)

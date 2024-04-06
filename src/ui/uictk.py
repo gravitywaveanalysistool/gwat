@@ -29,11 +29,14 @@ class GUI(ctk.CTk):
         self.scrollable_frame = None
         self.strato_graph_frame = None
         self.tropo_graph_frame = None
-        self.param_frame = None
+        self.strato_param_frame = None
+        self.tropo_param_frame = None
         self.is_main_layout = False
 
         self.station = None
         self.graph_objects = {}
+        self.strato_params = None
+        self.tropo_params = None
         self.options = {'degree': '3', 'dataskip': '100'}
 
         self.setup_initial_layout()
@@ -63,9 +66,10 @@ class GUI(ctk.CTk):
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
         self.upload_button.grid(row=1, column=0, padx=10, pady=(0, 10))
 
-    def switch_to_main_layout(self, parameters):
+    def switch_to_main_layout(self, strato_params, tropo_params):
         """
-        @param parameters:
+        @param strato_params:
+        @param tropo_params:
         @return:
         """
         self.is_main_layout = True
@@ -114,11 +118,17 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.grid(row=2, column=2, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
 
         # col 3
-        self.param_frame = ParameterFrame(master=self, params=parameters, width=400)
-        self.param_frame.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="nsew", rowspan=3)
+        param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
+        param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
+
+        self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
+        self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+
+        self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
+        self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=1)
 
         export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
-        export_param_button.grid(row=3, column=3, padx=(0, 10), pady=10, sticky="ew")
+        export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
 
     def upload_file(self):
         """
@@ -137,13 +147,13 @@ class GUI(ctk.CTk):
         self.generate_graphs(self.station)
 
         # Create Param Frame
-        tropo_params, strato_params = read_params()
+        self.tropo_params, self.strato_params = read_params()
 
         if self.is_main_layout:
-            # TODO: update params
-            pass
+            self.strato_param_frame.set_params(self.strato_params)
+            self.tropo_param_frame.set_params(self.tropo_params)
         else:
-            self.switch_to_main_layout(tropo_params)
+            self.switch_to_main_layout(self.strato_params, self.tropo_params)
 
     def export_graphs(self, selected_graphs):
         """
@@ -162,10 +172,9 @@ class GUI(ctk.CTk):
         """
         @return:
         """
-        file = filedialog.asksaveasfile(defaultextension=".txt", initialfile="parameters")
-        if file:
-            for i, (label, param) in enumerate(self.param_frame.params.items()):
-                file.write(label + ',' + param + '\n')
+        filepath = filedialog.asksaveasfilename(defaultextension=".txt", initialfile="parameters")
+        if filepath:
+            utils.save_params_to_file(self.strato_params, self.tropo_params, filepath)
 
     def create_custom_graph(self):
         """

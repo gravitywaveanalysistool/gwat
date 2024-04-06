@@ -15,7 +15,7 @@ class LineGraph(Graph):
         self.best_fit = best_fit
 
     def generate_graph(self):
-        fig = plt.figure()
+        fig = plt.figure(layout='tight')
 
         # Assuming self.data[self.x] contains x-axis data and self.data[self.y] contains y-axis data
         x = self.data[self.x]

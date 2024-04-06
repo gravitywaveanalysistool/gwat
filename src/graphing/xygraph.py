@@ -35,7 +35,7 @@ class XYGraph(Graph):
         @param data_type:
         @return:
         """
-        fig = plt.figure()
+        fig = plt.figure(layout='tight')
         plt.plot(data[self.x], data[self.y], linewidth=3, label='Data Points', color='k')
 
         # Draw lines between dots if draw_lines is True

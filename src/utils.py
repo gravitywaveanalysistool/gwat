@@ -31,22 +31,28 @@ def read_params():
     return tropoParams, stratoParams
 
 
-def save_params_to_file(parameterDictionary, filePath):
+def save_params_to_file(strato_params, tropo_params, filePath):
     """
     Parameters are stored in UI as a Python dictionary with ParameterName -> Value
     Need: output file path, parameter dictionary
     To add: right alignment needed for larger values to prevent key-value clipping in output
     """
     file = open(filePath, 'w')
-    longestKeyName = 0  # For keeping track of how much to indent value
-    for key in parameterDictionary:
-        if len(key) > longestKeyName:
-            longestKeyName = len(key)
+    longest_key_length = len(max(strato_params.keys(), key=len))
+    longest_value_length = len(max(strato_params.values(), key=lambda x: len(str(x))))
+    row_width = longest_key_length + longest_value_length + 8
 
-    for key, value in parameterDictionary.items():
-        difference = longestKeyName - len(key)  # Controls how much to indent the value as to line up values in a column
-        line = key + ("{:>" + str(difference+8) + "}").format(str(value)) # +8 is an output formatting preference
-        file.write(line + "\n")
+    def write_kv(dictionary):
+        for key, value in dictionary.items():
+            # Controls how much to indent the value as to line up values in a column
+            padding = row_width - len(str(value))
+            line = key.ljust(padding) + str(value)
+            file.write(line + "\n")
+
+    file.write("Stratosphere:\n")
+    write_kv(strato_params)
+    file.write("\nTroposphere:\n")
+    write_kv(tropo_params)
     file.close()
 
 

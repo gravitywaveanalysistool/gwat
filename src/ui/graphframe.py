@@ -24,10 +24,10 @@ class GraphFrame(customtkinter.CTkFrame):
         if self.canvas is not None:
             self.canvas.destroy()
         self.canvas = customtkinter.CTkCanvas(self)
-        self.canvas.grid(row=0, column=0)
+        self.canvas.pack(fill='both', expand=1)
         self.canvas.fig_agg = FigureCanvasTkAgg(fig, master=self.canvas)
         self.canvas.fig_agg.draw()
-        self.canvas.fig_agg.get_tk_widget().pack(fill=customtkinter.BOTH, expand=True)
+        self.canvas.fig_agg.get_tk_widget().pack(fill='both', expand=1)
 
         # toolbar = NavigationToolbar2Tk(self.canvas.fig_agg, self.toolbar_frame)
         # toolbar.update()

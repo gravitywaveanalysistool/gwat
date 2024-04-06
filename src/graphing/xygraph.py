@@ -51,7 +51,7 @@ class XYGraph(Graph):
 
         plt.xlabel(self.x_label)
         plt.ylabel(self.y_label)
-        plt.title(self.title)
+        plt.title(self._graph_title(data_type))
         plt.legend()
 
         self._set_figure(fig, data_type)

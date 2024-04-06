@@ -29,6 +29,12 @@ class Graph(ABC):
         else:
             self.tropo_fig = fig
 
+    def _graph_title(self, data_type):
+        if data_type == 'strato':
+            return self.title + ' (Stratosphere)'
+        else:
+            return self.title + ' (Troposphere)'
+
     def get_figure(self, data_type):
         """
         Gets the corresponding figure for the given data type

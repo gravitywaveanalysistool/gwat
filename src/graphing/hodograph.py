@@ -54,5 +54,6 @@ class HodoGraph(Graph):
         ax.set_xlabel('U\' Component (m/s)')
         ax.set_ylabel('V\' Component (m/s)')
 
+        plt.title(self._graph_title(data_type))
         self._set_figure(fig, data_type)
         plt.close(fig)

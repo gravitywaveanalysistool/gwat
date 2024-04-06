@@ -23,7 +23,6 @@ jobs:
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy -i data/media/logo_notext_icon.ico --add-data pro/:pro/ --add-data data/:data/
             zip_cmd: Compress-Archive -DestinationPath gwat-windows -Path dist/gwat/*
             filename: gwat-windows.zip
-      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       - name: Get Python
@@ -48,8 +47,10 @@ jobs:
           path: ${{ matrix.filename }}
           overwrite: true
       - name: Upload Release
+        if: github.ref == 'refs/heads/main'
         uses: ncipollo/release-action@v1
         with:
+          allowUpdates: true
           artifacts: ${{ matrix.filename }}
           prerelease: true
           replacesArtifacts: true

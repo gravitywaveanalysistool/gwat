@@ -24,7 +24,7 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.title("Custom Graph")
 
         # Set Icon
-        self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
+        #self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
 
         def select_x(selection):
             self.x_selection = selection

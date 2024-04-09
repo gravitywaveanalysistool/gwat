@@ -1,5 +1,9 @@
+import json
+
 from matplotlib.backends.backend_pdf import PdfPages
 from os import getlogin
+
+from src import datapath
 from src.ui.errorframe import ErrorFrame
 
 
@@ -76,3 +80,11 @@ def save_graph_to_file(graphs_objects, file_path, selected_graphs, gui):
                 out_file.savefig(graphs_objects[name].get_figure('tropo'))
 
         out_file.close()
+
+def save_options(options):
+    with open(datapath.getDataPath("options.json"), 'w') as f:
+        json.dump(options, f)
+
+def load_options():
+    with open(datapath.getDataPath("options.json"), 'r') as f:
+        return json.load(f)

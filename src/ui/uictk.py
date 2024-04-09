@@ -18,6 +18,8 @@ from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
 from src import datapath
 from src.utils import read_params
+from src.utils import save_options
+from src.utils import load_options
 from src import runGDL
 
 
@@ -39,7 +41,9 @@ class GUI(ctk.CTk):
         self.graph_objects = {}
         self.strato_params = None
         self.tropo_params = None
-        self.options = {'degree': '3', 'dataskip': '100'}
+
+        #Load up the options
+        self.options = utils.load_options()
 
         self.setup_initial_layout()
 
@@ -159,7 +163,8 @@ class GUI(ctk.CTk):
             self.tropo_param_frame.set_params(self.tropo_params)
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
-
+            #TODO display first graph come back to this
+            self.select_graph(next(iter(self.graph_objects)))
     def export_graphs(self, selected_graphs):
         """
         @param selected_graphs:
@@ -191,7 +196,7 @@ class GUI(ctk.CTk):
         """
         @return:
         """
-        OptionsFrame(self, self.options)
+        OptionsFrame(self, self.graph_objects, self.station, self.options)
 
     def select_graph(self, title):
         """

@@ -52,7 +52,7 @@ class GUI(ctk.CTk):
         @return:
         """
         self.title("Gravity Wave Analysis Tool")
-        self.geometry("1200x800")
+        self.geometry("1400x1000")
 
         # Set Icon
         if platform.system() == 'Windows':

@@ -61,7 +61,7 @@ def save_params_to_file(strato_params, tropo_params, filePath):
 
 
 # Talk to Eric to see how he's handling the desired graphs from UI
-def save_graph_to_file(graphs_objects, file_path, selected_graphs, gui):
+def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
     """
     - This function requires a list of desired graphs to be input which should be passed from the UI
     when the user checks off the graphs they want to export
@@ -71,13 +71,19 @@ def save_graph_to_file(graphs_objects, file_path, selected_graphs, gui):
     if not selected_graphs:
         ErrorFrame(gui).showerror("No Graphs Selected!")
     else:
+        def savefig(t):
+            graph = graph_objects[name]
+            fig = graph.get_figure(t)
+            fig.set_size_inches(graph.default_size[0], graph.default_size[1])
+            out_file.savefig(fig)
+
         out_file = PdfPages(file_path)  # Creates the output file
 
         for name, graph_type in selected_graphs.items():  # Saves each graph to file
             if graph_type in ['strato', 'all']:
-                out_file.savefig(graphs_objects[name].get_figure('strato'))
+                savefig('strato')
             if graph_type in ['tropo', 'all']:
-                out_file.savefig(graphs_objects[name].get_figure('tropo'))
+                savefig('tropo')
 
         out_file.close()
 

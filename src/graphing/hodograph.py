@@ -57,3 +57,4 @@ class HodoGraph(Graph):
         plt.title(self._graph_title(data_type))
         self._set_figure(fig, data_type)
         plt.close(fig)
+        self.default_size = fig.get_size_inches()

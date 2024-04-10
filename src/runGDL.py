@@ -4,7 +4,7 @@ import os
 from src import datapath
 
 
-def runGDL(filepath, latitude, gui):
+def runGDL(filepath, outPath, latitude, gui):
     """
     @param filepath:
     @param latitude:
@@ -20,7 +20,7 @@ def runGDL(filepath, latitude, gui):
                                text=True)
 
     # Command list for execution
-    commands = f"gw_eclipse_new,'{filepath}',{latitude}\nexit\n"
+    commands = f"gw_eclipse_new,'{filepath}','{outPath}',{latitude}\nexit\n"
 
     # Run the commands and split into output and error for convenience
     output, error = process.communicate(input=commands)

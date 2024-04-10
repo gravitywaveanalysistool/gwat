@@ -21,6 +21,7 @@ from src.utils import read_params
 from src.utils import save_options
 from src.utils import load_options
 from src import runGDL
+from src.parseradfile import  get_latitude_value
 
 
 class GUI(ctk.CTk):
@@ -149,8 +150,7 @@ class GUI(ctk.CTk):
             return
 
         self.station = parseradfile.generate_profile_data(file_path)
-
-        runGDL.runGDL(file_path, -35, self)
+        runGDL.runGDL(file_path, get_latitude_value(file_path), self)
 
         # GENERATE GRAPHS
         self.generate_graphs(self.station)

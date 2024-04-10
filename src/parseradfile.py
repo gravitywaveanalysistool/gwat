@@ -67,7 +67,7 @@ def get_tropopause_value(file_path):
 
 def get_latitude_value(file_path):
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='ISO-8859-1') as file:
             # read entire file as string
             text = file.read()
 

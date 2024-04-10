@@ -1,7 +1,7 @@
 import customtkinter
 
 from src import datapath
-
+from src.ui import windowicon
 
 class ErrorFrame(customtkinter.CTkToplevel):
     def __init__(self, master, *args, **kwargs):
@@ -16,7 +16,7 @@ class ErrorFrame(customtkinter.CTkToplevel):
         self.title("Error")
 
         # Set Icon
-        self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
+        windowicon.set_icon(self)
 
     def showerror(self, message):
         """

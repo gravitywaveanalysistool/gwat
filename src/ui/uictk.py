@@ -23,6 +23,7 @@ from src.utils import load_options
 from src import runGDL
 from src.parseradfile import  get_latitude_value
 from src.ui.errorframe import ErrorFrame
+from src.ui import windowicon
 
 
 class GUI(ctk.CTk):
@@ -56,10 +57,7 @@ class GUI(ctk.CTk):
         self.title("Gravity Wave Analysis Tool")
 
         # Set Icon
-        if platform.system() == 'Windows':
-            self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
-        else:
-            self.iconphoto(False, tk.PhotoImage(file=datapath.getDataPath("media/logo_notext_icon16.png")))
+        windowicon.set_icon(self)
 
         # setup grid
         self.grid_columnconfigure(0, weight=1)

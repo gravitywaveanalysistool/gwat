@@ -1,10 +1,22 @@
 import json
 
 from matplotlib.backends.backend_pdf import PdfPages
-from os import getlogin
+import os
 
 from src import datapath
 from src.ui.errorframe import ErrorFrame
+import platform
+
+
+def get_temp_folder():
+    path = ""
+    if platform.system() == 'Windows':
+        path = 'C:\\tmp\\'
+    else:
+        path = '/tmp/'
+    if not os.path.isdir(path):
+        os.mkdir(path)
+    return path
 
 
 def read_params():
@@ -12,8 +24,7 @@ def read_params():
     @return:
     """
     # only for windows right now
-    filepath = "C:\\Users\\" + getlogin() + "\\AppData\\Local\\Temp\\"
-    f = open(filepath + "gw_parameters.txt", "r")
+    f = open(get_temp_folder() + "gw_parameters.txt", "r")
 
     paramNames = ["Horizontal Wavelength", "Vertical Wavelength", "Mean Phase Propogation Direction",
                   "Upward Propogation Fraction",
@@ -87,9 +98,11 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
 
         out_file.close()
 
+
 def save_options(options):
     with open(datapath.getDataPath("options.json"), 'w') as f:
         json.dump(options, f)
+
 
 def load_options():
     with open(datapath.getDataPath("options.json"), 'r') as f:

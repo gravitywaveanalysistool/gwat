@@ -21,6 +21,7 @@ from src.utils import read_params
 from src.utils import save_options
 from src.utils import load_options
 from src import runGDL
+from src.parseradfile import  get_latitude_value
 from src.ui.errorframe import ErrorFrame
 
 
@@ -150,10 +151,9 @@ class GUI(ctk.CTk):
             return
 
         self.station = parseradfile.generate_profile_data(file_path)
-
         gdl_or_idl = runGDL.detect_gdl_idl()
         if gdl_or_idl != 'none':
-            runGDL.runGDL(file_path, -35, self, gdl_or_idl)
+            runGDL.runGDL(file_path, get_latitude_value(file_path), self, gdl_or_idl)
             self.tropo_params, self.strato_params = read_params()
         else:
             ErrorFrame(self).showerror("Neither GDL nor IDL was detected. \n"

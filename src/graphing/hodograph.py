@@ -31,8 +31,8 @@ class HodoGraph(Graph):
         fig = plt.figure(figsize=(6, 6), layout='tight')
         ax = fig.add_subplot(1, 1, 1)
         hodo = Hodograph(ax, component_range=self.comp_range)
-        hodo.add_grid(increment=10)
-        hodo.add_grid(increment=20, linestyle='-')
+        hodo.add_grid(increment=2)
+        hodo.add_grid(increment=4, linestyle='-')
 
         cmap = get_cmap('viridis')
         norm = plt.Normalize(vmin=data['Alt'].min(), vmax=data['Alt'].max())
@@ -45,6 +45,10 @@ class HodoGraph(Graph):
                 hodo.plot(data['UP'][i:i + 2], data['VP'][i:i + 2], color=segment_color, linewidth=self.line_width,
                           label=f'{data["Alt"].iloc[i]:.0f}-{data["Alt"].iloc[i + 1]:.0f} m')
                 last_alt = data['Alt'].iloc[i]
+
+        max_up_vp = max(data['UP'].abs().max() + 1, data['VP'].abs().max() + 1)
+        ax.set_xlim(-max_up_vp, max_up_vp)
+        ax.set_ylim(-max_up_vp, max_up_vp)
 
         # axis names and alt bar
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)

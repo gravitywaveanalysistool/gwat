@@ -11,6 +11,7 @@ class Graph(ABC):
         self.title = title
         self.strato_fig = None
         self.tropo_fig = None
+        self.default_size = None
 
     @abstractmethod
     def generate_graph(self, data, data_type):

@@ -22,6 +22,7 @@ from src.utils import save_options
 from src.utils import load_options
 from src import runGDL
 from src.parseradfile import  get_latitude_value
+from src.ui.errorframe import ErrorFrame
 
 
 class GUI(ctk.CTk):
@@ -53,7 +54,6 @@ class GUI(ctk.CTk):
         @return:
         """
         self.title("Gravity Wave Analysis Tool")
-        self.geometry("1200x800")
 
         # Set Icon
         if platform.system() == 'Windows':
@@ -128,17 +128,18 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.grid(row=2, column=2, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
 
         # col 3
-        param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
-        param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
+        if strato_params:
+            param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
+            param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
 
-        self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
-        self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+            self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
+            self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
 
-        self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
-        self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=1)
+            self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
+            self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=1)
 
-        export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
-        export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
+            export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
+            export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
 
     def upload_file(self):
         """
@@ -150,13 +151,17 @@ class GUI(ctk.CTk):
             return
 
         self.station = parseradfile.generate_profile_data(file_path)
-        runGDL.runGDL(file_path, get_latitude_value(file_path), self)
+        gdl_or_idl = runGDL.detect_gdl_idl()
+        if gdl_or_idl != 'none':
+            runGDL.runGDL(file_path, get_latitude_value(file_path), self, gdl_or_idl)
+            self.tropo_params, self.strato_params = read_params()
+        else:
+            ErrorFrame(self).showerror("Neither GDL nor IDL was detected. \n"
+                                       "Please install GDL from https://gnudatalanguage.github.io/\n"
+                                       "If you know GDL or IDL is installed, make sure it's accessible in PATH.")
 
         # GENERATE GRAPHS
         self.generate_graphs(self.station)
-
-        # Create Param Frame
-        self.tropo_params, self.strato_params = read_params()
 
         if self.is_main_layout:
             self.strato_param_frame.set_params(self.strato_params)
@@ -174,7 +179,6 @@ class GUI(ctk.CTk):
                                                  filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
                                                  initialfile="graphs")
 
-        print(selected_graphs)
         if file_path:
             utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs, self)
 

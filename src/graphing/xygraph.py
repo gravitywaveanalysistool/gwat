@@ -40,7 +40,7 @@ class XYGraph(Graph):
 
         # Draw lines between dots if draw_lines is True
         if self.draw_lines:
-            plt.plot(self.data[self.x], self.data[self.y], linestyle='-', color='k', alpha=0.5)
+            plt.plot(data[self.x], data[self.y], linestyle='-', color='k', alpha=0.5)
 
         # best fit curve
         if self.best_fit:
@@ -56,3 +56,6 @@ class XYGraph(Graph):
 
         self._set_figure(fig, data_type)
         plt.close(fig)
+
+        self.default_size = fig.get_size_inches()
+

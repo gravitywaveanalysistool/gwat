@@ -1,6 +1,6 @@
 @a2_eclipse
 
-PRO gw_eclipse_new, datapath, latitude
+PRO gw_eclipse_new, datapath, outputPath, latitude
 ;;Have it take in the path of the file and the lat_station variable
 ;======================================================================================
 ;VERSION update from gw_eclipse.pro
@@ -39,7 +39,8 @@ PRO gw_eclipse_new, datapath, latitude
 infile=findfile(datapath)
 nf=n_elements(infile)
 
-outputfile='~\AppData\Local\Temp\gw_parameters.txt'
+;outputfile='~\AppData\Local\Temp\gw_parameters.txt'
+outputfile = outputPath
 
 zseg=[1.98,30.]*1.E+3 ;original input height segment. Will be separated to stratosphere and troposphere later
 dz=15.

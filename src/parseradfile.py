@@ -136,7 +136,7 @@ def generate_profile_data(path_name):
         for col in profile_df.select_dtypes(include=['object']).columns:
             # Attempt to convert the column to numeric, coerce errors to NaN, then drop rows with NaNs
             profile_df[col] = pd.to_numeric(profile_df[col], errors='coerce')
-            profile_df = profile_df.dropna(subset=[col]).reset_index(drop=True)
+            # profile_df = profile_df.dropna(subset=[col]).reset_index(drop=True)
             profile_df[col] = profile_df[col].astype(float)
 
         # Calculates the difference between followings alts

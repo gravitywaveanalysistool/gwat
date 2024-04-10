@@ -4,6 +4,7 @@ import pandas as pd
 from src import datapath
 from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
+from src.ui import windowicon
 
 class CustomGraphFrame(customtkinter.CTkToplevel):
     def __init__(self, master, gui, station, *args, **kwargs):
@@ -24,7 +25,7 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
         self.title("Custom Graph")
 
         # Set Icon
-        #self.iconbitmap(datapath.getDataPath("media/logo_notext_icon.ico"))
+        windowicon.set_icon(self)
 
         def select_x(selection):
             self.x_selection = selection

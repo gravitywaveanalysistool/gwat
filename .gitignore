@@ -4,3 +4,5 @@ build/
 gwat.spec
 
 .idea/
+.vs/
+.venv/

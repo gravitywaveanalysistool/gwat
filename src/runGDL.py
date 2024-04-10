@@ -5,7 +5,15 @@ import os
 from src import datapath
 
 
-def runGDL(filepath, latitude, gui):
+def detect_gdl_idl():
+    if subprocess.run(['gdl', '-v']).returncode == 0:
+        return 'gdl'
+    elif subprocess.run(['idl', '-v']).returncode == 0:
+        return 'idl'
+    else:
+        return 'none'
+
+def runGDL(filepath, latitude, gui, gdl_or_idl):
     """
     @param filepath:
     @param latitude:
@@ -17,11 +25,13 @@ def runGDL(filepath, latitude, gui):
     os.chdir(datapath.getProPath(""))  # Assumes we are running out of root directory
 
     # Start GDL
-    process = subprocess.Popen(['gdl'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    process = subprocess.Popen([gdl_or_idl], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                text=True)
 
+    outfile = get_temp_folder() + "gw_parameters.txt"
+
     # Command list for execution
-    commands = f"gw_eclipse_new,'{filepath}','{get_temp_folder()}',{latitude}\nexit\n"
+    commands = f"gw_eclipse_new,'{filepath}','{outfile}',{latitude}\nexit\n"
 
     # Run the commands and split into output and error for convenience
     output, error = process.communicate(input=commands)

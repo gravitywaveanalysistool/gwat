@@ -6,12 +6,16 @@ from src import datapath
 
 
 def detect_gdl_idl():
-    if subprocess.run(['gdl', '-v']).returncode == 0:
+    try:
+        subprocess.run(['gdl', '-v'])
         return 'gdl'
-    elif subprocess.run(['idl', '-v']).returncode == 0:
-        return 'idl'
-    else:
-        return 'none'
+    except:
+        try:
+            subprocess.run(['idl', '-v'])
+            return 'idl'
+        except:
+            return 'none'
+
 
 def runGDL(filepath, latitude, gui, gdl_or_idl):
     """

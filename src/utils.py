@@ -11,7 +11,7 @@ import platform
 def get_temp_folder():
     path = ""
     if platform.system() == 'Windows':
-        path = 'C:\\tmp\\'
+        path = 'C:\\Users\\' + os.getlogin() + '\\AppData\\Local\\Temp\\'
     else:
         path = '/tmp/'
     if not os.path.isdir(path):

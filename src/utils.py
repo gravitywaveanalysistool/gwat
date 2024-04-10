@@ -81,19 +81,13 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
     if not selected_graphs:
         ErrorFrame(gui).showerror("No Graphs Selected!")
     else:
-        def savefig(t):
-            graph = graph_objects[name]
-            fig = graph.get_figure(t)
-            fig.set_size_inches(graph.default_size[0], graph.default_size[1])
-            out_file.savefig(fig)
-
         out_file = PdfPages(file_path)  # Creates the output file
 
         for name, graph_type in selected_graphs.items():  # Saves each graph to file
             if graph_type in ['strato', 'all']:
-                savefig('strato')
+                out_file.savefig(graph_objects[name].get_figure(graph_type, export=True))
             if graph_type in ['tropo', 'all']:
-                savefig('tropo')
+                out_file.savefig(graph_objects[name].get_figure(graph_type, export=True))
 
         out_file.close()
 

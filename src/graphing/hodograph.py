@@ -59,6 +59,5 @@ class HodoGraph(Graph):
         ax.set_ylabel('V\' Component (m/s)')
 
         plt.title(self._graph_title(data_type))
-        self._set_figure(fig, data_type)
         plt.close(fig)
-        self.default_size = fig.get_size_inches()
+        self._set_figure(fig, data_type)

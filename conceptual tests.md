@@ -48,4 +48,31 @@ gui: ctk context.
 -> side effect: pdf file at file_out with each of the selected graphs.
  | unable to write to file_out error 
 ```
+
+# Conceptual Tests
+# White Box Tests
+### ParseData.py
+```
+headerData(rawData, Encoding)
+
+rawData: String. Expected to be a TxT file / File Path
+Encoding: Defaulted to ISO-8859-1
+
+Test Case 1: File With Complete Header Data
+Objective: Identify  the start and ends lines of the raw data file when both 'Launch Data:' and 'Profile Data:' Occur
+Input: TxT file of raw profile data from radiosonde
+Output: A dataframe containing containing the  all the data between "Launch Data:" and 'Profile Data:'
+
+headerData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) ->  header_df
+
+
+Test Case 2: File Without 'Profile Data:'
+Objective: Test functions behaviour when 'Profile Data' is missing
+Input: File without Launch
+Output: The function should not initiate header dataframe, resulting in None for both start and end lines.
+
+headerData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) ->  None
+```
+
+
 tests for save graph probably cannot be implemented.

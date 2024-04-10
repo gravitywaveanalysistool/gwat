@@ -52,7 +52,6 @@ class GUI(ctk.CTk):
         @return:
         """
         self.title("Gravity Wave Analysis Tool")
-        self.geometry("1400x1000")
 
         # Set Icon
         if platform.system() == 'Windows':
@@ -174,7 +173,6 @@ class GUI(ctk.CTk):
                                                  filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
                                                  initialfile="graphs")
 
-        print(selected_graphs)
         if file_path:
             utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs, self)
 

@@ -23,7 +23,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
 
         self.all_selected = ctk.StringVar(value="off")
         self.select_all_checkbox = ctk.CTkCheckBox(self, text="Select All", width=10, variable=self.all_selected,
-                                              onvalue='on', offvalue='off', command=self.select_all)
+                                                   onvalue='on', offvalue='off', command=self.select_all)
         self.select_all_checkbox.grid(row=0, column=0, pady=10, padx=10, sticky="e")
 
         export_graphs_button = ctk.CTkButton(self, text="Export Graphs", command=self.export)
@@ -57,7 +57,6 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         """
         selected_graphs = {}
         for name, (checkbox, graph_type) in self.checkbox_dict.items():
-            print(name, graph_type)
             if checkbox.get():
                 if graph_type == self.data_options[0]:
                     selected_graphs[name] = 'all'
@@ -85,14 +84,13 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         @param title:
         @return:
         """
+
         def select_graph_type(selection):
-            self.checkbox_dict[title][1] = selection
+            self.checkbox_dict[title] = (self.checkbox_dict[title][0], selection)
 
         def check_cmd():
             if self.select_all_checkbox.get() == 'on':
-                print('goof')
                 self.select_all_checkbox.deselect()
-
 
         data_option = ctk.CTkOptionMenu(self.scroll_frame, values=self.data_options, command=select_graph_type)
         button = ctk.CTkButton(self.scroll_frame, text=title, width=100, height=24)

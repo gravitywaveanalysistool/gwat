@@ -71,7 +71,6 @@ def save_params_to_file(strato_params, tropo_params, filePath):
     file.close()
 
 
-# Talk to Eric to see how he's handling the desired graphs from UI
 def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
     """
     - This function requires a list of desired graphs to be input which should be passed from the UI
@@ -97,6 +96,24 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
                 savefig('tropo')
 
         out_file.close()
+
+def save_graphs_as_png(graph_objects, folder_path, selected_graphs, gui):
+    """
+    - This function saves the selected graphs as individual PNG files to a directory of the users choice
+    - Very not complete at the moment
+    """
+    if not selected_graphs:
+        ErrorFrame(gui).showerror("No Graphs Selected!")
+        return
+
+    png_folder = folder_path + "\\PNG_Graphs"
+    if not os.path.exists(png_folder):
+        os.mkdir(png_folder)
+
+    i = 0
+    for graph in selected_graphs:
+        graph.savefig(png_folder + f"\\{i}")
+        i += 1
 
 
 def save_options(options):

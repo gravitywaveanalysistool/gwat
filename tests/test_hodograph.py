@@ -16,9 +16,11 @@ class TestXYGraph(unittest.TestCase):
             alt_threshold=100
         )
 
+        # Make sure we have an instance and it is of type Graph
         self.assertIsNotNone(test_graph)
         self.assertIsInstance(test_graph, Graph)
 
+        # Make sure parameters are set
         self.assertIsNotNone(test_graph.title)
         self.assertIsNotNone(test_graph.comp_range)
         self.assertIsNotNone(test_graph.line_width)
@@ -33,8 +35,10 @@ class TestXYGraph(unittest.TestCase):
             'VP': np.array([2, 4, 6, 8, 10])
         }
 
+        # Put into dataframe
         df = pd.DataFrame(data)
 
+        # Create an instance with some dummy data
         test_graph = HodoGraph(
             title="Test Graph",
             comp_range=40,
@@ -42,9 +46,19 @@ class TestXYGraph(unittest.TestCase):
             alt_threshold=100
         )
 
+        # Try with dataframe
         test_graph.generate_graph(df, "tropo")
         test_graph.generate_graph(df, "strato")
 
+        # Try with something other than data frame
+        try:
+            test_graph.generate_graph(data, "tropo")
+            test_graph.generate_graph(data, "strato")
+            assert False, "Took in non-dataframe"
+        except AssertionError as e:
+            print("Successfully rejected wrong data", e)
+
+        # Make sure we have values and that they are the correct Type
         self.assertIsNotNone(test_graph.tropo_fig)
         self.assertIsInstance(test_graph.tropo_fig, Figure)
         self.assertIsNotNone(test_graph.strato_fig)

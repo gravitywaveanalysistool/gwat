@@ -1,6 +1,6 @@
 import subprocess
-from ui import errorframe
-from utils import get_temp_folder
+from src.ui import errorframe
+from src.utils import get_temp_folder
 import os
 from src import datapath
 

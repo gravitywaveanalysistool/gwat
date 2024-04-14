@@ -83,13 +83,12 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
     else:
         out_file = PdfPages(file_path)  # Creates the output file
 
-        for name, graph_type in selected_graphs.items():  # Saves each graph to file
-            if graph_type in ['strato', 'all']:
-                out_file.savefig(graph_objects[name].get_figure(graph_type, export=True))
-            if graph_type in ['tropo', 'all']:
-                out_file.savefig(graph_objects[name].get_figure(graph_type, export=True))
+        for name in selected_graphs:  # Saves each graph to file
+            out_file.savefig(graph_objects[name].get_figure("strato", export=True))
+            out_file.savefig(graph_objects[name].get_figure("tropo", export=True))
 
         out_file.close()
+
 
 def save_graphs_as_png(graph_objects, folder_path, selected_graphs, gui):
     """

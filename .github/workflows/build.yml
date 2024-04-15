@@ -20,7 +20,7 @@ jobs:
       - name: Test GWAT
         run: python -m unittest discover tests -v
   build:
-#    needs: test
+    needs: test
     name: Build GWAT to executable
     runs-on: ${{ matrix.os }}
     strategy:

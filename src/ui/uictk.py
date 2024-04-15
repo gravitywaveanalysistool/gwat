@@ -159,7 +159,7 @@ class GUI(ctk.CTk):
                                        "If you know GDL or IDL is installed, make sure it's accessible in PATH.")
 
         # GENERATE GRAPHS
-        self.generate_graphs(self.station)
+        self.generate_graphs()
 
         if self.is_main_layout:
             self.strato_param_frame.set_params(self.strato_params)
@@ -208,9 +208,8 @@ class GUI(ctk.CTk):
         self.strato_graph_frame.draw_plot(self.graph_objects[title].get_figure("strato"))
         self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
 
-    def generate_graphs(self, station):
+    def generate_graphs(self):
         """
-        @param station:
         @return:
         """
         with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:

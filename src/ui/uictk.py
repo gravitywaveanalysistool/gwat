@@ -149,14 +149,22 @@ class GUI(ctk.CTk):
             return
 
         self.station = parseradfile.generate_profile_data(file_path)
+
         gdl_or_idl = runGDL.detect_gdl_idl()
         if gdl_or_idl != 'none':
-            runGDL.runGDL(file_path, get_latitude_value(file_path), self, gdl_or_idl)
-            self.tropo_params, self.strato_params = read_params()
+            try:
+                runGDL.runGDL(file_path, get_latitude_value(file_path), gdl_or_idl)
+                self.tropo_params, self.strato_params = read_params()
+            except Exception as e:
+                if e.args[0] == 'no_file':
+                    ErrorFrame(self).showerror("No file found at '" + file_path + "'")
+                else:
+                    ErrorFrame(self).showerror("Unable to extract gravity wave parameters")
         else:
             ErrorFrame(self).showerror("Neither GDL nor IDL was detected. \n"
                                        "Please install GDL from https://gnudatalanguage.github.io/\n"
                                        "If you know GDL or IDL is installed, make sure it's accessible in PATH.")
+
 
         # GENERATE GRAPHS
         self.generate_graphs()

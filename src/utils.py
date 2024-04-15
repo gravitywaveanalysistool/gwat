@@ -19,12 +19,16 @@ def get_temp_folder():
     return path
 
 
+def get_parameter_file():
+    return os.path.abspath(get_temp_folder() + 'gw_parameters.txt')
+
+
 def read_params():
     """
     @return:
     """
     # only for windows right now
-    f = open(get_temp_folder() + "gw_parameters.txt", "r")
+    f = open(get_parameter_file(), "r")
 
     paramNames = ["Horizontal Wavelength", "Vertical Wavelength", "Mean Phase Propogation Direction",
                   "Upward Propogation Fraction",

@@ -16,6 +16,9 @@ def detect_gdl_idl():
             return 'none'
 
 
+class GDLError(Exception):
+    pass
+
 def runGDL(filepath, latitude, gdl_or_idl):
     """
     @param filepath:
@@ -26,7 +29,7 @@ def runGDL(filepath, latitude, gdl_or_idl):
     filepath = os.path.abspath(filepath)
 
     if not os.path.isfile(filepath):
-        raise Exception("no_file")
+        raise FileNotFoundError
 
     # Move to pro directory for access to gw programs
     cwd = os.getcwd()
@@ -49,4 +52,4 @@ def runGDL(filepath, latitude, gdl_or_idl):
 
     if output != "success\n":
         os.remove(utils.get_parameter_file())
-        raise Exception("gdl_error")
+        raise GDLError

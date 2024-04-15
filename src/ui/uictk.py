@@ -155,11 +155,10 @@ class GUI(ctk.CTk):
             try:
                 runGDL.runGDL(file_path, get_latitude_value(file_path), gdl_or_idl)
                 self.tropo_params, self.strato_params = read_params()
-            except Exception as e:
-                if e.args[0] == 'no_file':
-                    ErrorFrame(self).showerror("No file found at '" + file_path + "'")
-                else:
-                    ErrorFrame(self).showerror("Unable to extract gravity wave parameters")
+            except FileNotFoundError as e:
+                ErrorFrame(self).showerror("No file found at '" + file_path + "'")
+            except runGDL.GDLError:
+                ErrorFrame(self).showerror("Unable to extract gravity wave parameters")
         else:
             ErrorFrame(self).showerror("Neither GDL nor IDL was detected. \n"
                                        "Please install GDL from https://gnudatalanguage.github.io/\n"

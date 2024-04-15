@@ -23,11 +23,18 @@ def get_parameter_file():
     return os.path.abspath(get_temp_folder() + 'gw_parameters.txt')
 
 
+class MalformedFileError(Exception):
+    pass
+
+
 def read_params():
     """
     @return:
     """
-    # only for windows right now
+
+    if not os.path.isfile(get_parameter_file()):
+        raise FileNotFoundError
+
     f = open(get_parameter_file(), "r")
 
     paramNames = ["Horizontal Wavelength", "Vertical Wavelength", "Mean Phase Propogation Direction",
@@ -40,12 +47,17 @@ def read_params():
     for line in f:
         allParams.append(line.strip())
 
-    i = 0
-    for value in allParams:
-        if i > 7: break
+    if len(allParams) != len(paramNames) * 2:
+        f.close()
+        raise MalformedFileError
+
+    for i, _ in enumerate(allParams):
+        if i == len(paramNames):
+            break
         tropoParams[paramNames[i]] = allParams[i]
-        stratoParams[paramNames[i]] = allParams[i + 8]
-        i += 1
+        stratoParams[paramNames[i]] = allParams[i + len(paramNames)]
+
+    f.close()
 
     return tropoParams, stratoParams
 

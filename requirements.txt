@@ -6,7 +6,7 @@ customtkinter==5.2.2
 cycler==0.12.1
 darkdetect==0.8.0
 fonttools==4.50.0
-idna==3.6
+idna==3.7
 kiwisolver==1.4.5
 matplotlib==3.8.3
 MetPy==1.6.1

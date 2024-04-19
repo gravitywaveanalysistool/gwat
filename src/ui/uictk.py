@@ -7,6 +7,7 @@ from PIL import Image
 from src.ui.customgraphframe import CustomGraphFrame
 from src.ui.graphframe import GraphFrame
 from src.ui.optionsframe import OptionsFrame
+from src.ui.aboutframe import AboutFrame
 from src.ui.parameterframe import ParameterFrame
 from src.ui.scrollingbuttonframe import ScrollingCheckButtonFrame
 
@@ -60,15 +61,21 @@ class GUI(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
 
+        # about button
+        self.about_button = ctk.CTkButton(self, text="About", command=self.show_about, width=10)
+        self.about_button.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+
         # logo
         logo = ctk.CTkImage(light_image=Image.open(datapath.getDataPath("media/logo_text.png")),
                             dark_image=Image.open(datapath.getDataPath("media/logo_text.png")), size=(600, 600))
         self.logo_label = ctk.CTkLabel(self, image=logo, text="")
-        self.logo_label.grid(row=0, column=0, padx=10, pady=10)
+        self.logo_label.grid(row=1, column=0, padx=10, pady=10)
 
         # upload button
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
-        self.upload_button.grid(row=1, column=0, padx=10, pady=(0, 10))
+        self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
+
+
 
     def switch_to_main_layout(self, strato_params, tropo_params):
         """
@@ -170,6 +177,9 @@ class GUI(ctk.CTk):
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
             self.select_graph(next(iter(self.graph_objects)))
+
+    def show_about(self):
+        AboutFrame(self)
 
     def export_graphs(self, selected_graphs):
         """

@@ -2,9 +2,7 @@ import json
 from tkinter import filedialog
 
 import customtkinter as ctk
-import tkinter as tk
 from PIL import Image
-import platform
 
 from src.ui.customgraphframe import CustomGraphFrame
 from src.ui.graphframe import GraphFrame
@@ -18,8 +16,6 @@ from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
 from src import datapath
 from src.utils import read_params
-from src.utils import save_options
-from src.utils import load_options
 from src import runGDL
 from src.parseradfile import  get_latitude_value
 from src.ui.errorframe import ErrorFrame
@@ -112,7 +108,7 @@ class GUI(ctk.CTk):
 
         self.scrollable_frame \
             = ScrollingCheckButtonFrame(master=self, graph_objects=self.graph_objects, station=self.station,
-                                        but_cmd=self.select_graph, export_cmd=self.export_graphs, width=400)
+                                        but_cmd=self.select_graph, export_cmd=self.export_graphs)
         self.scrollable_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew", rowspan=2, columnspan=2)
 
         custom_graph_button = ctk.CTkButton(self, text="Create Custom Graph", command=self.create_custom_graph)
@@ -173,8 +169,8 @@ class GUI(ctk.CTk):
             self.tropo_param_frame.set_params(self.tropo_params)
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
-            #TODO display first graph come back to this
             self.select_graph(next(iter(self.graph_objects)))
+
     def export_graphs(self, selected_graphs):
         """
         @param selected_graphs:

@@ -19,12 +19,23 @@ def get_temp_folder():
     return path
 
 
+def get_parameter_file():
+    return os.path.abspath(get_temp_folder() + 'gw_parameters.txt')
+
+
+class MalformedFileError(Exception):
+    pass
+
+
 def read_params():
     """
     @return:
     """
-    # only for windows right now
-    f = open(get_temp_folder() + "gw_parameters.txt", "r")
+
+    if not os.path.isfile(get_parameter_file()):
+        raise FileNotFoundError
+
+    f = open(get_parameter_file(), "r")
 
     paramNames = ["Horizontal Wavelength", "Vertical Wavelength", "Mean Phase Propogation Direction",
                   "Upward Propogation Fraction",
@@ -36,12 +47,17 @@ def read_params():
     for line in f:
         allParams.append(line.strip())
 
-    i = 0
-    for value in allParams:
-        if i > 7: break
+    if len(allParams) != len(paramNames) * 2:
+        f.close()
+        raise MalformedFileError
+
+    for i, _ in enumerate(allParams):
+        if i == len(paramNames):
+            break
         tropoParams[paramNames[i]] = allParams[i]
-        stratoParams[paramNames[i]] = allParams[i + 8]
-        i += 1
+        stratoParams[paramNames[i]] = allParams[i + len(paramNames)]
+
+    f.close()
 
     return tropoParams, stratoParams
 
@@ -71,23 +87,27 @@ def save_params_to_file(strato_params, tropo_params, filePath):
     file.close()
 
 
-def save_graph_to_file(graph_objects, file_path, selected_graphs, gui):
+def save_graph_to_file(graph_objects, file_path, selected_graphs):
     """
     - This function requires a list of desired graphs to be input which should be passed from the UI
     when the user checks off the graphs they want to export
     - Graphs will then be exported to a single pdf file
     - Defaults to pdf but further file types can be added later if needed
     """
-    if not selected_graphs:
-        ErrorFrame(gui).showerror("No Graphs Selected!")
-    else:
-        out_file = PdfPages(file_path)  # Creates the output file
 
-        for name in selected_graphs:  # Saves each graph to file
-            out_file.savefig(graph_objects[name].get_figure("strato", export=True))
-            out_file.savefig(graph_objects[name].get_figure("tropo", export=True))
+    # if selection is empty, or the intersection of the graphs and selections is empty
+    if not selected_graphs or len(set(graph_objects.keys()) & set(selected_graphs)) == 0:
+        return
 
-        out_file.close()
+    out_file = PdfPages(file_path)  # Creates the output file
+
+    for name in selected_graphs:  # Saves each graph to file
+        if not name in graph_objects:
+            continue
+        out_file.savefig(graph_objects[name].get_figure("strato", export=True))
+        out_file.savefig(graph_objects[name].get_figure("tropo", export=True))
+
+    out_file.close()
 
 
 def save_graphs_as_png(graph_objects, folder_path, selected_graphs, gui):

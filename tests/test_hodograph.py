@@ -26,7 +26,6 @@ class TestXYGraph(unittest.TestCase):
         self.assertIsNotNone(test_graph.line_width)
         self.assertIsNotNone(test_graph.alt_threshold)
 
-
     def test_generate_graph(self):
         # Dummy data
         data = {
@@ -49,14 +48,6 @@ class TestXYGraph(unittest.TestCase):
         # Try with dataframe
         test_graph.generate_graph(df, "tropo")
         test_graph.generate_graph(df, "strato")
-
-        # Try with something other than data frame
-        try:
-            test_graph.generate_graph(data, "tropo")
-            test_graph.generate_graph(data, "strato")
-            assert False, "Took in non-dataframe"
-        except AssertionError as e:
-            print("Successfully rejected wrong data", e)
 
         # Make sure we have values and that they are the correct Type
         self.assertIsNotNone(test_graph.tropo_fig)

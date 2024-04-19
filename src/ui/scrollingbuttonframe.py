@@ -46,6 +46,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         self.but_cmd = but_cmd
         self.data_op_dict = {}
         self.button_list = []
+        self.selected_button = None
         self.checkbox_dict = {}
         for title, graph in graph_objects.items():
             self.add_item(title)
@@ -86,10 +87,30 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
 
         button = ctk.CTkButton(self.scroll_frame, text=title, anchor="w")
         checkbox = ctk.CTkCheckBox(self.scroll_frame, text="", width=10, command=check_cmd)
-        if self.but_cmd is not None:
-            button.configure(command=lambda: self.but_cmd(title))
+
         checkbox.grid(row=len(self.checkbox_dict), column=0, pady=(0, 10), sticky="e")
+
+        def button_select():
+            self.but_cmd(title)
+            self.select_button(button)
+
+        if self.but_cmd is not None:
+            button.configure(command=button_select)
         button.grid(row=len(self.button_list), column=1, pady=(0, 10), sticky="we")
+
+        if len(self.button_list) == 0:
+            self.select_button(button)
 
         self.button_list.append(button)
         self.checkbox_dict[title] = checkbox
+
+    def select_button(self, button):
+        if self.selected_button is not None:
+            default_fg_color = button.cget('fg_color')
+            default_text_color = button.cget('text_color')
+            default_hover_color = button.cget('hover_color')
+            self.selected_button.configure(fg_color=default_fg_color, text_color=default_text_color,
+                                           hover_color=default_hover_color)
+
+        self.selected_button = button
+        button.configure(fg_color='white', text_color='black', hover_color='#bbbbbb')

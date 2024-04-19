@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import pandas as pd
 from matplotlib.figure import Figure
 
 from src.graphing.xygraph import XYGraph
@@ -32,10 +33,10 @@ class TestXYGraph(unittest.TestCase):
 
     def test_generate_graph(self):
         # Dummy data
-        data = {
+        data = pd.DataFrame({
             'x': np.array([1, 2, 3, 4, 5]),
             'y': np.array([2, 4, 6, 8, 10])
-        }
+        })
 
         test_graph = XYGraph(
             title="Test Graph",

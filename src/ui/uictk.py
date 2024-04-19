@@ -2,13 +2,12 @@ import json
 from tkinter import filedialog
 
 import customtkinter as ctk
-import tkinter as tk
 from PIL import Image
-import platform
 
 from src.ui.customgraphframe import CustomGraphFrame
 from src.ui.graphframe import GraphFrame
 from src.ui.optionsframe import OptionsFrame
+from src.ui.aboutframe import AboutFrame
 from src.ui.parameterframe import ParameterFrame
 from src.ui.scrollingbuttonframe import ScrollingCheckButtonFrame
 
@@ -18,8 +17,6 @@ from src.graphing.hodograph import HodoGraph
 from src.graphing.xygraph import XYGraph
 from src import datapath
 from src.utils import read_params
-from src.utils import save_options
-from src.utils import load_options
 from src import runGDL
 from src.parseradfile import  get_latitude_value
 from src.ui.errorframe import ErrorFrame
@@ -64,15 +61,21 @@ class GUI(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
 
+        # about button
+        self.about_button = ctk.CTkButton(self, text="About", command=self.show_about, width=10)
+        self.about_button.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+
         # logo
         logo = ctk.CTkImage(light_image=Image.open(datapath.getDataPath("media/logo_text.png")),
                             dark_image=Image.open(datapath.getDataPath("media/logo_text.png")), size=(600, 600))
         self.logo_label = ctk.CTkLabel(self, image=logo, text="")
-        self.logo_label.grid(row=0, column=0, padx=10, pady=10)
+        self.logo_label.grid(row=1, column=0, padx=10, pady=10)
 
         # upload button
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
-        self.upload_button.grid(row=1, column=0, padx=10, pady=(0, 10))
+        self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
+
+
 
     def switch_to_main_layout(self, strato_params, tropo_params):
         """
@@ -112,7 +115,7 @@ class GUI(ctk.CTk):
 
         self.scrollable_frame \
             = ScrollingCheckButtonFrame(master=self, graph_objects=self.graph_objects, station=self.station,
-                                        but_cmd=self.select_graph, export_cmd=self.export_graphs, width=400)
+                                        but_cmd=self.select_graph, export_cmd=self.export_graphs)
         self.scrollable_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew", rowspan=2, columnspan=2)
 
         custom_graph_button = ctk.CTkButton(self, text="Create Custom Graph", command=self.create_custom_graph)
@@ -148,7 +151,8 @@ class GUI(ctk.CTk):
         if not file_path:
             return
 
-        self.station = parseradfile.generate_profile_data(file_path)
+        self.station = parseradfile.generate_profile_data(file_path,self)
+
 
         gdl_or_idl = runGDL.detect_gdl_idl()
         if gdl_or_idl != 'none':
@@ -173,19 +177,28 @@ class GUI(ctk.CTk):
             self.tropo_param_frame.set_params(self.tropo_params)
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
-            #TODO display first graph come back to this
             self.select_graph(next(iter(self.graph_objects)))
+
+    def show_about(self):
+        AboutFrame(self)
+
     def export_graphs(self, selected_graphs):
         """
         @param selected_graphs:
         @return:
         """
+
+        # TODO: simply disable button if none are selected
+        if not selected_graphs or len(selected_graphs) == 0:
+            ErrorFrame(self).showerror("No graphs selected")
+            return
+
         file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
                                                  filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
                                                  initialfile="graphs")
 
         if file_path:
-            utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs, self)
+            utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
 
     def export_params(self):
         """

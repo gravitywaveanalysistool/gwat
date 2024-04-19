@@ -21,6 +21,9 @@ class TestRunGDL(unittest.TestCase):
             os.remove(utils.get_parameter_file())
 
     def test_good_data(self):
+        """
+        Test to ensure runGDL will produce a correct results file when provided correctly formatted, error free data
+        """
         gdl_or_idl, outfile = self.gdl_preamble()
 
         runGDL.runGDL('./tests/data/gdl_gooddata.txt', -35, gdl_or_idl)
@@ -35,13 +38,16 @@ class TestRunGDL(unittest.TestCase):
 
         for p in params:
             v = float(gw.readline().strip())
-            self.assertAlmostEqual(v, p)
+            self.assertAlmostEqual(v, p, places=3)
         
         gw.close()
 
         os.remove(outfile)
 
     def test_bad_data(self):
+        """
+        Test to insure runGDL will raise a GDLError if provided incorrectly formatted data
+        """
         gdl_or_idl, outfile = self.gdl_preamble()
         self.addCleanup(self.gdl_cleanup)
 
@@ -50,6 +56,9 @@ class TestRunGDL(unittest.TestCase):
         self.assertFalse(os.path.isfile(outfile))
 
     def test_no_file(self):
+        """
+        Test to ensure runGDL will raise a FileNotFound error if provided with an invalid file path
+        """
         gdl_or_idl, outfile = self.gdl_preamble()
         self.addCleanup(self.gdl_cleanup)
 

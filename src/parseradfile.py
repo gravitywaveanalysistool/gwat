@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from src.station import Station
 import re
+from src.ui.errorframe import ErrorFrame
 
 # Grab header information such as station name date etc...
 def headerData(rawData, encoding='ISO-8859-1'):
@@ -21,7 +22,6 @@ def headerData(rawData, encoding='ISO-8859-1'):
                 end_line = i
                 break
             elif headerDataHit and line.strip() and start_line is None:
-                # Grabs line where profile data exists
                 start_line = i - 1
     return start_line, end_line
 
@@ -109,7 +109,7 @@ def calcTempPert(dataframe):
     dataframe['Temp_Pert'] = dataframe['T'] - x__curve
 
 
-def generate_profile_data(path_name):
+def generate_profile_data(path_name, gui):
     """
     @param path_name:
     @return:
@@ -133,31 +133,37 @@ def generate_profile_data(path_name):
 
         # Converts column to whatever integer equivalent float / int
         # Convert and prune non-integer rows
+        profile_df = profile_df[['Time','P','T','Hu','Ws','Wd','Long.','Lat.','Alt']]
+
         for col in profile_df.select_dtypes(include=['object']).columns:
-            # Attempt to convert the column to numeric, coerce errors to NaN, then drop rows with NaNs
-            profile_df[col] = pd.to_numeric(profile_df[col], errors='coerce')
-            # profile_df = profile_df.dropna(subset=[col]).reset_index(drop=True)
+            profile_df[col] = pd.to_numeric(profile_df[col], errors='raise')
             profile_df[col] = profile_df[col].astype(float)
 
         # Calculates the difference between followings alts
         profile_df['Alt_diff'] = profile_df['Alt'].diff()
         profile_df['Time_diff'] = profile_df["Time"].diff()
         peak_index = profile_df[profile_df['Alt_diff'] < 0].first_valid_index()
+
         # Drop rows after peak and drop diff column
         if peak_index is not None:
             profile_df = profile_df.loc[:peak_index - 1]
+
         profile_df['Ascending_Rate'] = profile_df['Alt_diff'] / profile_df['Time_diff']
+        #grab Latitude
         get_latitude_value(path_name)
-        Tropopause = get_tropopause_value(path_name)
+        #grab tropopause value
+        Tropopause = (get_tropopause_value(path_name))
+        #calculate wind computations and temperature pertubation
         calcWindComps(profile_df)
         calcTempPert(profile_df)
         profile_df['Log_P'] = np.log(profile_df['P'])
         closest_index = (profile_df['P'] - Tropopause).abs().idxmin()
+
+        #create troposphere and stratosphere dataframes to be graphed
         tropo_df = profile_df.iloc[:closest_index + 1]
         strato_df = profile_df.iloc[closest_index + 1:]
 
         station = Station(path_name, profile_df, strato_df, tropo_df, header_df)
         return station
     except Exception as e:
-        print(f"An Error Has Occurred with The File!")
-        return None, None
+        ErrorFrame(gui).showerror(f"Error has Occured: {e}\nPlease Follow Format Specified!")

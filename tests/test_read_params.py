@@ -6,6 +6,9 @@ import shutil
 
 class TestReadParams(unittest.TestCase):
     def test_good_data(self):
+        """
+        Test to ensure utils.get_parameter_file() will correctly read a properly formatted file
+        """
         shutil.copy('./tests/data/params_gooddata.txt', utils.get_parameter_file())
 
         def cleanup():
@@ -49,6 +52,10 @@ class TestReadParams(unittest.TestCase):
             self.assertAlmostEqual(v, value)
 
     def test_bad_data(self):
+        """
+        Test to ensure utils.get_parameter_file will raise a MalformedFileError if the provided file is incorrectly
+        formatted
+        """
         shutil.copy('tests/data/params_baddata.txt', utils.get_parameter_file())
 
         def cleanup():
@@ -60,7 +67,15 @@ class TestReadParams(unittest.TestCase):
         self.assertRaises(utils.MalformedFileError, utils.read_params)
 
     def test_no_file(self):
+        """
+        Test to ensure utils.get_parameter_file will raise a FileNotFound error if there is no file in the expected
+        location
+        """
         if os.path.isfile(utils.get_parameter_file()):
             os.remove(utils.get_parameter_file())
 
         self.assertRaises(FileNotFoundError, utils.read_params)
+
+
+if __name__ == '__main__':
+    unittest.main()

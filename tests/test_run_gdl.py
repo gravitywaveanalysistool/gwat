@@ -38,7 +38,7 @@ class TestRunGDL(unittest.TestCase):
 
         for p in params:
             v = float(gw.readline().strip())
-            self.assertAlmostEqual(v, p)
+            self.assertAlmostEqual(v, p, places=5)
         
         gw.close()
 

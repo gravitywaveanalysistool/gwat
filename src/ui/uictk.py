@@ -180,12 +180,18 @@ class GUI(ctk.CTk):
         @param selected_graphs:
         @return:
         """
+
+        # TODO: simply disable button if none are selected
+        if not selected_graphs or len(selected_graphs) == 0:
+            ErrorFrame(self).showerror("No graphs selected")
+            return
+
         file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
                                                  filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
                                                  initialfile="graphs")
 
         if file_path:
-            utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs, self)
+            utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
 
     def export_params(self):
         """

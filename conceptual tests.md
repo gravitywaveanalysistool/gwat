@@ -2,7 +2,7 @@
 
 ### utils.py/runGDL.py
 ```
-run_gdl(file_in, file_out, latitude, gui)
+run_gdl(file_in, latitude, gdl_or_idl)
 
 file_in: string. expected to be a file path pointing to a radiosonde test file.
 file_out: string. expected to be a file path.
@@ -13,6 +13,28 @@ gui: ctk context.
  | file_in not found error
  | unable to write file_out error
  | malformatted file_in error
+ 
+ Test Case 1: valid input file
+ Objective: Successfully pass a valid input to GDL
+ Input: filepath to a valid radiosonde txt file
+ Output: A txt file containing 16 parameters with 8 for each troposphere and stratosphere
+ 
+ run_gdl("T3_1800_Artemis_Rerun.txt", -35, gdl_or_idl) -> 16 GW parameters stored in a txt fil ein the tmp directory
+ 
+ Test Case 2: bad input file
+ Objective: Detect that GDL returned a bad file error and communicate to the user that their data was bad
+ Input: A malformated txt file
+ Output: GDL error popup in UI
+ 
+ run_gdl("SuperbadDataFile.txt",-35,gdl_or_idl) -> GDL error
+ 
+ Test Case 3: Invalid filepath/File not found
+ Objective: Detect that the input data file 
+ Input: A non-existent filepath
+ Output: Alert User of invalid file path error
+ 
+ run_gdl("..",-35,gdl_or_idl) -> File not found error
+ 
 ```
 
 ```

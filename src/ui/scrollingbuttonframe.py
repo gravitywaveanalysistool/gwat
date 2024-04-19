@@ -46,8 +46,8 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         self.but_cmd = but_cmd
         self.data_op_dict = {}
         self.button_list = []
+        self.selected_button = None
         self.checkbox_dict = {}
-        self.data_options = ['All', 'Stratosphere', 'Troposphere']
         for title, graph in graph_objects.items():
             self.add_item(title)
 
@@ -55,22 +55,18 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         """
         @return:
         """
-        selected_graphs = {}
-        for name, (checkbox, graph_type) in self.checkbox_dict.items():
+        selected_graphs = []
+        for name, checkbox in self.checkbox_dict.items():
             if checkbox.get():
-                if graph_type == self.data_options[0]:
-                    selected_graphs[name] = 'all'
-                elif graph_type == self.data_options[1]:
-                    selected_graphs[name] = 'strato'
-                elif graph_type == self.data_options[2]:
-                    selected_graphs[name] = 'tropo'
+                selected_graphs.append(name)
+
         self.export_cmd(selected_graphs)
 
     def select_all(self):
         """
         @return:
         """
-        for _, (checkbox, _) in self.checkbox_dict.items():
+        for _, checkbox in self.checkbox_dict.items():
             if self.all_selected.get() == 'on':
                 checkbox.select()
             else:
@@ -85,36 +81,36 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         @return:
         """
 
-        def select_graph_type(selection):
-            self.checkbox_dict[title] = (self.checkbox_dict[title][0], selection)
-
         def check_cmd():
             if self.select_all_checkbox.get() == 'on':
                 self.select_all_checkbox.deselect()
 
-        data_option = ctk.CTkOptionMenu(self.scroll_frame, values=self.data_options, command=select_graph_type)
-        button = ctk.CTkButton(self.scroll_frame, text=title, width=100, height=24)
+        button = ctk.CTkButton(self.scroll_frame, text=title, anchor="w")
         checkbox = ctk.CTkCheckBox(self.scroll_frame, text="", width=10, command=check_cmd)
-        if self.but_cmd is not None:
-            button.configure(command=lambda: self.but_cmd(title))
+
         checkbox.grid(row=len(self.checkbox_dict), column=0, pady=(0, 10), sticky="e")
-        button.grid(row=len(self.button_list), column=1, pady=(0, 10), sticky="w")
-        data_option.grid(row=len(self.checkbox_dict), column=2, pady=(0, 10), sticky="e")
 
-        self.data_op_dict[data_option] = title
+        def button_select():
+            self.but_cmd(title)
+            self.select_button(button)
+
+        if self.but_cmd is not None:
+            button.configure(command=button_select)
+        button.grid(row=len(self.button_list), column=1, pady=(0, 10), sticky="we")
+
+        if len(self.button_list) == 0:
+            self.select_button(button)
+
         self.button_list.append(button)
-        self.checkbox_dict[title] = (checkbox, self.data_options[0])
+        self.checkbox_dict[title] = checkbox
 
-    def remove_item(self, item):
-        """
-        @param item:
-        @return:
-        """
-        for button, checkbox in zip(self.button_list, self.checkbox_dict):
-            if item == button.cget("text"):
-                button.destroy()
-                checkbox.destroy()
+    def select_button(self, button):
+        if self.selected_button is not None:
+            default_fg_color = button.cget('fg_color')
+            default_text_color = button.cget('text_color')
+            default_hover_color = button.cget('hover_color')
+            self.selected_button.configure(fg_color=default_fg_color, text_color=default_text_color,
+                                           hover_color=default_hover_color)
 
-                self.button_list.remove(button)
-                self.checkbox_dict.pop(item)
-                return
+        self.selected_button = button
+        button.configure(fg_color='white', text_color='black', hover_color='#bbbbbb')

@@ -71,16 +71,17 @@ class CustomGraphFrame(customtkinter.CTkToplevel):
                 # Create graph instance
                 self.gui.graph_objects[title] = XYGraph(
                     title=title,
-                    data=station.profile_df,
                     x=self.x_selection,
                     y=self.y_selection,
                     degree=int(self.choose_bf.get()),
                     x_label=self.x_selection,
                     y_label=self.y_selection,
-                    best_fit=True)
+                    best_fit=True,
+                    draw_lines=True)
 
                 # Generate its figure
-                self.gui.graph_objects[title].generate_graph()
+                self.gui.graph_objects[title].generate_graph(station.strato_df, "strato")
+                self.gui.graph_objects[title].generate_graph(station.tropo_df, "tropo")
 
                 self.gui.scrollable_frame.add_item(title)
                 self.destroy()

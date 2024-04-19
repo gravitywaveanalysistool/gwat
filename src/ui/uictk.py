@@ -148,7 +148,9 @@ class GUI(ctk.CTk):
         if not file_path:
             return
 
-        self.station = parseradfile.generate_profile_data(file_path)
+        self.station = parseradfile.generate_profile_data(file_path,self)
+
+
         gdl_or_idl = runGDL.detect_gdl_idl()
         if gdl_or_idl != 'none':
             runGDL.runGDL(file_path, get_latitude_value(file_path), self, gdl_or_idl)

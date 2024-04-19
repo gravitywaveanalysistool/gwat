@@ -46,4 +46,4 @@ def runGDL(filepath, latitude, gui, gdl_or_idl):
         return 0
     else:
         print(filepath)
-        errorframe.ErrorFrame(gui).showerror("Bad Input File.")
+        errorframe.ErrorFrame(gui).showerror("Cannot Produce GDL Parameters for this file.")

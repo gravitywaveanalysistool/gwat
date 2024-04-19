@@ -50,7 +50,6 @@ gui: ctk context.
 ```
 
 # Conceptual Tests
-# White Box Tests
 ### ParseData.py
 ```
 headerData(rawData, Encoding)
@@ -61,18 +60,82 @@ Encoding: Defaulted to ISO-8859-1
 Test Case 1: File With Complete Header Data
 Objective: Identify  the start and ends lines of the raw data file when both 'Launch Data:' and 'Profile Data:' Occur
 Input: TxT file of raw profile data from radiosonde
-Output: A dataframe containing containing the  all the data between "Launch Data:" and 'Profile Data:'
+Output: two ints for the start_line and end_line
+headerData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) ->  start_line, end_line
 
-headerData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) ->  header_df
+Test Case 2: File Without HeaderData
+Objective: Test functions behaviour when 'Launch Data' is missing
+Input: TxT File without Launch
+Output: None for both start_line, end_line
+headerData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) ->  None, None
 
-
-Test Case 2: File Without 'Profile Data:'
-Objective: Test functions behaviour when 'Profile Data' is missing
-Input: File without Launch
-Output: The function should not initiate header dataframe, resulting in None for both start and end lines.
-
-headerData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) ->  None
 ```
+```
+grabProfileData(rawData, encoding)
+
+rawData: String. Expected to be a TxT file / File Path
+Encoding: Defaulted to ISO-8859-1
+
+Test Case 1: File with complete Profile Data
+Objective: Identify the start end lines of the raw data file when both 'Profile Data' and 'Tropopauses' occur
+Input: TxT file of raw profile data from radiosonde
+Output: two ints for the start_line and end_line
+grabProfileData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) -> start_line, end_line
+
+Test Case 2:
+Objective: Test function behavior when 'Profile Data' and/or 'Tropopauses' is missing
+Input: Raw data file without 'Profile Data' or/and 'Tropopauses' text
+Output: None for both start_line and end_line
+grabProfileData('T3_1800_ARTEMIS_RERUN.TXT, ISO-8859-1) -> None, None
+```
+```
+get_tropopause_value(file_path)
+Test Case 1: Tropopause Value Present
+Objective: Validate that the function extracts the tropopause value from the specified file.
+Input: Raw data file with tropopause value.
+Output: The function should return the correct tropopause value as a float.
+get_tropopause_value('T3_1800_ARTEMIS_RERUN.TXT') -> Tropopause Value
+
+Test Case 2: Tropopause Value Not Present
+Objective: Ensure proper behavior when tropopause value is not found in the file.
+Input: Raw data file without tropopause value.
+Output: The function should return None.
+get_tropopause_value('T3_1800_ARTEMIS_RERUN.TXT') -> Raise Error of no tropopause value
+```
+```
+get_latitude_value(file_path)
+Test Case 1: Latitude Value Present
+Objective: Confirm that the function retrieves the latitude value from the given file.
+Input: Raw data file with latitude value.
+Output: The function should return the correct latitude value as a string.
+get_latitude_value('T3_1800_ARTEMIS_RERUN.TXT') -> latitude Value
+
+Test Case 2: Latitude Value Not Present
+Objective: Verify the function's behavior when latitude value is not found in the file.
+Input: Raw data file without latitude value.
+Output: The function should return False (May change to defaulting to oswego latitude)
+get_latitude_value('T3_1800_ARTEMIS_RERUN.TXT') -> False Raise Error
+```
+
+```
+generate_profile_data(file_path, gui)
+Test Case 1: Generation of Profile Data that is complete
+Objective: Function generates the full profile dataframe as well as troposphere and stratosphere dataframe
+Input: Raw data file path and GUI reference.
+Output: Station object containing parsed data, or appropriate error handling in the GUI if an exception occurs.
+
+Test Case 2: Generation where Profile Data that contains non numeric characters
+Objective: Function throws error gui to user stating where the non numeric error occured for them to fix
+Input: Raw data file and GUI reference.
+Output: Error GUI frame to user stating where it occured
+generate_profile_data(file_path, gui) - > [Error Occured: Cannot parse "-      " at Line 2069! Please Follow Specified Format."]
+
+Test Case 3: Generation where Profile Data does contain Tropopause Value
+Objective: Function throws error gui to user stating that there is no tropopause occuring in the file
+input: Raw data file path and GUI reference
+Output: Error GUI frame to user stating there is no Tropopause Value
+```
+
 
 
 tests for save graph probably cannot be implemented.

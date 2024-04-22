@@ -1,4 +1,5 @@
 import json
+import threading
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -10,6 +11,7 @@ from src.ui.optionsframe import OptionsFrame
 from src.ui.aboutframe import AboutFrame
 from src.ui.parameterframe import ParameterFrame
 from src.ui.scrollingbuttonframe import ScrollingCheckButtonFrame
+from src.ui.progressbar import ProgressBar
 
 from src import parseradfile
 from src import utils
@@ -18,7 +20,7 @@ from src.graphing.xygraph import XYGraph
 from src import datapath
 from src.utils import read_params
 from src import runGDL
-from src.parseradfile import  get_latitude_value
+from src.parseradfile import get_latitude_value
 from src.ui.errorframe import ErrorFrame
 from src.ui import windowicon
 
@@ -28,6 +30,7 @@ class GUI(ctk.CTk):
         super().__init__()
 
         # vars
+        self.progress_bar = None
         self.logo_label = None
         self.upload_button = None
         self.scrollable_frame = None
@@ -42,7 +45,7 @@ class GUI(ctk.CTk):
         self.strato_params = None
         self.tropo_params = None
 
-        #Load up the options
+        # Load up the options
         self.options = utils.load_options()
 
         self.setup_initial_layout()
@@ -74,8 +77,6 @@ class GUI(ctk.CTk):
         # upload button
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
         self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
-
-
 
     def switch_to_main_layout(self, strato_params, tropo_params):
         """
@@ -151,8 +152,7 @@ class GUI(ctk.CTk):
         if not file_path:
             return
 
-        self.station = parseradfile.generate_profile_data(file_path,self)
-
+        self.station = parseradfile.generate_profile_data(file_path, self)
 
         gdl_or_idl = runGDL.detect_gdl_idl()
         if gdl_or_idl != 'none':
@@ -168,9 +168,16 @@ class GUI(ctk.CTk):
                                        "Please install GDL from https://gnudatalanguage.github.io/\n"
                                        "If you know GDL or IDL is installed, make sure it's accessible in PATH.")
 
-
         # GENERATE GRAPHS
         self.generate_graphs()
+        # self.progress_bar = ProgressBar(self, "Initializing Graphs")
+        #
+        # thread = threading.Thread(target=self.generate_graphs)
+        # thread.start()
+        #
+        # while thread.is_alive():
+        #     self.update_idletasks()
+        #     self.after(100)
 
         if self.is_main_layout:
             self.strato_param_frame.set_params(self.strato_params)
@@ -235,7 +242,7 @@ class GUI(ctk.CTk):
         with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:
             default_graphs = json.load(json_file)
 
-        for graph_name, params in default_graphs.items():
+        for i, (graph_name, params) in enumerate(default_graphs.items()):
             if params['type'] == 'XYGraph':
                 self.graph_objects[graph_name] = XYGraph(
                     title=params['title'],
@@ -254,11 +261,16 @@ class GUI(ctk.CTk):
                     line_width=params['line_width'],
                     alt_threshold=params['alt_threshold']
                 )
+            #self.progress_bar.update_bar((i + 1) / 10)
+            #self.update_idletasks()
 
-        # Generate their figures
-        for _, graph in self.graph_objects.items():
+        #self.progress_bar.change_label("Generating Graphs")
+
+        for i, (_, graph) in enumerate(self.graph_objects.items()):
             graph.generate_graph(self.station.strato_df, "strato")
             graph.generate_graph(self.station.tropo_df, "tropo")
+            #self.progress_bar.update_bar((i + 1) / 10)
+            #self.update_idletasks()
 
 
 def main():

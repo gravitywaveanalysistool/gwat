@@ -19,11 +19,55 @@ def detect_gdl_idl():
 class GDLError(Exception):
     pass
 
-def runGDL(filepath, latitude, gdl_or_idl):
+
+def create_gdl_friendly_file(df):
+    filename = utils.get_temp_folder() + 'gdl_friendly_profile.txt'
+    f = open(filename, 'w', encoding='ISO-8859-1')
+    # skip 20 lines
+    for i in range(0, 20):
+        # ISO-8859-1 needs carriage returns
+        f.write('filler\n')
+
+    def v_or(row, key, default):
+        if key in row:
+            return row[key]
+        return default
+
+    for i, row in df.iterrows():
+        f.write(str(int(v_or(row, 'Time', 9999.0))).ljust(24) + '\t')
+        f.write(str(v_or(row, 'P', 9999.0)).ljust(6) + '\t')
+        f.write(str(v_or(row, 'T', 999.0)).ljust(23) + '\t')
+        f.write(str(v_or(row, 'Hu', 999.0)).ljust(24) + '\t')
+        f.write(str(v_or(row, 'Ws', 999.0)).ljust(5) + '\t')
+        f.write(str(v_or(row, 'Wd', 999.0)).ljust(23) + '\t')
+        f.write(str(v_or(row, 'Long.', 999.0)).ljust(10) + '\t')
+        f.write(str(v_or(row, 'Lat.', 999.0)).ljust(13) + '\t')
+        f.write(str(v_or(row, 'Alt', 999.0)).ljust(7) + '\t')
+        f.write(str(v_or(row, 'Geopot', 99999.0)).ljust(12) + '\t')
+        f.write(str(v_or(row, 'MRI', 999.0)).ljust(10) + '\t')
+        f.write(str(v_or(row, 'RI', 999.0)).ljust(10) + '\t')
+        f.write(str(v_or(row, 'Dewp.', 999.0)).ljust(8) + '\t')
+        f.write(str(v_or(row, 'Virt. Temp', 999.0)).ljust(14) + '\t')
+        f.write(str(v_or(row, 'Rs', 999.0)).ljust(5) + '\t')
+        f.write(str(v_or(row, 'Elevation', 999.0)).ljust(9) + '\t')
+        f.write(str(v_or(row, 'Azimuth', 999.0)).ljust(8) + '\t')
+        f.write(str(v_or(row, 'Range', 999.0)).ljust(7) + '\t')
+        f.write(str(v_or(row, 'D', 999.0)))
+        f.write('\n')
+
+    for i in range(0, 10):
+        f.write('end\n')
+        
+    f.close()
+
+    return filename
+
+
+def run_gdl(filepath, latitude, gdl_or_idl):
     """
-    @param filepath:
-    @param latitude:
-    @param gui:
+    @param filepath: path to the input file
+    @param latitude: latitude parameter extracted from the input file
+    @param gdl_or_idl: the gw_eclipse.pro runner, either 'gdl' or 'idl'
     @return:
     """
     filepath = os.path.abspath(filepath)

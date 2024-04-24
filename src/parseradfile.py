@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from src.station import Station
+from src import utils
 import re
-from src.ui.errorframe import ErrorFrame
 
 # Grab header information such as station name date etc...
 def headerData(rawData, encoding='ISO-8859-1'):
@@ -83,8 +83,7 @@ def get_tropopause_value(file_path,df):
             if tropopause_found and "1.:" in line:
                 value = line.split("1.:")[1].split()[0]
                 return float(value)
-            else:
-                return calc_tropopause(df, 1000)
+        return calc_tropopause(df, 1000)
 
 
 def get_latitude_value(file_path):
@@ -160,7 +159,7 @@ def generate_profile_data(path_name):
             # profile_df.columns += profile_df.iloc[0]
             profile_df.rename(columns=lambda x: x.strip(), inplace=True)
             profile_df = profile_df[1:]
-            profile_df = profile_df[['Time', 'P', 'T', 'Hu', 'Ws', 'Wd', 'Long.', 'Lat.', 'Alt']]
+            profile_df = profile_df[['Time', 'P', 'T', 'Hu', 'Ws', 'Wd', 'Long.', 'Lat.', 'Alt', 'Rs']]
 
         for col in profile_df.select_dtypes(include=['object']).columns:
             profile_df[col] = pd.to_numeric(profile_df[col], errors='coerce')
@@ -179,6 +178,8 @@ def generate_profile_data(path_name):
     profile_df['Ascending_Rate'] = profile_df['Alt_diff'] / profile_df['Time_diff']
     #grab tropopause value
     Tropopause = (get_tropopause_value(path_name,profile_df))
+    if Tropopause is None:
+        raise utils.MalformedFileError
 
     #calculate wind computations and temperature pertubation
     calcWindComps(profile_df)

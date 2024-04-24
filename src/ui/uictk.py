@@ -162,6 +162,10 @@ class GUI(ctk.CTk):
 
         try:
             self.station = parseradfile.generate_profile_data(file_path)
+        except utils.MalformedFileError as _:
+            text = "Unable to calculate tropopause\n"
+            ErrorFrame(self).showerror(text)
+            return
         except Exception as e:
             text = "Error parsing file!\n" \
                 "Ensure the file follow one of the formats specified in the user manual\n"
@@ -170,17 +174,36 @@ class GUI(ctk.CTk):
             return
 
         gdl_or_idl = runGDL.detect_gdl_idl()
+
         if gdl_or_idl != 'none':
+            latitude = get_latitude_value(file_path)
             try:
-                runGDL.runGDL(file_path, get_latitude_value(file_path), gdl_or_idl)
+                runGDL.run_gdl(file_path, latitude, gdl_or_idl)
+            except FileNotFoundError as _:
+                ErrorFrame(self).showerror("file '" + file_path + "' not found")
+                return
+            except runGDL.GDLError as _:
+                gdl_file = runGDL.create_gdl_friendly_file(self.station.profile_df)
+                try:
+                    runGDL.run_gdl(gdl_file, latitude, gdl_or_idl)
+                except FileNotFoundError as _:
+                    ErrorFrame(self).showerror("This shouldn't happen, please report this.",
+                                               r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                    return
+                except runGDL.GDLError as _:
+                    # TODO: find out why and report to the user
+                    text = "Unable to extract gravity wave parameters\n" \
+                           "Reason:\n" \
+                           "Missing data most likely"
+                    link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+                    ErrorFrame(self).showdialog(text, link=link)
+            try:
                 self.tropo_params, self.strato_params = read_params()
-            except FileNotFoundError as e:
-                ErrorFrame(self).showerror("No file found at '" + file_path + "'")
-            except runGDL.GDLError:
-                ErrorFrame(self).showerror(
-                    gdl_or_idl.upper() + " was unable to parse the file.\n"
-                    "Ensure the file is in the correct format"
-                )
+            except FileNotFoundError:
+                ErrorFrame(self).showerror("This shouldn't happen, please report this.",
+                                           r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                return
+
         else:
             text = "Unable to extract gravity wave parameters\n" \
                 "Reason:\n" \
@@ -204,7 +227,8 @@ class GUI(ctk.CTk):
             self.tropo_param_frame.set_params(self.tropo_params)
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
-            self.select_graph(next(iter(self.graph_objects)))
+
+        self.select_graph(next(iter(self.graph_objects)))
 
         if self.strato_params:
             self.show_param_frame()
@@ -264,6 +288,7 @@ class GUI(ctk.CTk):
         """
         self.strato_graph_frame.draw_plot(self.graph_objects[title].get_figure("strato"))
         self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
+        self.scrollable_frame.select_button(self.scrollable_frame.button_list[0])
 
     def generate_graphs(self):
         """

@@ -214,7 +214,7 @@ class GUI(ctk.CTk):
     def show_about(self):
         AboutFrame(self)
 
-    def export_graphs(self, selected_graphs):
+    def export_graphs(self, selected_graphs, export_type):
         """
         @param selected_graphs:
         @return:
@@ -225,12 +225,17 @@ class GUI(ctk.CTk):
             ErrorFrame(self).showerror("No graphs selected")
             return
 
-        file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
-                                                 filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
-                                                 initialfile="graphs")
+        if export_type == 'pdf':
+            file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
+                                                     filetypes=[("PDF file", "*.pdf")],
+                                                     initialfile="graphs")
 
-        if file_path:
-            utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
+            if file_path:
+                utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
+        else:
+            dir_path = filedialog.askdirectory(mustexist=True)
+            if dir_path:
+                utils.save_graphs_as_png(self.graph_objects, dir_path, selected_graphs)
 
     def export_params(self):
         """

@@ -1,6 +1,7 @@
 import json
 
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib import pyplot as plt
 import os
 
 from src import datapath
@@ -106,7 +107,7 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs):
     out_file = PdfPages(file_path)  # Creates the output file
 
     for name in selected_graphs:  # Saves each graph to file
-        if not name in graph_objects:
+        if name not in graph_objects:
             continue
         out_file.savefig(graph_objects[name].get_figure("strato", export=True))
         out_file.savefig(graph_objects[name].get_figure("tropo", export=True))
@@ -114,23 +115,21 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs):
     out_file.close()
 
 
-def save_graphs_as_png(graph_objects, folder_path, selected_graphs, gui):
+def save_graphs_as_png(graph_objects, folder_path, selected_graphs):
     """
     - This function saves the selected graphs as individual PNG files to a directory of the users choice
     - Very not complete at the moment
     """
-    if not selected_graphs:
-        ErrorFrame(gui).showerror("No Graphs Selected!")
+    if not selected_graphs or len(set(graph_objects.keys()) & set(selected_graphs)) == 0:
         return
 
-    png_folder = folder_path + "\\PNG_Graphs"
+    png_folder = os.path.join(folder_path, "graphs")
     if not os.path.exists(png_folder):
         os.mkdir(png_folder)
 
-    i = 0
-    for graph in selected_graphs:
-        graph.savefig(png_folder + f"\\{i}")
-        i += 1
+    for name in selected_graphs:
+        graph_objects[name].get_figure("strato", export=True).savefig(os.path.join(png_folder, name + "-stratosphere"))
+        graph_objects[name].get_figure("tropo", export=True).savefig(os.path.join(png_folder, name + "-troposphere"))
 
 
 def save_options(options):

@@ -16,6 +16,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
@@ -26,15 +27,18 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
                                                    onvalue='on', offvalue='off', command=self.select_all)
         self.select_all_checkbox.grid(row=0, column=0, pady=10, padx=10, sticky="e")
 
-        export_graphs_button = ctk.CTkButton(self, text="Export Graphs", command=self.export)
+        export_graphs_button = ctk.CTkButton(self, text="Export Graphs PDF", command=lambda: self.export('pdf'))
         export_graphs_button.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="ew")
+
+        export_graphs_button = ctk.CTkButton(self, text="Export Graphs PNG", command=lambda: self.export('png'))
+        export_graphs_button.grid(row=0, column=2, pady=10, padx=(0, 10), sticky="ew")
 
         if width:
             self.scroll_frame = ctk.CTkScrollableFrame(self, width=width)
         else:
             self.scroll_frame = ctk.CTkScrollableFrame(self)
 
-        self.scroll_frame.grid(row=1, column=0, pady=(10, 0), sticky="nsew", columnspan=2)
+        self.scroll_frame.grid(row=1, column=0, pady=(10, 0), sticky="nsew", columnspan=3)
 
         self.scroll_frame.grid_columnconfigure(0, weight=1)
         self.scroll_frame.grid_columnconfigure(1, weight=2)
@@ -51,7 +55,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         for title, graph in graph_objects.items():
             self.add_item(title)
 
-    def export(self):
+    def export(self, export_type):
         """
         @return:
         """
@@ -60,7 +64,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
             if checkbox.get():
                 selected_graphs.append(name)
 
-        self.export_cmd(selected_graphs)
+        self.export_cmd(selected_graphs, export_type)
 
     def select_all(self):
         """

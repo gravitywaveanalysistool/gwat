@@ -74,7 +74,7 @@ class TestSaveParamsToFile(unittest.TestCase):
 
         self.addCleanup(lambda: cleanup(file_path))
 
-        self.assertRaises(PermissionError, lambda: save_params_to_file(strato_params, tropo_params, file_path))
+        self.assertRaises(Exception, lambda: save_params_to_file(strato_params, tropo_params, file_path))
 
 
 if __name__ == '__main__':

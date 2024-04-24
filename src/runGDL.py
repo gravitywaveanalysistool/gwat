@@ -6,11 +6,11 @@ from src import datapath
 
 def detect_gdl_idl():
     try:
-        subprocess.run(['gdl', '-v'])
+        subprocess.run(['gdl', '-v'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return 'gdl'
     except:
         try:
-            subprocess.run(['idl', '-v'])
+            subprocess.run(['idl', '-v'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return 'idl'
         except:
             return 'none'

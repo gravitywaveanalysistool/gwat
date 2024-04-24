@@ -62,16 +62,20 @@ def read_params():
     return tropoParams, stratoParams
 
 
-def save_params_to_file(strato_params, tropo_params, filePath):
+def save_params_to_file(strato_params, tropo_params, file_path):
     """
     Parameters are stored in UI as a Python dictionary with ParameterName -> Value
     Need: output file path, parameter dictionary
-    To add: right alignment needed for larger values to prevent key-value clipping in output
     """
-    file = open(filePath, 'w')
-    longest_key_length = len(max(strato_params.keys(), key=len))
-    longest_value_length = len(max(strato_params.values(), key=lambda x: len(str(x))))
-    row_width = longest_key_length + longest_value_length + 8
+
+    file = open(file_path, 'w')
+
+    def max_length(s):
+        return max(map(len, map(str, s)))
+
+    longest_key_length = max(max_length(tropo_params.keys()), max_length(strato_params.keys()))
+    longest_value_length = max(max_length(tropo_params.values()), max_length(strato_params.values()))
+    row_width = longest_key_length + longest_value_length + 4
 
     def write_kv(dictionary):
         for key, value in dictionary.items():

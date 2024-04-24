@@ -1,4 +1,5 @@
 import json
+import threading
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -10,6 +11,7 @@ from src.ui.optionsframe import OptionsFrame
 from src.ui.aboutframe import AboutFrame
 from src.ui.parameterframe import ParameterFrame
 from src.ui.scrollingbuttonframe import ScrollingCheckButtonFrame
+from src.ui.progressbar import ProgressBar
 
 from src import parseradfile
 from src import utils
@@ -18,7 +20,7 @@ from src.graphing.xygraph import XYGraph
 from src import datapath
 from src.utils import read_params
 from src import runGDL
-from src.parseradfile import  get_latitude_value
+from src.parseradfile import get_latitude_value
 from src.ui.errorframe import ErrorFrame
 from src.ui import windowicon
 
@@ -28,13 +30,18 @@ class GUI(ctk.CTk):
         super().__init__()
 
         # vars
+        self.progress_bar = None
         self.logo_label = None
         self.upload_button = None
         self.scrollable_frame = None
+
+        self.param_label = None
         self.strato_graph_frame = None
         self.tropo_graph_frame = None
         self.strato_param_frame = None
         self.tropo_param_frame = None
+        self.export_param_button = None
+
         self.is_main_layout = False
 
         self.station = None
@@ -42,7 +49,7 @@ class GUI(ctk.CTk):
         self.strato_params = None
         self.tropo_params = None
 
-        #Load up the options
+        # Load up the options
         self.options = utils.load_options()
 
         self.setup_initial_layout()
@@ -74,8 +81,6 @@ class GUI(ctk.CTk):
         # upload button
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
         self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
-
-
 
     def switch_to_main_layout(self, strato_params, tropo_params):
         """
@@ -129,18 +134,22 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.grid(row=2, column=2, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
 
         # col 3
-        if strato_params:
-            param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
-            param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
+        self.param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
+        self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
+        self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
+        self.export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
 
-            self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
-            self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+    def show_param_frame(self):
+        self.param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
+        self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+        self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+        self.export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
 
-            self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
-            self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=1)
-
-            export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
-            export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
+    def hide_param_frame(self):
+        self.param_label.grid_forget()
+        self.strato_param_frame.grid_forget()
+        self.tropo_param_frame.grid_forget()
+        self.export_param_button.grid_forget()
 
     def upload_file(self):
         """
@@ -151,8 +160,14 @@ class GUI(ctk.CTk):
         if not file_path:
             return
 
-        self.station = parseradfile.generate_profile_data(file_path,self)
-
+        try:
+            self.station = parseradfile.generate_profile_data(file_path)
+        except Exception as e:
+            text = "Error parsing file!\n" \
+                "Ensure the file follow one of the formats specified in the user manual\n"
+            link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+            ErrorFrame(self).showerror(text, link)
+            return
 
         gdl_or_idl = runGDL.detect_gdl_idl()
         if gdl_or_idl != 'none':
@@ -162,15 +177,27 @@ class GUI(ctk.CTk):
             except FileNotFoundError as e:
                 ErrorFrame(self).showerror("No file found at '" + file_path + "'")
             except runGDL.GDLError:
-                ErrorFrame(self).showerror("Unable to extract gravity wave parameters")
+                ErrorFrame(self).showerror(
+                    gdl_or_idl.upper() + " was unable to parse the file.\n"
+                    "Ensure the file is in the correct format"
+                )
         else:
-            ErrorFrame(self).showerror("Neither GDL nor IDL was detected. \n"
-                                       "Please install GDL from https://gnudatalanguage.github.io/\n"
-                                       "If you know GDL or IDL is installed, make sure it's accessible in PATH.")
-
+            text = "Unable to extract gravity wave parameters\n" \
+                "Reason:\n" \
+                "Neither GDL nor IDL was detected. \n" \
+                "If you know GDL or IDL is installed, make sure it's accessible in PATH."
+            ErrorFrame(self).showdialog(text, link=("Install GDL", "https://github.com/gnudatalanguage/gdl"))
 
         # GENERATE GRAPHS
         self.generate_graphs()
+        # self.progress_bar = ProgressBar(self, "Initializing Graphs")
+        #
+        # thread = threading.Thread(target=self.generate_graphs)
+        # thread.start()
+        #
+        # while thread.is_alive():
+        #     self.update_idletasks()
+        #     self.after(100)
 
         if self.is_main_layout:
             self.strato_param_frame.set_params(self.strato_params)
@@ -178,6 +205,11 @@ class GUI(ctk.CTk):
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
             self.select_graph(next(iter(self.graph_objects)))
+
+        if self.strato_params:
+            self.show_param_frame()
+        else:
+            self.hide_param_frame()
 
     def show_about(self):
         AboutFrame(self)
@@ -235,7 +267,7 @@ class GUI(ctk.CTk):
         with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:
             default_graphs = json.load(json_file)
 
-        for graph_name, params in default_graphs.items():
+        for i, (graph_name, params) in enumerate(default_graphs.items()):
             if params['type'] == 'XYGraph':
                 self.graph_objects[graph_name] = XYGraph(
                     title=params['title'],
@@ -254,11 +286,16 @@ class GUI(ctk.CTk):
                     line_width=params['line_width'],
                     alt_threshold=params['alt_threshold']
                 )
+            #self.progress_bar.update_bar((i + 1) / 10)
+            #self.update_idletasks()
 
-        # Generate their figures
-        for _, graph in self.graph_objects.items():
+        #self.progress_bar.change_label("Generating Graphs")
+
+        for i, (_, graph) in enumerate(self.graph_objects.items()):
             graph.generate_graph(self.station.strato_df, "strato")
             graph.generate_graph(self.station.tropo_df, "tropo")
+            #self.progress_bar.update_bar((i + 1) / 10)
+            #self.update_idletasks()
 
 
 def main():

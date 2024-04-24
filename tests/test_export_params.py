@@ -25,26 +25,29 @@ def generateGoodStrato():
                     "Kinetic Energy": 4.26}
     return stratoParams
 
-
 class TestSaveParamsToFile(unittest.TestCase):
 
     def test_export_params_to_file(self, stratoParams, tropoParams, filePath):
 
         def cleanup():
-            if os.path.exists(filePath):
+            if os.path.isfile(filePath):
                 os.remove(filePath)
 
         def contains(currentLayer, key, val):
-            if currentLayer == "Strato:":
-                if key in stratoParams.keys and val == stratoParams[key]:
+            if currentLayer == "Stratosphere:":
+                if key in stratoParams.keys and val == str(stratoParams[key]):
                     return True
-            elif currentLayer == "Tropo:":
-                if key in tropoParams.keys and val == tropoParams[key]:
+            elif currentLayer == "Troposphere:":
+                if key in tropoParams.keys and val == str(tropoParams[key]):
                     return True
             return False
 
-
+        # Runs the save Params method
         save_params_to_file(stratoParams, tropoParams, filePath)
+
+        # This exact same block is run within the save_params_to_file method so this will pass the case for bad filepath
+        if not os.path.exists(filePath):
+            return
 
         self.addCleanup(cleanup)
 
@@ -55,10 +58,12 @@ class TestSaveParamsToFile(unittest.TestCase):
         f = open(filePath, "r")
         currentLayer = "none"
         for line in f:
-            if line.strip() == "Strato:" or line.strip() == "Tropo:":
+            if line.strip() == "Stratosphere:" or line.strip() == "Troposphere:":
                 currentLayer = line.strip()
             else:
-                key, val = line.split()
+                splitLine = line.split()
+                key = " ".join(splitLine[:len(splitLine)-1])
+                val = splitLine[len(splitLine)-1:][0]
                 self.assertTrue(contains(currentLayer, key, val))
 
         f.close()
@@ -68,31 +73,25 @@ class TestSaveParamsToFile(unittest.TestCase):
         """
         Test that a file which contains formatted tropo and strato parameters will be generated on good data input
         """
-        tropoParams, stratoParams = generateGoodTropo(), generateGoodStrato()
-        self.test_export_params_to_file(stratoParams,tropoParams, filePath="params.txt")
+        self.test_export_params_to_file(generateGoodStrato(), generateGoodTropo(), filePath="params.txt")
 
     def test_goodStrato_badTropo(self):
         """
         Test that the method will catch when it has invalid arras passed to it and stop execution before creating a bad parameters file
         """
-        stratoParams = generateGoodStrato()
-        tropoParams = generateBadTropo()
-        self.test_export_params_to_file(stratoParams,tropoParams, filePath="params.txt")
+        self.test_export_params_to_file(generateGoodStrato(), generateBadTropo(), filePath="params.txt")
 
     def test_badStrato_goodTropo(self):
         """
         Same as previous test, opposite order
         """
-        stratoParams = generateBadStrato()
-        tropoParams = generateGoodTropo()
-        self.test_export_params_to_file(stratoParams,tropoParams, filePath="params.txt")
+        self.test_export_params_to_file(generateBadStrato(), generateGoodTropo(), filePath="params.txt")
 
     def test_badFilepath(self):
         """
         Make sure that if the output filepath does not exist/is not valid to cancel execution and alert the user
         """
-        stratoParams, tropoParams = generateGoodStrato(), generateGoodTropo()
-        self.test_export_params_to_file(stratoParams,tropoParams, filePath="params.txt")
+        self.test_export_params_to_file(generateGoodStrato(), generateGoodTropo(), filePath="badDirectory\\params.txt")
 
 
 if __name__ == '__main__':

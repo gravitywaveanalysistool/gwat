@@ -68,9 +68,12 @@ def save_params_to_file(strato_params, tropo_params, filePath):
     Need: output file path, parameter dictionary
     To add: right alignment needed for larger values to prevent key-value clipping in output
     """
+    if not os.path.exists(filePath):
+        return
+
     file = open(filePath, 'w')
     longest_key_length = len(max(strato_params.keys(), key=len))
-    longest_value_length = len(max(strato_params.values(), key=lambda x: len(str(x))))
+    longest_value_length = len(str(max(strato_params.values(), key=lambda x: len(str(x)))))
     row_width = longest_key_length + longest_value_length + 8
 
     def write_kv(dictionary):

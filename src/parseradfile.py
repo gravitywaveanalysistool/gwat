@@ -131,69 +131,65 @@ def calcTempPert(dataframe):
     dataframe['Temp_Pert'] = dataframe['T'] - x__curve
 
 
-
-def generate_profile_data(path_name, gui):
+def generate_profile_data(path_name):
     """
     @param path_name:
     @return:
     """
-    try:
 
-        head_data_start_line, head_data_end_line = headerData(path_name)
-        data_start_line, data_end_line = grabProfileData(path_name)
-        if head_data_start_line is not None and head_data_end_line is not None:
-            nrows_to_read = head_data_end_line - head_data_start_line
-            header_df = pd.read_csv(path_name, sep='\t', skiprows=head_data_start_line, nrows=nrows_to_read, engine='python',
-                                    encoding='ISO-8859-1', header=None)
+    head_data_start_line, head_data_end_line = headerData(path_name)
+    data_start_line, data_end_line = grabProfileData(path_name)
+    if head_data_start_line is not None and head_data_end_line is not None:
+        nrows_to_read = head_data_end_line - head_data_start_line
+        header_df = pd.read_csv(path_name, sep='\t', skiprows=head_data_start_line, nrows=nrows_to_read, engine='python',
+                                encoding='ISO-8859-1', header=None)
 
-        if head_data_start_line is None and head_data_end_line is None:
-            profile_df = pd.read_csv(path_name, sep='\t', engine='python',
+    if head_data_start_line is None and head_data_end_line is None:
+        profile_df = pd.read_csv(path_name, sep='\t', engine='python',
+                                 encoding='ISO-8859-1')
+        profile_df['Time'] = profile_df.index
+        profile_df.rename(columns=lambda x: x.strip(), inplace=True)
+        profile_df = profile_df[~(profile_df == -999.9).any(axis=1)]
+        profile_df = profile_df.rename(columns={"Lat": "Lat.", "Long": "Long.", })
+
+    else:
+        if data_start_line is not None and data_end_line is not None:
+            nrows_to_read = data_end_line - data_start_line
+            profile_df = pd.read_csv(path_name, sep='\t', skiprows=data_start_line, nrows=nrows_to_read, engine='python',
                                      encoding='ISO-8859-1')
-            profile_df['Time'] = profile_df.index
+            # profile_df.columns += profile_df.iloc[0]
             profile_df.rename(columns=lambda x: x.strip(), inplace=True)
-            profile_df = profile_df[~(profile_df == -999.9).any(axis=1)]
-            profile_df = profile_df.rename(columns={"Lat": "Lat.", "Long": "Long.", })
+            profile_df = profile_df[1:]
+            profile_df = profile_df[['Time', 'P', 'T', 'Hu', 'Ws', 'Wd', 'Long.', 'Lat.', 'Alt']]
 
-        else:
-            if data_start_line is not None and data_end_line is not None:
-                nrows_to_read = data_end_line - data_start_line
-                profile_df = pd.read_csv(path_name, sep='\t', skiprows=data_start_line, nrows=nrows_to_read, engine='python',
-                                         encoding='ISO-8859-1')
-                # profile_df.columns += profile_df.iloc[0]
-                profile_df.rename(columns=lambda x: x.strip(), inplace=True)
-                profile_df = profile_df[1:]
-                profile_df = profile_df[['Time', 'P', 'T', 'Hu', 'Ws', 'Wd', 'Long.', 'Lat.', 'Alt']]
-
-            for col in profile_df.select_dtypes(include=['object']).columns:
-                profile_df[col] = pd.to_numeric(profile_df[col], errors='coerce')
-                profile_df[col] = profile_df[col].astype(float)
+        for col in profile_df.select_dtypes(include=['object']).columns:
+            profile_df[col] = pd.to_numeric(profile_df[col], errors='coerce')
+            profile_df[col] = profile_df[col].astype(float)
 
 
-        # Calculates the difference between followings alts
-        profile_df['Alt_diff'] = profile_df['Alt'].diff()
-        profile_df['Time_diff'] = profile_df["Time"].diff()
-        peak_index = profile_df[profile_df['Alt_diff'] < 0].first_valid_index()
+    # Calculates the difference between followings alts
+    profile_df['Alt_diff'] = profile_df['Alt'].diff()
+    profile_df['Time_diff'] = profile_df["Time"].diff()
+    peak_index = profile_df[profile_df['Alt_diff'] < 0].first_valid_index()
 
-        # Drop rows after peak and drop diff column
-        if peak_index is not None:
-            profile_df = profile_df.loc[:peak_index - 1]
+    # Drop rows after peak and drop diff column
+    if peak_index is not None:
+        profile_df = profile_df.loc[:peak_index - 1]
 
-        profile_df['Ascending_Rate'] = profile_df['Alt_diff'] / profile_df['Time_diff']
-        #grab tropopause value
-        Tropopause = (get_tropopause_value(path_name,profile_df))
+    profile_df['Ascending_Rate'] = profile_df['Alt_diff'] / profile_df['Time_diff']
+    #grab tropopause value
+    Tropopause = (get_tropopause_value(path_name,profile_df))
 
-        #calculate wind computations and temperature pertubation
-        calcWindComps(profile_df)
-        calcTempPert(profile_df)
-        profile_df['Log_P'] = np.log(profile_df['P'])
-        closest_index = (profile_df['P'] - Tropopause).abs().idxmin()
+    #calculate wind computations and temperature pertubation
+    calcWindComps(profile_df)
+    calcTempPert(profile_df)
+    profile_df['Log_P'] = np.log(profile_df['P'])
+    closest_index = (profile_df['P'] - Tropopause).abs().idxmin()
 
-        #create troposphere and stratosphere dataframes to be graphed
-        tropo_df = profile_df.iloc[:closest_index + 1]
-        strato_df = profile_df.iloc[closest_index + 1:]
+    #create troposphere and stratosphere dataframes to be graphed
+    tropo_df = profile_df.iloc[:closest_index + 1]
+    strato_df = profile_df.iloc[closest_index + 1:]
 
 
-        station = Station(path_name, profile_df, strato_df, tropo_df)
-        return station
-    except Exception as e:
-        ErrorFrame(gui).showerror(f"Error has Occured: {e}\nPlease Follow Format Specified!")
+    station = Station(path_name, profile_df, strato_df, tropo_df)
+    return station

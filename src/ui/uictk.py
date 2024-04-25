@@ -34,10 +34,14 @@ class GUI(ctk.CTk):
         self.logo_label = None
         self.upload_button = None
         self.scrollable_frame = None
+
+        self.param_label = None
         self.strato_graph_frame = None
         self.tropo_graph_frame = None
         self.strato_param_frame = None
         self.tropo_param_frame = None
+        self.export_param_button = None
+
         self.is_main_layout = False
 
         self.station = None
@@ -130,18 +134,22 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.grid(row=2, column=2, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
 
         # col 3
-        if strato_params:
-            param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
-            param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
+        self.param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
+        self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
+        self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
+        self.export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
 
-            self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
-            self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+    def show_param_frame(self):
+        self.param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
+        self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+        self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
+        self.export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
 
-            self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
-            self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=1)
-
-            export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
-            export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
+    def hide_param_frame(self):
+        self.param_label.grid_forget()
+        self.strato_param_frame.grid_forget()
+        self.tropo_param_frame.grid_forget()
+        self.export_param_button.grid_forget()
 
     def upload_file(self):
         """
@@ -152,21 +160,56 @@ class GUI(ctk.CTk):
         if not file_path:
             return
 
-        self.station = parseradfile.generate_profile_data(file_path, self)
+        try:
+            self.station = parseradfile.generate_profile_data(file_path)
+        except utils.MalformedFileError as _:
+            text = "Unable to calculate tropopause\n"
+            ErrorFrame(self).showerror(text)
+            return
+        except Exception as e:
+            text = "Error parsing file!\n" \
+                "Ensure the file follow one of the formats specified in the user manual\n"
+            link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+            ErrorFrame(self).showerror(text, link)
+            return
 
         gdl_or_idl = runGDL.detect_gdl_idl()
+
         if gdl_or_idl != 'none':
+            latitude = get_latitude_value(file_path)
             try:
-                runGDL.runGDL(file_path, get_latitude_value(file_path), gdl_or_idl)
+                runGDL.run_gdl(file_path, latitude, gdl_or_idl)
+            except FileNotFoundError as _:
+                ErrorFrame(self).showerror("file '" + file_path + "' not found")
+                return
+            except runGDL.GDLError as _:
+                gdl_file = runGDL.create_gdl_friendly_file(self.station.profile_df)
+                try:
+                    runGDL.run_gdl(gdl_file, latitude, gdl_or_idl)
+                except FileNotFoundError as _:
+                    ErrorFrame(self).showerror("This shouldn't happen, please report this.",
+                                               r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                    return
+                except runGDL.GDLError as _:
+                    # TODO: find out why and report to the user
+                    text = "Unable to extract gravity wave parameters\n" \
+                           "Reason:\n" \
+                           "Missing data most likely"
+                    link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+                    ErrorFrame(self).showdialog(text, link=link)
+            try:
                 self.tropo_params, self.strato_params = read_params()
-            except FileNotFoundError as e:
-                ErrorFrame(self).showerror("No file found at '" + file_path + "'")
-            except runGDL.GDLError:
-                ErrorFrame(self).showerror("Unable to extract gravity wave parameters")
+            except FileNotFoundError:
+                ErrorFrame(self).showerror("This shouldn't happen, please report this.",
+                                           r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                return
+
         else:
-            ErrorFrame(self).showerror("Neither GDL nor IDL was detected. \n"
-                                       "Please install GDL from https://gnudatalanguage.github.io/\n"
-                                       "If you know GDL or IDL is installed, make sure it's accessible in PATH.")
+            text = "Unable to extract gravity wave parameters\n" \
+                "Reason:\n" \
+                "Neither GDL nor IDL was detected. \n" \
+                "If you know GDL or IDL is installed, make sure it's accessible in PATH."
+            ErrorFrame(self).showdialog(text, link=("Install GDL", "https://github.com/gnudatalanguage/gdl"))
 
         # GENERATE GRAPHS
         self.generate_graphs()
@@ -184,12 +227,18 @@ class GUI(ctk.CTk):
             self.tropo_param_frame.set_params(self.tropo_params)
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
-            self.select_graph(next(iter(self.graph_objects)))
+
+        self.select_graph(next(iter(self.graph_objects)))
+
+        if self.strato_params:
+            self.show_param_frame()
+        else:
+            self.hide_param_frame()
 
     def show_about(self):
         AboutFrame(self)
 
-    def export_graphs(self, selected_graphs):
+    def export_graphs(self, selected_graphs, export_type):
         """
         @param selected_graphs:
         @return:
@@ -200,12 +249,17 @@ class GUI(ctk.CTk):
             ErrorFrame(self).showerror("No graphs selected")
             return
 
-        file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
-                                                 filetypes=(("PDF file", "*.pdf"), ("PNG files", "*.png")),
-                                                 initialfile="graphs")
+        if export_type == 'pdf':
+            file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
+                                                     filetypes=[("PDF file", "*.pdf")],
+                                                     initialfile="graphs")
 
-        if file_path:
-            utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
+            if file_path:
+                utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
+        else:
+            dir_path = filedialog.askdirectory(mustexist=True)
+            if dir_path:
+                utils.save_graphs_as_png(self.graph_objects, dir_path, selected_graphs)
 
     def export_params(self):
         """
@@ -234,6 +288,7 @@ class GUI(ctk.CTk):
         """
         self.strato_graph_frame.draw_plot(self.graph_objects[title].get_figure("strato"))
         self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
+        self.scrollable_frame.select_button(self.scrollable_frame.button_list[0])
 
     def generate_graphs(self):
         """

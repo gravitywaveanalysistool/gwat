@@ -40,5 +40,6 @@ class ParameterFrame(customtkinter.CTkScrollableFrame):
 
     def set_params(self, params):
         self.clear()
-        for i, (label, param) in enumerate(params.items()):
-            self.add_item(i, label, param)
+        if params:
+            for i, (label, param) in enumerate(params.items()):
+                self.add_item(i, label, param)

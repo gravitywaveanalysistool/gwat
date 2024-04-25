@@ -1,6 +1,7 @@
 import json
 
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib import pyplot as plt
 import os
 
 from src import datapath
@@ -62,19 +63,20 @@ def read_params():
     return tropoParams, stratoParams
 
 
-def save_params_to_file(strato_params, tropo_params, filePath):
+def save_params_to_file(strato_params, tropo_params, file_path):
     """
     Parameters are stored in UI as a Python dictionary with ParameterName -> Value
     Need: output file path, parameter dictionary
-    To add: right alignment needed for larger values to prevent key-value clipping in output
     """
-    if not os.path.exists(filePath):
-        return
 
-    file = open(filePath, 'w')
-    longest_key_length = len(max(strato_params.keys(), key=len))
-    longest_value_length = len(str(max(strato_params.values(), key=lambda x: len(str(x)))))
-    row_width = longest_key_length + longest_value_length + 8
+    file = open(file_path, 'w')
+
+    def max_length(s):
+        return max(map(len, map(str, s)))
+
+    longest_key_length = max(max_length(tropo_params.keys()), max_length(strato_params.keys()))
+    longest_value_length = max(max_length(tropo_params.values()), max_length(strato_params.values()))
+    row_width = longest_key_length + longest_value_length + 4
 
     def write_kv(dictionary):
         for key, value in dictionary.items():
@@ -105,7 +107,7 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs):
     out_file = PdfPages(file_path)  # Creates the output file
 
     for name in selected_graphs:  # Saves each graph to file
-        if not name in graph_objects:
+        if name not in graph_objects:
             continue
         out_file.savefig(graph_objects[name].get_figure("strato", export=True))
         out_file.savefig(graph_objects[name].get_figure("tropo", export=True))
@@ -113,23 +115,21 @@ def save_graph_to_file(graph_objects, file_path, selected_graphs):
     out_file.close()
 
 
-def save_graphs_as_png(graph_objects, folder_path, selected_graphs, gui):
+def save_graphs_as_png(graph_objects, folder_path, selected_graphs):
     """
     - This function saves the selected graphs as individual PNG files to a directory of the users choice
     - Very not complete at the moment
     """
-    if not selected_graphs:
-        ErrorFrame(gui).showerror("No Graphs Selected!")
+    if not selected_graphs or len(set(graph_objects.keys()) & set(selected_graphs)) == 0:
         return
 
-    png_folder = folder_path + "\\PNG_Graphs"
+    png_folder = os.path.join(folder_path, "graphs")
     if not os.path.exists(png_folder):
         os.mkdir(png_folder)
 
-    i = 0
-    for graph in selected_graphs:
-        graph.savefig(png_folder + f"\\{i}")
-        i += 1
+    for name in selected_graphs:
+        graph_objects[name].get_figure("strato", export=True).savefig(os.path.join(png_folder, name + "-stratosphere"))
+        graph_objects[name].get_figure("tropo", export=True).savefig(os.path.join(png_folder, name + "-troposphere"))
 
 
 def save_options(options):

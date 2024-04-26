@@ -34,9 +34,12 @@ jobs:
             filename: dist/gwat/gwat-linux.tar.gz
           - os: macos-latest
             target: MacOS
-            build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --hidden-import='PIL._tkinter_finder' -i data/media/logo_notext_icon.ico --add-data pro/:pro/ --add-data data/:data/
-            zip_cmd: cd dist/gwat/ && zip -r9 gwat-macos * && cd ../..
-            filename: dist/gwat/gwat-macos.zip
+            build_cmd: |
+              pyinstaller -F -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --hidden-import='PIL._tkinter_finder' -i data/media/logo_notext_icon.ico
+              cp -R data dist/data
+              cp -R pro dist/pro
+            zip_cmd: cd dist/ && zip -r9 gwat-macos * && cd ../..
+            filename: dist/gwat-macos.zip
           - os: windows-latest
             target: Windows
             build_cmd: pyinstaller -D -w src/__init__.py -n gwat -p src/ --copy-metadata numpy --hidden-import='PIL._tkinter_finder' -i data/media/logo_notext_icon.ico --add-data pro/:pro/ --add-data data/:data/

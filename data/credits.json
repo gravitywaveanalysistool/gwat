@@ -1,0 +1,52 @@
+{
+  "credits": {
+    "Gravity wave parameter calulation": {
+      "citation": "Jie Gong (2009):Characteristics of Two Gravity Wave Sources in the US High Vertical-resolution Radiosonde Data,PhD. thesis, http://hdl.handle.net/1951/52345, Stony Brook University PhD Thesis Database",
+      "link": "http://hdl.handle.net/1951/52345"
+    },
+    "Hilbert tranform code": {
+      "citation": "Leonard Kramer, IPST (U. of Maryland) on site contractor to NASA(Goddard Sp. Flgt. Cntr.)"
+    },
+    "GNU Data Language": {
+      "link": "https://gnudatalanguage.github.io/"
+    }
+  },
+  "pip-dependencies": {
+    "altgraph (0.17.4)": "https://pypi.org/project/altgraph/0.17.4/",
+    "certifi (2024.2.2)": "https://pypi.org/project/certifi/2024.2.2/",
+    "charset-normalizer (3.3.2)": "https://pypi.org/project/charset-normalizer/3.3.2/",
+    "contourpy (1.2.0)": "https://pypi.org/project/contourpy/1.2.0/",
+    "customtkinter (5.2.2)": "https://pypi.org/project/customtkinter/5.2.2/",
+    "cycler (0.12.1)": "https://pypi.org/project/cycler/0.12.1",
+    "darkdetect (0.8.0)": "https://pypi.org/project/darkdetect/0.8.0/",
+    "fonttools (4.50.0)": "https://pypi.org/project/fonttools/4.50.0/",
+    "idna (3.7)": "https://pypi.org/project/idna/3.7/",
+    "kiwisolver (1.4.5)": "https://pypi.org/project/kiwisolver/1.4.5/",
+    "matplotlib (3.8.3)": "https://pypi.org/project/matplotlib/3.8.3/",
+    "MetPy (1.6.1)": "https://pypi.org/project/MetPy/1.6.1/",
+    "numpy (1.26.4)": "https://pypi.org/project/numpy/1.26.4/",
+    "packaging (24.0)": "https://pypi.org/project/packaging/24.0/",
+    "pandas (2.2.1)": "https://pypi.org/project/pandas/2.2.1/",
+    "pillow (10.3.0)": "https://pypi.org/project/pillow/10.3.0/",
+    "Pint (0.23)": "https://pypi.org/project/Pint/0.23/",
+    "platformdirs (4.2.0)": "https://pypi.org/project/platformdirs/4.2.0/",
+    "pooch (1.8.1)": "https://pypi.org/project/pooch/1.8.1/",
+    "pyinstaller (6.5.0)": "https://pypi.org/project/pyinstaller/6.5.0/",
+    "pyinstaller-hooks-contrib (2024.3)": "https://pypi.org/project/pyinstaller-hooks-contrib/2024.3/",
+    "pyparsing (3.1.2)": "https://pypi.org/project/pyparsing/3.1.2/",
+    "pypdf2 (3.0.1)": "https://pypi.org/project/pypdf2/3.0.1/",
+    "pyproj (3.6.1)": "https://pypi.org/project/pyproj/3.6.1/",
+    "python-dateutil (2.9.0.post0)": "https://pypi.org/project/python-dateutil/2.9.0.post0/",
+    "pytz (2024.1)": "https://pypi.org/project/pytz/2024.1/",
+    "requests (2.31.0)": "https://pypi.org/project/requests/2.31.0/",
+    "scipy (1.12.0)": "https://pypi.org/project/scipy/1.12.0/",
+    "six (1.16.0)": "https://pypi.org/project/six/1.16.0/",
+    "tabulate (0.9.0)": "https://pypi.org/project/tabulate/0.9.0/",
+    "tk (0.1.0)": "https://pypi.org/project/tk/0.1.0/",
+    "traitlets (5.14.2)": "https://pypi.org/project/traitlets/5.14.2/",
+    "typing_extensions (4.10.0)": "https://pypi.org/project/typing_extensions/4.10.0/",
+    "tzdata (2024.1)": "https://pypi.org/project/tzdata/2024.1/",
+    "urllib3 (2.2.1)": "https://pypi.org/project/urllib3/2.2.1/",
+    "xarray (2024.2.0)": "https://pypi.org/project/xarray/2024.2.0/"
+  }
+}

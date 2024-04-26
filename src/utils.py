@@ -1,11 +1,9 @@
 import json
 
 from matplotlib.backends.backend_pdf import PdfPages
-from matplotlib import pyplot as plt
 import os
 
 from src import datapath
-from src.ui.errorframe import ErrorFrame
 import platform
 
 

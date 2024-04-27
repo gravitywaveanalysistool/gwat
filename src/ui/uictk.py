@@ -30,6 +30,7 @@ class GUI(ctk.CTk):
         super().__init__()
 
         # vars
+        self.about_button = None
         self.progress_bar = None
         self.logo_label = None
         self.upload_button = None
@@ -104,8 +105,9 @@ class GUI(ctk.CTk):
         # +---+---+-------+---+
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure(2, weight=1)
-        self.grid_columnconfigure(3, weight=0)
+        self.grid_columnconfigure(2, weight=0)
+        self.grid_columnconfigure(3, weight=1)
+        self.grid_columnconfigure(4, weight=0)
 
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
@@ -116,22 +118,24 @@ class GUI(ctk.CTk):
         self.upload_button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
         options_button = ctk.CTkButton(self, text="Options", command=self.show_options)
-        options_button.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        options_button.grid(row=0, column=1, padx=(0, 10), pady=10, sticky="ew")
+
+        self.about_button.grid(row=0, column=2, padx=(0, 10), pady=10, sticky="ew")
 
         self.scrollable_frame \
             = ScrollingCheckButtonFrame(master=self, graph_objects=self.graph_objects, station=self.station,
                                         but_cmd=self.select_graph, export_cmd=self.export_graphs)
-        self.scrollable_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew", rowspan=2, columnspan=2)
+        self.scrollable_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew", rowspan=2, columnspan=3)
 
         custom_graph_button = ctk.CTkButton(self, text="Create Custom Graph", command=self.create_custom_graph)
-        custom_graph_button.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="ew", columnspan=2)
+        custom_graph_button.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="ew", columnspan=3)
 
         # col 2
         self.strato_graph_frame = GraphFrame(self)
-        self.strato_graph_frame.grid(row=0, column=2, padx=(0, 10), pady=10, sticky="nsew", rowspan=2)
+        self.strato_graph_frame.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="nsew", rowspan=2)
 
         self.tropo_graph_frame = GraphFrame(self)
-        self.tropo_graph_frame.grid(row=2, column=2, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
+        self.tropo_graph_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew", rowspan=2)
 
         # col 3
         self.param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
@@ -140,10 +144,10 @@ class GUI(ctk.CTk):
         self.export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
 
     def show_param_frame(self):
-        self.param_label.grid(row=0, column=3, padx=(0, 10), pady=10, sticky="ew")
-        self.strato_param_frame.grid(row=1, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
-        self.tropo_param_frame.grid(row=2, column=3, padx=(0, 10), pady=(0, 10), sticky="nsew")
-        self.export_param_button.grid(row=3, column=3, padx=(0, 10), pady=(0, 10), sticky="ew")
+        self.param_label.grid(row=0, column=4, padx=(0, 10), pady=10, sticky="ew")
+        self.strato_param_frame.grid(row=1, column=4, padx=(0, 10), pady=(0, 10), sticky="nsew")
+        self.tropo_param_frame.grid(row=2, column=4, padx=(0, 10), pady=(0, 10), sticky="nsew")
+        self.export_param_button.grid(row=3, column=4, padx=(0, 10), pady=(0, 10), sticky="ew")
 
     def hide_param_frame(self):
         self.param_label.grid_forget()

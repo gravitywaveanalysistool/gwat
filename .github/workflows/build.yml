@@ -21,6 +21,7 @@ jobs:
         run: python -m unittest discover tests -v
   build:
     needs: test
+    if: github.ref == 'refs/heads/main'
     name: Build GWAT to executable
     runs-on: ${{ matrix.os }}
     strategy:

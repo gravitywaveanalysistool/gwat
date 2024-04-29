@@ -185,7 +185,7 @@ class GUI(ctk.CTk):
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
 
-        # self.select_graph(next(iter(self.graph_objects)))
+        self.select_graph(next(iter(self.graph_objects)))
 
         if self.strato_params:
             self.show_param_frame()

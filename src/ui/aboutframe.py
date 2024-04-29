@@ -45,10 +45,11 @@ class AboutPage(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
 
-        summary_text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been " \
-                       "the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley " \
-                       "of type and scrambled it to make a type specimen book. It has survived not only five centuries," \
-                       " but also the leap into electronic typesetting, remaining essent"
+        summary_text = "The Gravity Wave Analysis Tool (GWAT) is a cross-platform software application that is " \
+                       "designed to graph and analyze radiosonde data.  It offers an intuitive interface for " \
+                       "meteorologists, researchers, and students, making it accessible to those without programming " \
+                       "knowledge or money to burn (college students). The Gravity Wave Analysis Tool simplifies the " \
+                       "process of examining atmospheric data, providing powerful analysis with ease."
 
         h1_font = ctk.CTkFont(size=32, weight='bold')
         h2_font = ctk.CTkFont(size=24, weight='bold')
@@ -67,11 +68,14 @@ class AboutPage(ctk.CTkScrollableFrame):
             return self.current_row
 
         # about us
-        about_us = ctk.CTkLabel(self, text="About Us", font=h1_font)
+        about_us = ctk.CTkLabel(self, text="About The project", font=h1_font)
         about_us.grid(row=next_row(), column=0, columnspan=4, sticky='ew')
 
         summary = WrappingLabel(self, text=summary_text)
-        summary.grid(row=next_row(), column=0, columnspan=4, sticky='w', padx=5)
+        summary.grid(row=next_row(), column=0, columnspan=4, sticky='w', padx=10, pady=(20, 10))
+
+        HyperlinkLabel(self, text="User manual", link="https://github.com/gravitywaveanalysistool/gwat/wiki",
+                       justify='left').grid(row=next_row(), column=0, columnspan=4, sticky='w', padx=10)
 
         # authors
         authors = ctk.CTkLabel(self, text="Authors", font=h2_font, justify='left')
@@ -100,7 +104,7 @@ class AboutPage(ctk.CTkScrollableFrame):
                     datapath.getDataPath('media/logo_notext.png'))
          .grid(row=author_row, column=2, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
-                    'Scott Wilmott',
+                    'Scott Wilmot',
                     'ADD YOUR BUSINESS EMAIL',
                     None,
                     'https://github.com/Gooseclemons',

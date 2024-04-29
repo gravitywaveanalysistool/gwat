@@ -82,7 +82,7 @@ class GUI(ctk.CTk):
         self.logo_label.grid(row=1, column=0, padx=10, pady=10)
 
         # upload button
-        self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
+        self.upload_button = ctk.CTkButton(self, text="Import File", command=self.upload_file)
         self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
 
     def change_upload_state(self, state):
@@ -253,7 +253,7 @@ class GUI(ctk.CTk):
         except Exception as e:
             text = "Error parsing file!\n" \
                 "Ensure the file follow one of the formats specified in the user manual\n"
-            link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+            link = ("User manual", r"https://github.com/gravitywaveanalysistool/gwat/wiki/Data-Formats")
             ErrorFrame(self).showerror(text, link)
             return
 
@@ -272,20 +272,20 @@ class GUI(ctk.CTk):
                     runGDL.run_gdl(gdl_file, latitude, gdl_or_idl)
                 except FileNotFoundError as _:
                     ErrorFrame(self).showerror("This shouldn't happen, please report this.",
-                                               r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                                               r"https://github.com/gravitywaveanalysistool/gwat/issues")
                     return
                 except runGDL.GDLError as _:
                     # TODO: find out why and report to the user
                     text = "Unable to extract gravity wave parameters\n" \
                            "Reason:\n" \
                            "Missing data most likely"
-                    link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+                    link = ("User manual", r"https://github.com/gravitywaveanalysistool/gwat/wiki/Data-Formats")
                     ErrorFrame(self).showdialog(text, link=link)
             try:
                 self.tropo_params, self.strato_params = read_params()
             except FileNotFoundError:
                 ErrorFrame(self).showerror("This shouldn't happen, please report this.",
-                                           r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                                           r"https://github.com/gravitywaveanalysistool/gwat/issues")
                 return
 
         else:

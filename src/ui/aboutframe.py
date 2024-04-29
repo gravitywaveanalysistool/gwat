@@ -90,7 +90,7 @@ class AboutPage(ctk.CTkScrollableFrame):
                     'jjhh12@outlook.com',
                     None,
                     'https://github.com/piesarentsquare',
-                    datapath.getDataPath('media/logo_notext.png'))
+                    datapath.getDataPath('media/jeremiah.jpg'))
          .grid(row=author_row, column=1, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
                     'Eric Stewart',

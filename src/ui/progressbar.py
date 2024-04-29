@@ -13,18 +13,25 @@ class ProgressBar(ctk.CTkToplevel):
         self.label = ctk.CTkLabel(self, text=label)
         self.label.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 
-        self.progressbar = ctk.CTkProgressBar(self, orientation=ctk.HORIZONTAL, mode='determinate', height=20)
+        self.progressbar = ctk.CTkProgressBar(self, orientation=ctk.HORIZONTAL, mode='indeterminate', height=20)
         self.progressbar.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
         self.lift()
         self.grab_set()
 
-    def update_bar(self, value):
-        print(self.progressbar.get())
-        self.progressbar.set(value)
+    def start_bar(self):
+        self.progressbar.start()
 
-        #if value > 1.0:
-        #    self.destroy()
+    def stop_bar(self):
+        self.progressbar.stop()
+        self.destroy()
 
-    def change_label(self, label):
-        self.label.configure(text=label)
+    # def update_bar(self, value):
+    #     print(self.progressbar.get())
+    #     self.progressbar.set(value)
+    #
+    #     #if value > 1.0:
+    #     #    self.destroy()
+
+    # def change_label(self, label):
+    #     self.label.configure(text=label)

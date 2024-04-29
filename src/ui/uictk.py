@@ -1,5 +1,6 @@
 import json
 import threading
+import time
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -30,6 +31,7 @@ class GUI(ctk.CTk):
         super().__init__()
 
         # vars
+        self.file_path = None
         self.about_button = None
         self.progress_bar = None
         self.logo_label = None
@@ -82,6 +84,12 @@ class GUI(ctk.CTk):
         # upload button
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
         self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
+
+    def change_upload_state(self, state):
+        if not state:
+            self.upload_button.configure(state='disabled')
+        else:
+            self.upload_button.configure(state='normal')
 
     def switch_to_main_layout(self, strato_params, tropo_params):
         """
@@ -159,80 +167,25 @@ class GUI(ctk.CTk):
         """
         @return:
         """
-        file_path = filedialog.askopenfilename()
+        self.file_path = filedialog.askopenfilename()
 
-        if not file_path:
+        if not self.file_path:
             return
 
-        try:
-            self.station = parseradfile.generate_profile_data(file_path)
-        except utils.MalformedFileError as _:
-            text = "Unable to calculate tropopause\n"
-            ErrorFrame(self).showerror(text)
-            return
-        except Exception as e:
-            text = "Error parsing file!\n" \
-                "Ensure the file follow one of the formats specified in the user manual\n"
-            link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
-            ErrorFrame(self).showerror(text, link)
-            return
+        self.progress_bar = ProgressBar(self, "Generating Graphs")
 
-        gdl_or_idl = runGDL.detect_gdl_idl()
+        # Do GDL and Gen Graphs in thread
+        thread = threading.Thread(target=self.do_threading)
+        thread.start()
 
-        if gdl_or_idl != 'none':
-            latitude = get_latitude_value(file_path)
-            try:
-                runGDL.run_gdl(file_path, latitude, gdl_or_idl)
-            except FileNotFoundError as _:
-                ErrorFrame(self).showerror("file '" + file_path + "' not found")
-                return
-            except runGDL.GDLError as _:
-                gdl_file = runGDL.create_gdl_friendly_file(self.station.profile_df)
-                try:
-                    runGDL.run_gdl(gdl_file, latitude, gdl_or_idl)
-                except FileNotFoundError as _:
-                    ErrorFrame(self).showerror("This shouldn't happen, please report this.",
-                                               r"https://github.com/piesarentsquare/csc380-team-e/issues")
-                    return
-                except runGDL.GDLError as _:
-                    # TODO: find out why and report to the user
-                    text = "Unable to extract gravity wave parameters\n" \
-                           "Reason:\n" \
-                           "Missing data most likely"
-                    link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
-                    ErrorFrame(self).showdialog(text, link=link)
-            try:
-                self.tropo_params, self.strato_params = read_params()
-            except FileNotFoundError:
-                ErrorFrame(self).showerror("This shouldn't happen, please report this.",
-                                           r"https://github.com/piesarentsquare/csc380-team-e/issues")
-                return
-
-        else:
-            text = "Unable to extract gravity wave parameters\n" \
-                "Reason:\n" \
-                "Neither GDL nor IDL was detected. \n" \
-                "If you know GDL or IDL is installed, make sure it's accessible in PATH."
-            ErrorFrame(self).showdialog(text, link=("Install GDL", "https://github.com/gnudatalanguage/gdl"))
-
-        # GENERATE GRAPHS
-        self.generate_graphs()
-        # self.progress_bar = ProgressBar(self, "Initializing Graphs")
-        #
-        # thread = threading.Thread(target=self.generate_graphs)
-        # thread.start()
-        #
-        # while thread.is_alive():
-        #     self.update_idletasks()
-        #     self.after(100)
-
+    def switch_layouts(self):
         if self.is_main_layout:
             self.strato_param_frame.set_params(self.strato_params)
             self.tropo_param_frame.set_params(self.tropo_params)
         else:
             self.switch_to_main_layout(self.strato_params, self.tropo_params)
 
-        self.select_graph(next(iter(self.graph_objects)))
+        # self.select_graph(next(iter(self.graph_objects)))
 
         if self.strato_params:
             self.show_param_frame()
@@ -294,10 +247,63 @@ class GUI(ctk.CTk):
         self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
         self.scrollable_frame.select_button(self.scrollable_frame.button_list[0])
 
+    def do_gdl_stuff(self, file_path):
+        try:
+            self.station = parseradfile.generate_profile_data(file_path)
+        except utils.MalformedFileError as _:
+            text = "Unable to calculate tropopause\n"
+            ErrorFrame(self).showerror(text)
+            return
+        except Exception as e:
+            text = "Error parsing file!\n" \
+                "Ensure the file follow one of the formats specified in the user manual\n"
+            link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+            ErrorFrame(self).showerror(text, link)
+            return
+
+        gdl_or_idl = runGDL.detect_gdl_idl()
+
+        if gdl_or_idl != 'none':
+            latitude = get_latitude_value(file_path)
+            try:
+                runGDL.run_gdl(file_path, latitude, gdl_or_idl)
+            except FileNotFoundError as _:
+                ErrorFrame(self).showerror("file '" + file_path + "' not found")
+                return
+            except runGDL.GDLError as _:
+                gdl_file = runGDL.create_gdl_friendly_file(self.station.profile_df)
+                try:
+                    runGDL.run_gdl(gdl_file, latitude, gdl_or_idl)
+                except FileNotFoundError as _:
+                    ErrorFrame(self).showerror("This shouldn't happen, please report this.",
+                                               r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                    return
+                except runGDL.GDLError as _:
+                    # TODO: find out why and report to the user
+                    text = "Unable to extract gravity wave parameters\n" \
+                           "Reason:\n" \
+                           "Missing data most likely"
+                    link = ("User manual", r"https://github.com/piesarentsquare/csc380-team-e/manual.md")
+                    ErrorFrame(self).showdialog(text, link=link)
+            try:
+                self.tropo_params, self.strato_params = read_params()
+            except FileNotFoundError:
+                ErrorFrame(self).showerror("This shouldn't happen, please report this.",
+                                           r"https://github.com/piesarentsquare/csc380-team-e/issues")
+                return
+
+        else:
+            text = "Unable to extract gravity wave parameters\n" \
+                "Reason:\n" \
+                "Neither GDL nor IDL was detected. \n" \
+                "If you know GDL or IDL is installed, make sure it's accessible in PATH."
+            ErrorFrame(self).showdialog(text, link=("Install GDL", "https://github.com/gnudatalanguage/gdl"))
+
     def generate_graphs(self):
         """
         @return:
         """
+
         with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:
             default_graphs = json.load(json_file)
 
@@ -320,16 +326,23 @@ class GUI(ctk.CTk):
                     line_width=params['line_width'],
                     alt_threshold=params['alt_threshold']
                 )
-            #self.progress_bar.update_bar((i + 1) / 10)
-            #self.update_idletasks()
-
-        #self.progress_bar.change_label("Generating Graphs")
 
         for i, (_, graph) in enumerate(self.graph_objects.items()):
             graph.generate_graph(self.station.strato_df, "strato")
             graph.generate_graph(self.station.tropo_df, "tropo")
-            #self.progress_bar.update_bar((i + 1) / 10)
-            #self.update_idletasks()
+
+    def do_threading(self):
+        if self.progress_bar:
+            self.progress_bar.start_bar()
+
+        self.do_gdl_stuff(self.file_path)
+        self.generate_graphs()
+
+        if self.progress_bar:
+            self.progress_bar.stop_bar()
+
+        self.switch_layouts()
+
 
 
 def main():

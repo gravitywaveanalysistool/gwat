@@ -82,7 +82,7 @@ class GUI(ctk.CTk):
         self.logo_label.grid(row=1, column=0, padx=10, pady=10)
 
         # upload button
-        self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
+        self.upload_button = ctk.CTkButton(self, text="Import File", command=self.upload_file)
         self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
 
     def change_upload_state(self, state):

@@ -5,8 +5,8 @@
         "x": "T",
         "y": "Alt",
         "degree": 6,
-        "x_label": "Temperature (K)",
-        "y_label": "Altitude (km)",
+        "x_label": "Temperature (C)",
+        "y_label": "Altitude (m)",
         "best_fit": true,
         "draw_lines": false
     },
@@ -16,7 +16,7 @@
         "x": "Ws",
         "y": "Alt",
         "degree": 8,
-        "x_label": "Wind Speed",
+        "x_label": "Wind Speed (m/s)",
         "y_label": "Altitude",
         "best_fit": true,
         "draw_lines": false
@@ -27,7 +27,7 @@
         "x": "T",
         "y": "Alt",
         "degree": 8,
-        "x_label": "Temperature Rate of Change",
+        "x_label": "Temperature Rate of Change (C)",
         "y_label": "Altitude (m)",
         "best_fit": true,
         "draw_lines": false
@@ -38,7 +38,7 @@
         "x": "Temp_Pert",
         "y": "Alt",
         "degree": 8,
-        "x_label": "Temperature Perturbation",
+        "x_label": "Temperature Perturbation (C)",
         "y_label": "Altitude (m)",
         "best_fit": false,
         "draw_lines": false
@@ -72,7 +72,7 @@
         "y": "Alt",
         "degree": 8,
         "x_label": "u Wind Component (m/s)",
-        "y_label": "Altitude",
+        "y_label": "Altitude (m)",
         "best_fit": true,
         "draw_lines": false
     },
@@ -100,14 +100,14 @@
     },
     "Hodograph 1": {
         "type": "HodoGraph",
-        "title": "Hodograph 1",
+        "title": "Hodograph Lined",
         "comp_range": 9,
         "line_width": 2,
         "alt_threshold": 0
     },
     "Hodograph 2": {
         "type": "HodoGraph",
-        "title": "Hodograph 2",
+        "title": "Hodograph Scatter",
         "comp_range": 9,
         "line_width": 5,
         "alt_threshold": 150

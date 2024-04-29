@@ -201,10 +201,6 @@ class GUI(ctk.CTk):
         @return:
         """
 
-        # TODO: simply disable button if none are selected
-        if not selected_graphs or len(selected_graphs) == 0:
-            ErrorFrame(self).showerror("No graphs selected")
-            return
 
         if export_type == 'pdf':
             file_path = filedialog.asksaveasfilename(defaultextension=".pdf",

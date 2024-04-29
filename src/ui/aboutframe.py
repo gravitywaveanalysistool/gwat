@@ -98,14 +98,14 @@ class AboutPage(ctk.CTkScrollableFrame):
          .grid(row=author_row, column=1, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
                     'Eric Stewart',
-                    'ADD YOUR BUSINESS EMAIL',
+                    'ericjamestewart@gmail.com',
                     None,
                     'https://github.com/estewar5',
                     datapath.getDataPath('media/logo_notext.png'))
          .grid(row=author_row, column=2, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
                     'Scott Wilmot',
-                    'ADD YOUR BUSINESS EMAIL',
+                    'scottwilmot04@gmail.com',
                     None,
                     'https://github.com/Gooseclemons',
                     datapath.getDataPath('media/logo_notext.png'))

@@ -2,12 +2,14 @@ import unittest
 from src.parseradfile import headerData, grabProfileData, calc_tropopause, generate_profile_data, get_latitude_value
 import pandas as pd
 import src.utils as utils
+from src import datapath
+
 
 class TestRadiosondeDataProcessing(unittest.TestCase):
     def setUp(self):
         # This is the path to a test file. Adjust it according to your test data directory.
         #self.test_file_path = './data/NewYork_SUNYOswego_231013_1642_Q3.txt'
-        self.test_file_path = './data/T3_1800_12132020_Artemis_Rerun.txt'
+        self.test_file_path = './tests/data/T3_1800_12132020_Artemis_Rerun.txt'
 
     def test_headerData(self):
         # Test the function with expected headers
@@ -34,9 +36,9 @@ class TestRadiosondeDataProcessing(unittest.TestCase):
         self.assertIsInstance(tropopause_pressure, float)
 
     def test_get_latitude(self):
-        alaskaFormat = get_latitude_value("./data/Alaska_UAF_231013_1704_Q2.txt")
-        headerFormat = get_latitude_value("./data/T3_1800_12132020_Artemis_Rerun.txt")
-        oswegoFormat = get_latitude_value("./data/SUO011800_040724_id1.txt")
+        alaskaFormat = get_latitude_value("./tests/data/Alaska_UAF_231013_1704_Q2.txt")
+        headerFormat = get_latitude_value("./tests/data/T3_1800_12132020_Artemis_Rerun.txt")
+        oswegoFormat = get_latitude_value("./tests/data/SUO011800_040724_id1.txt")
         self.assertIsNotNone(alaskaFormat)
         self.assertIsNotNone(headerFormat)
         self.assertIsNotNone(oswegoFormat)
@@ -46,9 +48,9 @@ class TestRadiosondeDataProcessing(unittest.TestCase):
     #test generate profile data formats
     def test_generate_profile_data(self):
         #should return no tropopause
-        headerFormat = generate_profile_data("./data/T3_1800_12132020_Artemis_Rerun.txt")
-        nonHeaderFormat = generate_profile_data("./data/Alaska_UAF_231013_2100_Q2.txt")
-        self.assertRaises(utils.MalformedFileError,generate_profile_data,"./data/Alaska_UAF_231013_1704_Q2.txt")
+        headerFormat = generate_profile_data("./tests/data/T3_1800_12132020_Artemis_Rerun.txt")
+        nonHeaderFormat = generate_profile_data("./tests/data/Alaska_UAF_231013_2100_Q2.txt")
+        self.assertRaises(utils.MalformedFileError, generate_profile_data, "./tests/data/Alaska_UAF_231013_1704_Q2.txt")
         self.assertIsNotNone(headerFormat)
         self.assertIsNotNone(nonHeaderFormat)
 

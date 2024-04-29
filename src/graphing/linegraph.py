@@ -25,7 +25,8 @@ class LineGraph(Graph):
         skip = 2
 
         # Plot the data points with skipping
-        plt.scatter(x[::skip], y[::skip], s=5, label='Data Points', color='k')
+        plt.scatter(x[::skip], y[::skip], s=3, label='Data Points', color='k')
+        plt.grid(True, linestyle='--', linewidth=0.5, color='gray', alpha=0.5)
 
         # Smooth the y-axis data using a moving average
         window_size = 5  # Adjust window size as needed

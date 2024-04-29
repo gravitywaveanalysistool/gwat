@@ -16,6 +16,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
@@ -26,15 +27,20 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
                                                    onvalue='on', offvalue='off', command=self.select_all)
         self.select_all_checkbox.grid(row=0, column=0, pady=10, padx=10, sticky="e")
 
-        export_graphs_button = ctk.CTkButton(self, text="Export Graphs", command=self.export)
-        export_graphs_button.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="ew")
+        self.export_as_pdf_but = ctk.CTkButton(self, text="Export Graphs PDF", command=lambda: self.export('pdf'),
+                                               state="disabled", fg_color="#B2B2B2")
+        self.export_as_pdf_but.grid(row=0, column=1, pady=10, padx=(0, 10), sticky="ew")
+
+        self.export_as_png_but = ctk.CTkButton(self, text="Export Graphs PNG", command=lambda: self.export('png'),
+                                               state="disabled", fg_color="#B2B2B2")
+        self.export_as_png_but.grid(row=0, column=2, pady=10, padx=(0, 10), sticky="ew")
 
         if width:
             self.scroll_frame = ctk.CTkScrollableFrame(self, width=width)
         else:
             self.scroll_frame = ctk.CTkScrollableFrame(self)
 
-        self.scroll_frame.grid(row=1, column=0, pady=(10, 0), sticky="nsew", columnspan=2)
+        self.scroll_frame.grid(row=1, column=0, pady=(10, 0), sticky="nsew", columnspan=3)
 
         self.scroll_frame.grid_columnconfigure(0, weight=1)
         self.scroll_frame.grid_columnconfigure(1, weight=2)
@@ -51,7 +57,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         for title, graph in graph_objects.items():
             self.add_item(title)
 
-    def export(self):
+    def export(self, export_type):
         """
         @return:
         """
@@ -60,7 +66,7 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
             if checkbox.get():
                 selected_graphs.append(name)
 
-        self.export_cmd(selected_graphs)
+        self.export_cmd(selected_graphs, export_type)
 
     def select_all(self):
         """
@@ -72,8 +78,20 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
             else:
                 checkbox.deselect()
 
+        self.decide_export_state()
+
     def destroy(self):
         super().destroy()
+
+    def decide_export_state(self):
+        for _, checkbox in self.checkbox_dict.items():
+            if checkbox.get() == 1:
+                self.export_as_png_but.configure(state='normal', fg_color="#DB7325")
+                self.export_as_pdf_but.configure(state='normal', fg_color="#DB7325")
+                return
+
+        self.export_as_png_but.configure(state='disabled', fg_color="#B2B2B2")
+        self.export_as_pdf_but.configure(state='disabled', fg_color="#B2B2B2")
 
     def add_item(self, title):
         """
@@ -84,6 +102,8 @@ class ScrollingCheckButtonFrame(ctk.CTkFrame):
         def check_cmd():
             if self.select_all_checkbox.get() == 'on':
                 self.select_all_checkbox.deselect()
+            self.decide_export_state()
+
 
         button = ctk.CTkButton(self.scroll_frame, text=title, anchor="w")
         checkbox = ctk.CTkCheckBox(self.scroll_frame, text="", width=10, command=check_cmd)

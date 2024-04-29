@@ -74,6 +74,9 @@ class AboutPage(ctk.CTkScrollableFrame):
         summary = WrappingLabel(self, text=summary_text)
         summary.grid(row=next_row(), column=0, columnspan=4, sticky='w', padx=10, pady=(20, 10))
 
+        HyperlinkLabel(self, text="User manual", link="https://github.com/gravitywaveanalysistool/gwat/wiki",
+                       justify='left').grid(row=next_row(), column=0, columnspan=4, sticky='w', padx=10)
+
         # authors
         authors = ctk.CTkLabel(self, text="Authors", font=h2_font, justify='left')
         authors.grid(row=next_row(), column=0, columnspan=4, sticky='w', padx=10, pady=(20, 10))
@@ -101,7 +104,7 @@ class AboutPage(ctk.CTkScrollableFrame):
                     datapath.getDataPath('media/logo_notext.png'))
          .grid(row=author_row, column=2, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
-                    'Scott Wilmott',
+                    'Scott Wilmot',
                     'ADD YOUR BUSINESS EMAIL',
                     None,
                     'https://github.com/Gooseclemons',

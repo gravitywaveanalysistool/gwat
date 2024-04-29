@@ -1,5 +1,6 @@
 import json
 import threading
+import time
 from tkinter import filedialog
 
 import customtkinter as ctk
@@ -30,6 +31,7 @@ class GUI(ctk.CTk):
         super().__init__()
 
         # vars
+        self.file_path = None
         self.about_button = None
         self.progress_bar = None
         self.logo_label = None
@@ -82,6 +84,12 @@ class GUI(ctk.CTk):
         # upload button
         self.upload_button = ctk.CTkButton(self, text="Upload File", command=self.upload_file)
         self.upload_button.grid(row=2, column=0, padx=10, pady=(0, 10))
+
+    def change_upload_state(self, state):
+        if not state:
+            self.upload_button.configure(state='disabled')
+        else:
+            self.upload_button.configure(state='normal')
 
     def switch_to_main_layout(self, strato_params, tropo_params):
         """
@@ -159,11 +167,83 @@ class GUI(ctk.CTk):
         """
         @return:
         """
-        file_path = filedialog.askopenfilename()
+        self.file_path = filedialog.askopenfilename()
 
-        if not file_path:
+        if not self.file_path:
             return
 
+        self.progress_bar = ProgressBar(self, "Generating Graphs")
+
+        # Do GDL and Gen Graphs in thread
+        thread = threading.Thread(target=self.do_threading)
+        thread.start()
+
+    def switch_layouts(self):
+        if self.is_main_layout:
+            self.strato_param_frame.set_params(self.strato_params)
+            self.tropo_param_frame.set_params(self.tropo_params)
+        else:
+            self.switch_to_main_layout(self.strato_params, self.tropo_params)
+
+        # self.select_graph(next(iter(self.graph_objects)))
+
+        if self.strato_params:
+            self.show_param_frame()
+        else:
+            self.hide_param_frame()
+
+    def show_about(self):
+        AboutFrame(self)
+
+    def export_graphs(self, selected_graphs, export_type):
+        """
+        @param selected_graphs:
+        @return:
+        """
+
+
+        if export_type == 'pdf':
+            file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
+                                                     filetypes=[("PDF file", "*.pdf")],
+                                                     initialfile="graphs")
+
+            if file_path:
+                utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
+        else:
+            dir_path = filedialog.askdirectory(mustexist=True)
+            if dir_path:
+                utils.save_graphs_as_png(self.graph_objects, dir_path, selected_graphs)
+
+    def export_params(self):
+        """
+        @return:
+        """
+        filepath = filedialog.asksaveasfilename(defaultextension=".txt", initialfile="parameters")
+        if filepath:
+            utils.save_params_to_file(self.strato_params, self.tropo_params, filepath)
+
+    def create_custom_graph(self):
+        """
+        @return:
+        """
+        CustomGraphFrame(self, self, self.station)
+
+    def show_options(self):
+        """
+        @return:
+        """
+        OptionsFrame(self, self.graph_objects, self.station, self.options)
+
+    def select_graph(self, title):
+        """
+        @param title:
+        @return:
+        """
+        self.strato_graph_frame.draw_plot(self.graph_objects[title].get_figure("strato"))
+        self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
+        self.scrollable_frame.select_button(self.scrollable_frame.button_list[0])
+
+    def do_gdl_stuff(self, file_path):
         try:
             self.station = parseradfile.generate_profile_data(file_path)
         except utils.MalformedFileError as _:
@@ -215,89 +295,11 @@ class GUI(ctk.CTk):
                 "If you know GDL or IDL is installed, make sure it's accessible in PATH."
             ErrorFrame(self).showdialog(text, link=("Install GDL", "https://github.com/gnudatalanguage/gdl"))
 
-        # GENERATE GRAPHS
-        self.generate_graphs()
-        # self.progress_bar = ProgressBar(self, "Initializing Graphs")
-        #
-        # thread = threading.Thread(target=self.generate_graphs)
-        # thread.start()
-        #
-        # while thread.is_alive():
-        #     self.update_idletasks()
-        #     self.after(100)
-
-        if self.is_main_layout:
-            self.strato_param_frame.set_params(self.strato_params)
-            self.tropo_param_frame.set_params(self.tropo_params)
-        else:
-            self.switch_to_main_layout(self.strato_params, self.tropo_params)
-
-        self.select_graph(next(iter(self.graph_objects)))
-
-        if self.strato_params:
-            self.show_param_frame()
-        else:
-            self.hide_param_frame()
-
-    def show_about(self):
-        AboutFrame(self)
-
-    def export_graphs(self, selected_graphs, export_type):
-        """
-        @param selected_graphs:
-        @return:
-        """
-
-        # TODO: simply disable button if none are selected
-        if not selected_graphs or len(selected_graphs) == 0:
-            ErrorFrame(self).showerror("No graphs selected")
-            return
-
-        if export_type == 'pdf':
-            file_path = filedialog.asksaveasfilename(defaultextension=".pdf",
-                                                     filetypes=[("PDF file", "*.pdf")],
-                                                     initialfile="graphs")
-
-            if file_path:
-                utils.save_graph_to_file(self.graph_objects, file_path, selected_graphs)
-        else:
-            dir_path = filedialog.askdirectory(mustexist=True)
-            if dir_path:
-                utils.save_graphs_as_png(self.graph_objects, dir_path, selected_graphs)
-
-    def export_params(self):
-        """
-        @return:
-        """
-        filepath = filedialog.asksaveasfilename(defaultextension=".txt", initialfile="parameters")
-        if filepath:
-            utils.save_params_to_file(self.strato_params, self.tropo_params, filepath)
-
-    def create_custom_graph(self):
-        """
-        @return:
-        """
-        CustomGraphFrame(self, self, self.station)
-
-    def show_options(self):
-        """
-        @return:
-        """
-        OptionsFrame(self, self.graph_objects, self.station, self.options)
-
-    def select_graph(self, title):
-        """
-        @param title:
-        @return:
-        """
-        self.strato_graph_frame.draw_plot(self.graph_objects[title].get_figure("strato"))
-        self.tropo_graph_frame.draw_plot(self.graph_objects[title].get_figure("tropo"))
-        self.scrollable_frame.select_button(self.scrollable_frame.button_list[0])
-
     def generate_graphs(self):
         """
         @return:
         """
+
         with open(datapath.getDataPath("default_graphs.json"), 'r') as json_file:
             default_graphs = json.load(json_file)
 
@@ -320,16 +322,23 @@ class GUI(ctk.CTk):
                     line_width=params['line_width'],
                     alt_threshold=params['alt_threshold']
                 )
-            #self.progress_bar.update_bar((i + 1) / 10)
-            #self.update_idletasks()
-
-        #self.progress_bar.change_label("Generating Graphs")
 
         for i, (_, graph) in enumerate(self.graph_objects.items()):
             graph.generate_graph(self.station.strato_df, "strato")
             graph.generate_graph(self.station.tropo_df, "tropo")
-            #self.progress_bar.update_bar((i + 1) / 10)
-            #self.update_idletasks()
+
+    def do_threading(self):
+        if self.progress_bar:
+            self.progress_bar.start_bar()
+
+        self.do_gdl_stuff(self.file_path)
+        self.generate_graphs()
+
+        if self.progress_bar:
+            self.progress_bar.stop_bar()
+
+        self.switch_layouts()
+
 
 
 def main():

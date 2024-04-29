@@ -19,7 +19,7 @@
     "hover_color": ["#BF6025", "#BF6025"],
     "border_color": ["#3E454A", "#949A9F"],
     "text_color": ["#FFFFFF", "#FFFFFF"],
-    "text_color_disabled": ["gray74", "gray60"]
+    "text_color_disabled": ["#656565", "#656565"]
   },
   "CTkLabel": {
     "corner_radius": 0,
@@ -68,8 +68,8 @@
   "CTkProgressBar": {
     "corner_radius": 1000,
     "border_width": 0,
-    "fg_color": ["#939BA2", "#4A4D50"],
-    "progress_color": ["#3a7ebf", "#1f538d"],
+    "fg_color": ["#DB7325", "#DB7325"],
+    "progress_color": ["#A7581C", "#A7581C"],
     "border_color": ["gray", "gray"]
   },
   "CTkSlider": {

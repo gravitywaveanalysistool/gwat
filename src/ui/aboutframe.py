@@ -46,7 +46,7 @@ class AboutPage(ctk.CTkScrollableFrame):
         super().__init__(master, **kwargs)
 
         summary_text = "The Gravity Wave Analysis Tool (GWAT) is a cross-platform software application that is " \
-                       "designed to graph and analyze radiosonde data.  It offers an intuitive interface for " \
+                       "designed to graph and analyze radiosonde data. It offers an intuitive interface for " \
                        "meteorologists, researchers, and students, making it accessible to those without programming " \
                        "knowledge or money to burn (college students). The Gravity Wave Analysis Tool simplifies the " \
                        "process of examining atmospheric data, providing powerful analysis with ease."

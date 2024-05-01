@@ -94,6 +94,8 @@ def run_gdl(filepath, latitude, gdl_or_idl):
 
     os.chdir(cwd)
 
+    print(output, error)
+
     if output != "success\n":
         os.remove(utils.get_parameter_file())
         raise GDLError

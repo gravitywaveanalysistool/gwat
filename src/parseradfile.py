@@ -45,8 +45,13 @@ def grabProfileData(rawData, encoding='ISO-8859-1'):
                 end_line = i - 1
                 break
             elif pfDataHit and line.strip() and start_line is None:
-                # Grabs line where profile data exists
+                # First line of actual profile data
                 start_line = i
+
+            if pfDataHit and line.strip():
+                # Update end_line with each line containing data until 'Tropopauses:' or end of file
+                end_line = i
+
     return start_line, end_line
 
 
@@ -135,7 +140,6 @@ def generate_profile_data(path_name):
     @param path_name:
     @return:
     """
-
     head_data_start_line, head_data_end_line = headerData(path_name)
     data_start_line, data_end_line = grabProfileData(path_name)
     if head_data_start_line is not None and head_data_end_line is not None:
@@ -153,12 +157,15 @@ def generate_profile_data(path_name):
 
     else:
         if data_start_line is not None and data_end_line is not None:
+            print(1)
             nrows_to_read = data_end_line - data_start_line
             profile_df = pd.read_csv(path_name, sep='\t', skiprows=data_start_line, nrows=nrows_to_read, engine='python',
                                      encoding='ISO-8859-1')
             # profile_df.columns += profile_df.iloc[0]
             profile_df.rename(columns=lambda x: x.strip(), inplace=True)
             profile_df = profile_df[1:]
+            profile_df['Time'] = profile_df.index
+            profile_df = profile_df.rename(columns={"Lat": "Lat.", "Long": "Long.", })
             profile_df = profile_df[['Time', 'P', 'T', 'Hu', 'Ws', 'Wd', 'Long.', 'Lat.', 'Alt', 'Rs']]
 
         for col in profile_df.select_dtypes(include=['object']).columns:

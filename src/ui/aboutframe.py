@@ -46,7 +46,7 @@ class AboutPage(ctk.CTkScrollableFrame):
         super().__init__(master, **kwargs)
 
         summary_text = "The Gravity Wave Analysis Tool (GWAT) is a cross-platform software application that is " \
-                       "designed to graph and analyze radiosonde data.  It offers an intuitive interface for " \
+                       "designed to graph and analyze radiosonde data. It offers an intuitive interface for " \
                        "meteorologists, researchers, and students, making it accessible to those without programming " \
                        "knowledge or money to burn (college students). The Gravity Wave Analysis Tool simplifies the " \
                        "process of examining atmospheric data, providing powerful analysis with ease."
@@ -98,17 +98,17 @@ class AboutPage(ctk.CTkScrollableFrame):
          .grid(row=author_row, column=1, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
                     'Eric Stewart',
-                    'ADD YOUR BUSINESS EMAIL',
+                    'ericjamestewart@gmail.com',
                     None,
                     'https://github.com/estewar5',
                     datapath.getDataPath('media/logo_notext.png'))
          .grid(row=author_row, column=2, sticky='ew', padx=(0, 10)))
         (AuthorCard(self,
                     'Scott Wilmot',
-                    'ADD YOUR BUSINESS EMAIL',
+                    'scottwilmot04@gmail.com',
                     None,
                     'https://github.com/Gooseclemons',
-                    datapath.getDataPath('media/logo_notext.png'))
+                    datapath.getDataPath('media/scott.png'))
          .grid(row=author_row, column=3, sticky='ew', padx=(0, 10)))
 
         # license

@@ -98,16 +98,16 @@
         "best_fit": false,
         "draw_lines": false
     },
-    "Hodograph 1": {
+    "Hodograph Lined": {
         "type": "HodoGraph",
-        "title": "Hodograph Lined",
+        "title": "Hodograph",
         "comp_range": 9,
         "line_width": 2,
         "alt_threshold": 0
     },
-    "Hodograph 2": {
+    "Hodograph Scatter": {
         "type": "HodoGraph",
-        "title": "Hodograph Scatter",
+        "title": "Hodograph",
         "comp_range": 9,
         "line_width": 5,
         "alt_threshold": 150

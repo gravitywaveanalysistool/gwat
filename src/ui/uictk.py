@@ -281,6 +281,7 @@ class GUI(ctk.CTk):
                            "Missing data most likely"
                     link = ("User manual", r"https://github.com/gravitywaveanalysistool/gwat/wiki/Data-Formats")
                     ErrorFrame(self).showdialog(text, link=link)
+                    return
             try:
                 self.tropo_params, self.strato_params = read_params()
             except FileNotFoundError:

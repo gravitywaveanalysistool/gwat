@@ -108,7 +108,7 @@ class AboutPage(ctk.CTkScrollableFrame):
                     'scottwilmot04@gmail.com',
                     None,
                     'https://github.com/Gooseclemons',
-                    datapath.getDataPath('media/logo_notext.png'))
+                    datapath.getDataPath('media/scott.png'))
          .grid(row=author_row, column=3, sticky='ew', padx=(0, 10)))
 
         # license

@@ -147,8 +147,8 @@ class GUI(ctk.CTk):
 
         # col 3
         self.param_label = ctk.CTkLabel(self, text="Gravity Wave Parameters")
-        self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=350)
-        self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=350)
+        self.strato_param_frame = ParameterFrame(master=self, params=strato_params, title="Stratosphere", width=400)
+        self.tropo_param_frame = ParameterFrame(master=self, params=tropo_params, title="Troposphere", width=400)
         self.export_param_button = ctk.CTkButton(self, text="Export Parameters", command=self.export_params)
 
     def show_param_frame(self):

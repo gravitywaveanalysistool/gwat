@@ -39,6 +39,7 @@ def read_params():
     paramNames = ["Horizontal Wavelength", "Vertical Wavelength", "Mean Phase Propogation Direction",
                   "Upward Propogation Fraction",
                   "Zonal Momentum Flux", "Meridional Momentum Flux", "Potential Energy", "Kinetic Energy"]
+    units = ["[km]", "[km]", "[deg]", " ", "[m^2/s^2]", "[m^2/s^2]", "[J/kg]", "[J/kg]"]
     allParams = []
     tropoParams = {}
     stratoParams = {}
@@ -53,8 +54,8 @@ def read_params():
     for i, _ in enumerate(allParams):
         if i == len(paramNames):
             break
-        tropoParams[paramNames[i]] = allParams[i]
-        stratoParams[paramNames[i]] = allParams[i + len(paramNames)]
+        tropoParams[paramNames[i]] = allParams[i] + " " + units[i]
+        stratoParams[paramNames[i]] = allParams[i + len(paramNames)] + " " + units[i]
 
     f.close()
 

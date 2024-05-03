@@ -40,6 +40,9 @@ class WrappingLabel(ctk.CTkLabel):
         self.configure(wraplength=800)
         WrappingLabel.labels.append(self)
 
+    def destroy(self):
+        super().destroy()
+        WrappingLabel.labels.remove(self)
 
 class AboutPage(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):

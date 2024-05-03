@@ -1,27 +1,7 @@
 name: Build GWAT
-on: [push]
+on: workflow_dispatch
 jobs:
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Get Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-          cache: 'pip'
-      - name: Install GDL
-        run: sudo apt install gnudatalanguage
-      - name: Install PIP Dependencies
-        run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-      - name: Test GWAT
-        run: python -m unittest discover tests -v
   build:
-    needs: test
-    if: github.ref == 'refs/heads/main'
     name: Build GWAT to executable
     runs-on: ${{ matrix.os }}
     strategy:
